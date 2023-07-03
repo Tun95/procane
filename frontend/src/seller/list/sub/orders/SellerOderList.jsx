@@ -222,7 +222,7 @@ function SellerOrderList() {
                         : "paginationItemStyle active"
                     }`}
                     component={Link}
-                    to={`/admin/orders?page=${item.page}`}
+                    to={`/vendor/orders?page=${item.page}`}
                     {...item}
                   />
                 )}

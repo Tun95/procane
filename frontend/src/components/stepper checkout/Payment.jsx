@@ -180,17 +180,17 @@ function Payment(props) {
         dispatch({ type: "PAY_RESET" });
       }
     } else {
-      const loadPaypalScript = () => {
-        paypalDispatch({
-          type: "resetOptions",
-          value: {
-            "client-id": process.env.REACT_APP_PAYPAL_CLIENT_ID,
-            currency: toCurrency,
-          },
-        });
-        paypalDispatch({ type: "setLoadingStatus", value: "pending" });
-      };
-      loadPaypalScript();
+      // const loadPaypalScript = () => {
+      //   paypalDispatch({
+      //     type: "resetOptions",
+      //     value: {
+      //       "client-id": process.env.REACT_APP_PAYPAL_CLIENT_ID,
+      //       currency: toCurrency,
+      //     },
+      //   });
+      //   paypalDispatch({ type: "setLoadingStatus", value: "pending" });
+      // };
+      // loadPaypalScript();
     }
   }, [
     navigate,
