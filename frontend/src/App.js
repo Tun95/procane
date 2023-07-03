@@ -425,11 +425,6 @@ function App() {
 
           {/* SELLER ROUTES */}
         </Routes>
-        {/* <MessengerCustomerChat
-          pageId="<PAGE_ID>"
-          appId="<APP_ID>"
-          htmlRef="<REF_STRING>"
-        /> */}
         {settings?.map((s, index) => (
           <FloatingWhatsApp
             key={index}
