@@ -77,7 +77,7 @@ function Filter({
 
   const minDistance = 1000; // Adjust the value as needed
 
-  const [value, setValue] = React.useState([20, 1000]);
+  const [value, setValue] = React.useState([0, 10000]);
 
   const handleChange = (event, newValue, activeThumb) => {
     if (!Array.isArray(newValue)) {
@@ -111,7 +111,7 @@ function Filter({
     setSelectedSizes([]);
     setSelectedBrands([]);
     setSelectedColors([]);
-    setValue([20, 1000]);
+    setValue([0, 10000]);
     navigate("/store");
   };
 

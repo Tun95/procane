@@ -89,7 +89,7 @@ function Payment(props) {
   };
 
   //PAYPAL MODAL
-  const [openPaypalModal, is0penPaypalModal] = useState(true);
+  const [openPaypalModal, is0penPaypalModal] = useState(false);
   const closePaypalModal = () => {
     is0penPaypalModal(false);
     document.body.style.overflow = "unset";
@@ -107,7 +107,7 @@ function Payment(props) {
   };
 
   //RAZORPAY
-  const [openRazorPayModal, is0penRazorPayModal] = useState(false);
+  const [openRazorPayModal, is0penRazorPayModal] = useState(true);
   const closeRazorPayModal = () => {
     is0penRazorPayModal(false);
     document.body.style.overflow = "unset";
