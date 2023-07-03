@@ -103,9 +103,9 @@ function Head() {
               >
                 <option value="USD">$ USD</option>
                 <option value="INR">₹ INR</option>
-                {/* <option value="NGN">₦ NGN</option>
+                <option value="NGN">₦ NGN</option>
                 <option value="GBP">£ GBP</option>
-                <option value="EUR">€ EUR</option> */}
+                <option value="EUR">€ EUR</option>
               </select>
             </div>
             <FormControlLabel

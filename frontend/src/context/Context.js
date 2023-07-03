@@ -162,7 +162,6 @@ function reducer(state, action) {
 export function ContextProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { settings } = state;
   //==============
   //FETCH SETTINGS HANDLER
   //==============
@@ -286,21 +285,10 @@ export function ContextProvider(props) {
   //TEST FOR CONVERSION
   //==================
   const [toCurrency, setToCurrency] = useState(
-    localStorage.getItem("toCurrency") || "INR"
+    localStorage.getItem("toCurrency") || "USD"
   );
-  const convertToINR = (price) => {
-    // Conversion rate from USD to INR
-    const conversionRate = settings
-      ?.map((s) => Number(s.rate))
-      ?.find((rate) => !isNaN(rate));
-    return (price * conversionRate)?.toFixed(2);
-  };
 
-  const convertToUSD = (price) => {
-    // Conversion rate from INR to USD
-    // const conversionRate = 0.013;
-    return price?.toFixed(2);
-  };
+  const [conversionRate, setConversionRate] = useState(null);
 
   const formatPrice = (price, grandTotal) => {
     const formatter = new Intl.NumberFormat("en-GB", {
@@ -313,13 +301,11 @@ export function ContextProvider(props) {
       const formattedGrandTotal = formatter.format(grandTotal);
       const formattedPrice = formatter.format(price);
 
-      // Replace the currency symbol in the formatted price with an empty string
       const formattedPriceWithoutSymbol = formattedPrice.replace(
         formattedGrandTotal,
         ""
       );
 
-      // Append the formatted price without the symbol to the formatted grand total
       return formattedGrandTotal + formattedPriceWithoutSymbol;
     } else {
       return formatter.format(price);
@@ -339,12 +325,17 @@ export function ContextProvider(props) {
         ? Number(price.replace(/[^0-9.-]+/g, ""))
         : price;
 
-    if (toCurrency === "INR") {
-      const convertedPrice = convertToINR(numericPrice, grandTotal);
-      const convertedItemsPrice = convertToINR(itemsPrice, grandTotal);
-      const convertedShippingPrice = convertToINR(shippingPrice, grandTotal);
-      const convertedTaxPrice = convertToINR(taxPrice, grandTotal);
-      const convertedSalesPrice = convertToINR(sales, grandTotal);
+    if (
+      toCurrency === "INR" ||
+      toCurrency === "NGN" ||
+      toCurrency === "GBP" ||
+      toCurrency === "EUR"
+    ) {
+      const convertedPrice = numericPrice * conversionRate;
+      const convertedItemsPrice = itemsPrice * conversionRate;
+      const convertedShippingPrice = shippingPrice * conversionRate;
+      const convertedTaxPrice = taxPrice * conversionRate;
+      const convertedSalesPrice = sales * conversionRate;
 
       return formatPrice(
         convertedPrice,
@@ -355,11 +346,11 @@ export function ContextProvider(props) {
         convertedSalesPrice
       );
     } else if (toCurrency === "USD") {
-      const convertedPrice = convertToUSD(numericPrice, grandTotal);
-      const convertedItemsPrice = convertToUSD(itemsPrice, grandTotal);
-      const convertedShippingPrice = convertToUSD(shippingPrice, grandTotal);
-      const convertedTaxPrice = convertToUSD(taxPrice, grandTotal);
-      const convertedSalesPrice = convertToUSD(sales, grandTotal);
+      const convertedPrice = numericPrice / conversionRate;
+      const convertedItemsPrice = itemsPrice / conversionRate;
+      const convertedShippingPrice = shippingPrice / conversionRate;
+      const convertedTaxPrice = taxPrice / conversionRate;
+      const convertedSalesPrice = sales / conversionRate;
 
       return formatPrice(
         convertedPrice,
@@ -383,6 +374,21 @@ export function ContextProvider(props) {
 
   useEffect(() => {
     localStorage.setItem("toCurrency", toCurrency);
+
+    const fetchConversionRate = async () => {
+      try {
+        const response = await fetch(
+          "https://api.exchangerate-api.com/v4/latest/USD"
+        );
+        const data = await response.json();
+        const rate = data.rates[toCurrency];
+        setConversionRate(rate);
+      } catch (error) {
+        console.log("Error fetching exchange rate data:", error);
+      }
+    };
+
+    fetchConversionRate();
   }, [toCurrency]);
 
   const value = {
