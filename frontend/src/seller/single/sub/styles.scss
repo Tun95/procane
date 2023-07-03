@@ -1,0 +1,123 @@
+.seller_product {
+  width: 100%;
+  .sellers_item {
+    .light_shadow {
+      width: 100%;
+      margin: 10px;
+      padding: 10px;
+      height: auto;
+      .seller_img {
+        margin-right: 20px;
+        .img {
+          width: 200px;
+          height: 200px;
+          border-radius: 10px;
+        }
+      }
+      .seller_info {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        h3 {
+          margin-right: 5px;
+          font-weight: 600;
+          color: var(--color-gray);
+        }
+        .info {
+          font-size: 13px;
+          a {
+            text-decoration: underline;
+            font-size: 12px;
+          }
+        }
+        .rate {
+          color: var(--color-rating);
+          font-weight: 600;
+        }
+      }
+      .bio {
+        h3 {
+          font-weight: 600;
+          color: var(--color-gray);
+        }
+      }
+    }
+  }
+
+  .item_list {
+    width: 100%;
+    .product {
+      h2 {
+        font-weight: 600;
+        color: var(--color-gray);
+      }
+    }
+    .list {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 10px;
+      gap: 20px;
+      .product {
+        transition: 0.5s;
+      }
+      .product:hover {
+        box-shadow: rgb(43 52 69 / 10%) 0px 4px 16px;
+      }
+      .product {
+        max-height: 400px;
+        overflow: hidden;
+        .img {
+          img {
+            width: 100%;
+            height: 270px;
+            object-fit: cover;
+            border-radius: 10px;
+          }
+        }
+      }
+      .muiBtn {
+        color: var(--color-primary);
+        border: 1px solid var(--color-primary);
+      }
+    }
+  }
+  /*======= MEDIA QUERIES (MEDIUM DEVICES) =======*/
+  @media screen and (max-width: 1155px) {
+    .seller_details {
+      flex-direction: column;
+    }
+    .item_list {
+      .list {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 900px) {
+    .item_list {
+      .list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 750px) {
+    .product {
+      position: relative;
+      left: 0;
+      margin-left: 0px;
+    }
+    .sellers_item {
+      flex-direction: column;
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 545px) {
+    .item_list {
+      .list {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

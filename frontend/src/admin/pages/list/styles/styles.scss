@@ -1,0 +1,105 @@
+
+.datatable {
+  padding: 20px;
+  // height: 715px;
+  -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+  box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+  h2 {
+    color: var(--color-gray);
+  }
+  .datagrid {
+    padding: 10px;
+    height: 680px;
+  }
+  .cellWidthImg {
+    display: flex;
+    align-items: center;
+
+    .cellImg {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 20px;
+    }
+  }
+  .cellWithAdminSellerStatus {
+    .yes {
+      color: green;
+    }
+
+    .no {
+      color: red;
+    }
+  }
+  .cellWithStatus {
+    padding: 5px;
+    border-radius: 5px;
+
+    &.active {
+      color: green;
+      background-color: rgba(0, 128, 0, 0.151);
+    }
+    &.pending {
+      color: goldenrod;
+      background-color: rgba(189, 189, 3, 0.103);
+    }
+    &.blocked {
+      color: red;
+      background-color: rgba(255, 0, 0, 0.2);
+    }
+    &.false {
+      color: green;
+      background-color: rgba(0, 128, 0, 0.151);
+    }
+
+    &.true {
+      color: red;
+      background-color: rgba(255, 0, 0, 0.2);
+    }
+  }
+  .cellWithPrice {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+  .cellAction {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    a {
+      text-decoration: none;
+    }
+    .blockButton {
+      padding: 2px 5px;
+      border-radius: 5px;
+      color: darkblue !important;
+      border: 1px dotted rgba(0, 0, 139, 0.596) !important;
+      cursor: pointer;
+    }
+    .deleteButton {
+      padding: 2px 5px;
+      border-radius: 5px;
+      color: crimson !important;
+      border: 1px dotted rgba(220, 20, 60, 0.6) !important;
+      cursor: pointer;
+    }
+    .viewButton {
+      padding: 2px 5px;
+      border-radius: 5px;
+      color: darkgreen !important;
+      border: 1px dotted rgba(0, 139, 0, 0.596) !important;
+      cursor: pointer;
+    }
+  }
+}
+.order-table {
+  .tableEditBtn {
+    border: 1px dotted #e94560;
+    background: transparent;
+    padding: 5px;
+    border-radius: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+    color: var(--color-primary);
+  }
+}

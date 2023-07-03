@@ -1,0 +1,32 @@
+.settings_screen {
+  .settings_box {
+    .a_flex {
+      flex-direction: column;
+      width: 80%;
+      
+
+      .link_btn {
+        width: 60%;
+        color: var(--color-white);
+        background-color: var(--color-primary);
+        height: 40px;
+        border-radius: 10px;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+      @media screen and (max-width: 500px) {
+        width: 100%;
+				.dude {
+        width: 100%;
+      }
+        .link_btn {
+          width: 100%;
+          font-weight: 500;
+          font-size: 18px;
+          height: 30px;
+        }
+      }
+    }
+  }
+}

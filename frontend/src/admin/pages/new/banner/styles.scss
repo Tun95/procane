@@ -1,0 +1,41 @@
+.new-settings-edit {
+  .banner_create_box {
+    display: flex;
+    justify-content: center;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    .setting-create {
+      width: 100%;
+      font-size: 18px;
+    }
+  }
+  .banner_image {
+    width: 200px;
+    height: 200px;
+    border-radius: 10px;
+  }
+  .color_split_split {
+    display: flex;
+    align-items: baseline;
+  }
+  .banner_desc {
+    margin-top: 10px;
+    border: 2px solid var(--color-gray);
+    border-radius: 10px;
+    resize: none;
+  }
+}
+/*======= MEDIA QUERIES (MEDIUM DEVICES) =======*/
+@media screen and (max-width: 640px) {
+  .banner_create_box {
+    .color_split_split {
+      flex-direction: column-reverse;
+      input {
+        width: 100%;
+      }
+      .ml {
+        margin-left: 0;
+      }
+    }
+  }
+}

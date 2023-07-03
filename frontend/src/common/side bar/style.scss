@@ -1,0 +1,42 @@
+.menu_btn_icon {
+  .menu_icon {
+    font-size: 40px !important;
+    color: var(--color-primary);
+  }
+}
+.cart_badge {
+  color: var(--color-white);
+  background-color: var(--color-primary);
+  padding: 0px 5px;
+  font-size: 12px;
+  border-radius: 50%;
+  position: relative;
+  bottom: 15px;
+  right: 12px;
+}
+.side_bar_drawer {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  .toogle_width {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 20px 0px;
+    .toggle_btn {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      font-weight: 600;
+      width: 180px;
+    }
+  }
+}
+.side_bar_search {
+  width: 100%;
+  margin-bottom: 40px;
+  .side_bar_search_box {
+    border: 2px solid #b4b4b4;
+    padding: 6px;
+    width: 95%;
+  }
+}

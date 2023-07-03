@@ -1,0 +1,17 @@
+.store-pages {
+  .homeSlide {
+    border-bottom: 1px solid var(--color-light-gray);
+    ul {
+      position: absolute;
+      bottom: 20px;
+    }
+  }
+
+  @media screen and (max-width: 1086px) {
+    .homeSlide {
+      .box .btn-primary {
+        margin-bottom: 20px;
+      }
+    }
+  }
+}

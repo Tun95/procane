@@ -1,0 +1,23 @@
+.home_outline {
+  min-height: 600px;
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 550px) {
+    section {
+      .heading-left {
+        h2 {
+          font-size: 18px;
+        }
+        img {
+          width: 25px;
+          height: 25px;
+        }
+        i {
+          font-size: 18px;
+        }
+      }
+    }
+    h1 {
+      font-size: 28px;
+    }
+  }
+}

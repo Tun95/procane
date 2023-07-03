@@ -1,0 +1,31 @@
+.info_form {
+  padding: 10px 0px;
+}
+.locations {
+  h2 {
+    color: var(--color-gray);
+  }
+  .store_list {
+    margin-top: 30px;
+    .list {
+      margin-bottom: 20px;
+      .left {
+        img {
+          width: 100%;
+          border-radius: 5px;
+        }
+        .left_info {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          margin-left: 5px;
+          label {
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--color-gray);
+          }
+        }
+      }
+    }
+  }
+}

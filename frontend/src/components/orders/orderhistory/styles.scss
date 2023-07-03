@@ -1,0 +1,39 @@
+.order-table {
+  margin: 20px 0px;
+  -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+  box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+  padding: 20px;
+  h2 {
+    color: var(--color-gray);
+  }
+  .tableCell {
+    .price {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+    .paidAt {
+      color: var(--color-tab);
+      font-weight: 600;
+    }
+    .negate {
+      color: var(--color-primary);
+    }
+    .with_cash {
+      color: var(--color-green);
+      font-weight: 600;
+      border: 1px dotted var(--color-green);
+      padding: 3px;
+      font-size: 14px;
+      text-transform: uppercase;
+      border-radius: 4px;
+    }
+  }
+  .tableBtn {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-weight: 600;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}

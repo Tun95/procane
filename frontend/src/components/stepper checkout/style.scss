@@ -1,0 +1,357 @@
+.form_container {
+  .labelProps {
+    // color: var(--color-white);
+    // background-color: var(--color-primary);
+  }
+  .stepper_back_btn {
+    padding: 10px 45px 10px 45px;
+    border-radius: 20px;
+    color: var(--color-primary);
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .stepper_next_btn {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 10px 25px 10px 25px;
+    border-radius: 20px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .form_box_content {
+    min-height: 400px;
+    .submit_btn {
+      width: 100%;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      top: 20px;
+    }
+
+    .delivery {
+      margin-top: 20px;
+      h3 {
+        color: var(--color-gray);
+      }
+      span {
+        cursor: pointer;
+        .dev_input {
+          height: auto !important;
+          width: auto !important;
+          margin-right: 5px;
+        }
+      }
+    }
+
+    .confirmtion {
+      .confirmation_box {
+        display: grid;
+        grid-template-columns: 60% 40%;
+        gap: 20px;
+        h3 {
+          color: var(--color-gray);
+        }
+        h4 {
+          color: var(--color-light-gray);
+        }
+        .table {
+          max-height: 400px;
+        }
+        .table::-webkit-scrollbar {
+          display: none;
+        }
+        .delivery_info {
+          h4 {
+            margin-top: 10px;
+          }
+          .small_text {
+            color: var(--color-gray);
+          }
+          .price {
+            font-weight: 600;
+            color: var(--color-primary);
+          }
+          .table_content {
+            margin-top: 28px;
+            padding-right: 20px;
+            h3 {
+              margin-bottom: 10px;
+            }
+            .tableLabel {
+              font-weight: 600;
+              color: var(--color-gray);
+            }
+          }
+        }
+      }
+    }
+    .payment {
+      .choose_method {
+        width: 100%;
+        .choose_method_box {
+          width: 80%;
+          .payment_label {
+            border: 2px solid var(--color-light-gray);
+            background-color: #f7f7f7;
+            width: 100%;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-align: center;
+            input {
+              cursor: pointer;
+            }
+            .label-svg {
+              display: grid;
+              justify-content: center;
+              width: 100%;
+
+              .input_text {
+                display: flex;
+                justify-content: center;
+              }
+              img {
+                width: 50%;
+              }
+              .cash_img {
+                width: 30%;
+                height: 70px;
+              }
+            }
+            input {
+              border: 2px solid var(--color-light-gray);
+              height: 25px;
+              width: 25px;
+              padding-left: 0px;
+              outline-color: #2451e6;
+              margin-right: 2px;
+            }
+          }
+          .active.payment_label {
+            border: 2px solid #6eb2fb;
+            background-color: #e5f1ff;
+          }
+        }
+      }
+
+      .paypal-stripe {
+        min-height: 241px;
+      }
+      .stripe-details {
+        position: relative;
+        top: 15px;
+      }
+      .stripe-details .p-inner-form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        // padding: 10px 40px;
+        position: relative;
+        left: -5px;
+        line-height: 40px;
+      }
+      .stripe-details .p-inner-form .form-group {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+      .payment-input-box {
+        border: 1px solid var(--color-light-gray);
+        height: 40px;
+        width: 100%;
+        border-radius: 5px;
+        padding-left: 5px;
+      }
+
+      .p-inner-form .form-group input {
+        outline: none;
+        border: none;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        border-radius: 5px;
+        width: 90%;
+        font-size: 25px;
+
+        background: transparent;
+      }
+      .p-inner-form .form-group #name::placeholder {
+        color: var(--color-light-gray);
+        position: relative;
+      }
+      .p-inner-form .form-group #card-number::placeholder {
+        color: var(--color-light-gray);
+        position: relative;
+        top: 8px;
+      }
+      .p-inner-form label {
+        font-weight: 600;
+        color: var(--color-light-gray);
+      }
+      .p-inner-form .form-group .fa {
+        position: relative;
+
+        bottom: 5px;
+        width: 10px;
+      }
+
+      .form-group span {
+        line-height: 20px;
+        color: var(--color-light-gray);
+        position: relative;
+        top: 15px;
+      }
+      .p-inner-form .form-date {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        margin-top: -10px;
+        gap: 20px;
+      }
+      .cvc-fa-icon {
+        border: 1px solid var(--color-light-gray);
+        height: 40px;
+        width: 77%;
+        border-radius: 5px;
+        padding-left: 5px;
+      }
+      .form-date .form-group-d input {
+        border: none;
+        font-size: 25px;
+        width: 90%;
+        outline: none;
+        position: relative;
+        top: 3px;
+      }
+
+      .form-date .form-group-d #cvv::placeholder {
+        color: var(--color-light-gray);
+      }
+      .form-group-d #passcvv {
+        position: relative;
+        margin-left: -15px;
+        width: 10px;
+      }
+
+      /* PAYPAL-DETAILS */
+      .paypal-stripe .paypal-details {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+      }
+      .payment-details .paypal-btn {
+        position: relative;
+        top: 40px;
+        width: 80%;
+      }
+      /* PAYPAL-DETAILS */
+      .cash_btn_style .cash_btn {
+        width: 45%;
+        height: 45px;
+        cursor: pointer;
+        background-color: var(--color-dark);
+        color: var(--color-white);
+        border-radius: 5px;
+      }
+      .cash_btn_style img {
+        height: 100%;
+      }
+      .cash_btn_style .cash_text {
+        font-weight: 600;
+        font-size: 20px;
+      }
+    }
+    .finish_detail {
+      .finish-box .finish-sections {
+        display: flex;
+        justify-content: center;
+        position: relative;
+      }
+      .f-sections {
+        text-align: center;
+        line-height: 30px;
+        .img {
+          margin-top: 20px;
+          img {
+            width: 30%;
+          }
+        }
+      }
+
+      .f-sections .details h1 {
+        font-family: "Old Standard TT", serif;
+        font-size: 48px;
+        color: var(--color-black);
+        margin-bottom: 20px;
+      }
+      .f-sections span {
+        color: var(--color-gray);
+        font-size: 18px;
+      }
+      .finish-btn button {
+        background: var(--color-primary);
+        padding: 15px 30px;
+        border-radius: 40px;
+        color: var(--color-white);
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      @media screen and (max-width: 760px) {
+        .finish {
+          padding: 10px;
+        }
+        .finish .finish-box {
+          width: 100%;
+        }
+        .n-t-y {
+          margin-left: 17px;
+        }
+        .finish-box h2 {
+          display: none;
+        }
+      }
+
+      @media screen and (max-width: 414px) {
+        .finish-btn button {
+          padding: 15px 40px 15px 40px;
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width: 900px) {
+  .form_container {
+    .form_box_content {
+      .payment {
+        .choose_method {
+          .choose_method_box {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width: 700px) {
+  .form_container {
+    .form_box_content {
+      .confirmtion {
+        .confirmation_box {
+          display: flex;
+          grid-template-columns: 100%;
+          flex-direction: column-reverse;
+          .delivery_info {
+            .table_content {
+              margin-top: 10px;
+              padding-right: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}

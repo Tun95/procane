@@ -1,0 +1,209 @@
+.user_profile_page {
+  .profile-styles {
+    h2 {
+      color: var(--color-gray);
+    }
+    .profile_seller {
+      width: 100%;
+
+      padding: 10px;
+      .profile_box {
+        .profile_form {
+          .form_header {
+            -webkit-box-shadow: 0px 0px 7px -1px var(--color-light-gray);
+            box-shadow: 0px 0px 7px -1px var(--color-light-gray);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            .user_image {
+              margin-right: 20px;
+              img {
+                width: 160px;
+                height: 160px;
+                object-fit: cover;
+                border-radius: 50%;
+              }
+            }
+            .user_details {
+              line-height: 30px;
+              .user_detail_list {
+                display: flex;
+                align-items: center;
+                label {
+                  font-weight: 600;
+                  color: var(--color-gray);
+                  margin-right: 10px;
+                }
+                h4 {
+                  font-weight: 500;
+                }
+              }
+              .verify_now {
+                span {
+                  border: 1px dotted var(--color-green);
+                  color: var(--color-green);
+                  padding: 0px 5px;
+                  height: 20px;
+                  cursor: pointer;
+                  border-radius: 5px;
+                }
+              }
+            }
+          }
+          .profile_inner_form {
+            -webkit-box-shadow: 0px 0px 7px -1px var(--color-light-gray);
+            box-shadow: 0px 0px 7px -1px var(--color-light-gray);
+            padding: 20px;
+            .profile_user_form {
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 20px;
+              .profile_form_group {
+                display: grid;
+                grid-template-columns: 1fr;
+                margin-top: -10px;
+                label {
+                  font-weight: 600;
+                  color: var(--color-gray);
+                }
+                input {
+                  padding: 7px;
+                  font-size: 16px;
+                  border-radius: 5px;
+                  border: 2px solid var(--color-light-gray);
+                }
+                .eye-icon {
+                  float: right;
+                  margin-top: -30px;
+                  cursor: pointer;
+                  position: relative;
+                  left: -10px;
+                }
+              }
+            }
+            .seller_component {
+              margin-top: 20px;
+              .seller_header {
+                margin-bottom: 10px;
+              }
+              .seller_name {
+                display: grid;
+              }
+              .profile-form-group {
+                margin-bottom: 10px;
+                img {
+                  width: 160px;
+                  height: 160px;
+                  border-radius: 10px;
+                  object-fit: cover;
+                }
+
+                label {
+                  font-weight: 600;
+                  color: var(--color-gray);
+                }
+                input {
+                  width: 100%;
+                  padding: 7px;
+                  font-size: 16px;
+                  border-radius: 5px;
+                  border: 2px solid var(--color-light-gray);
+                }
+              }
+            }
+            .profile_form_button {
+              margin-top: 20px;
+              button {
+                background: var(--color-primary);
+                outline: none;
+                border: none;
+                font-size: 20px;
+                width: 40%;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 5px;
+                color: var(--color-white);
+                font-weight: 600;
+                cursor: pointer;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  @media screen and (max-width: 640px) {
+    .profile-styles {
+      .profile_seller {
+        .profile_box {
+          .profile_form {
+            .profile_inner_form {
+              .profile_user_form {
+                grid-template-columns: 1fr;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  @media screen and (max-width: 600px) {
+    .profile-styles {
+      .profile_seller {
+        .profile_box {
+          .profile_form {
+            .form_header {
+              flex-direction: column;
+            }
+          }
+        }
+      }
+    }
+  }
+  @media screen and (max-width: 490px) {
+    .profile-styles {
+      .profile_seller {
+        .profile_box {
+          .profile_form {
+            .form_header {
+              padding: 10px;
+            }
+            .profile_inner_form {
+              .profile_form_button {
+                button {
+                  font-size: 15px;
+                  width: 100%;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  @media screen and (max-width: 390px) {
+    .profile-styles {
+      .profile_seller {
+        padding: 0px;
+        .profile_box {
+          .profile_form {
+            .profile_inner_form {
+              padding: 8px;
+              margin: 10px 0px;
+            }
+            .user_details {
+              .user_detail_list {
+                flex-wrap: wrap;
+                label {
+                  margin-right: 0px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

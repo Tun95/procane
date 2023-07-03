@@ -1,0 +1,124 @@
+.container {
+  .product_edit {
+    h2 {
+      color: var(--color-gray);
+    }
+    input {
+      outline: none;
+      border-bottom: 1px solid #6c6c6c;
+      width: 100%;
+    }
+    .productTop {
+      gap: 20px;
+      .productTopLeft,
+      .productTopRight {
+        padding: 20px 20px;
+      }
+      .productTopRight {
+        .productInfoImg {
+          width: 100px;
+          height: 100px;
+          object-fit: cover;
+          border-radius: 10px;
+        }
+        .top_right_label {
+          font-weight: 600;
+          color: var(--color-gray);
+        }
+      }
+    }
+    .productBottom {
+      .productFormLeft_styles {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        .productFormLeft {
+          display: grid;
+          .color_image_size {
+            width: 20px;
+          }
+        }
+      }
+      .productFormLeft {
+        .check_box {
+          display: flex;
+          align-items: center;
+          height: 10px;
+          width: 100%;
+          margin-top: 20px;
+          .flashdeal {
+            width: 20px;
+          }
+          input,
+          label {
+            cursor: pointer;
+          }
+        }
+      }
+      .productFormRight {
+        .productUpload {
+          width: max-content;
+          .upload-btn {
+            cursor: pointer;
+          }
+          .deleteImages {
+            color: var(--color-primary);
+            cursor: pointer;
+          }
+          .productUploadImg {
+            width: 300px;
+            border-radius: 10px;
+          }
+          .main_img {
+            margin-right: 5px;
+          }
+          .productUploadImg-delete {
+            display: flex;
+            flex-wrap: wrap;
+
+            justify-content: center;
+          }
+          .small_imgs {
+            width: 100px;
+            height: 100px;
+            border-radius: 5px;
+          }
+        }
+      }
+      .productButton {
+        width: 40%;
+        font-size: 18px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+@media screen and (max-width: 640px) {
+  .container {
+    .product_edit {
+      .productTop {
+        flex-direction: column;
+      }
+      .productBottom {
+        .productFormLeft_styles {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width: 460px) {
+  .container {
+    .product_edit {
+      .productBottom {
+        .productFormLeft_styles {
+          grid-template-columns: 1fr;
+        }
+        .productButton {
+          width: 100%;
+          font-size: 15px;
+        }
+      }
+    }
+  }
+}

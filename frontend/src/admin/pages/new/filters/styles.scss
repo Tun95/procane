@@ -1,0 +1,96 @@
+.new-settings-edit {
+  .filter-create-box {
+    display: flex;
+    justify-content: center;
+    margin-top: 10%;
+    margin-bottom: 10%;
+  }
+  .color_upload_btn {
+    color: var(--color-gray);
+  }
+  .color_split_split {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .FilterForm {
+    width: 600px;
+    text-align: center;
+  }
+
+  .settings .d_flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .filter-create-shadow .fa-solid {
+    float: right;
+  }
+
+  .settingsForm {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .settingsItem {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+  .Filterbtn {
+    display: flex;
+    justify-content: center;
+  }
+
+  .settingsItem > input {
+    height: 40px;
+    padding: 10px;
+    font-size: 18px;
+    margin: 20px 0px;
+    outline-color: #6eb2fb;
+    border: 1px solid var(--color-light-gray);
+    border-radius: 5px;
+  }
+
+  .settings-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .settings-btn .update-btn {
+    background-color: #53a5fd;
+  }
+  .settings-btn .setting-create {
+    width: 40%;
+  }
+  .settingsButton {
+    width: 100%;
+    border: none;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 10px 10px;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 5px;
+    margin-top: 30px;
+    cursor: pointer;
+    outline: none;
+  }
+  .color_split input {
+    height: 40px;
+    padding: 10px;
+    font-size: 18px;
+    margin: 20px 0px;
+    outline-color: #6eb2fb;
+    border: 1px solid var(--color-light-gray);
+    border-radius: 5px;
+  }
+  .color_split input:nth-child(2) {
+    margin-left: 10px;
+  }
+  .color_image{
+    width: 50px;
+    margin: 5px;
+  }
+}

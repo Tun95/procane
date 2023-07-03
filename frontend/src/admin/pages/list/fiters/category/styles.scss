@@ -1,0 +1,31 @@
+.table {
+  .cellWrapper {
+    img {
+      border-radius: 50%;
+    }
+  }
+  .banner_list_img {
+    border-radius: 5px;
+  }
+  .tableBtn {
+    background-color: var(--color-blue);
+    color: var(--color-white);
+    padding: 5px;
+    margin-left: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .deleteButton {
+    padding: 5px;
+    margin-left: 5px;
+    border-radius: 5px;
+    background: transparent;
+    color: crimson;
+    border: 1px dotted rgba(220, 20, 60, 0.6);
+    cursor: pointer;
+  }
+}
+.filters_plus {
+  float: right;
+  margin-bottom: 5px;
+}

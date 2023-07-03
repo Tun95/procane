@@ -1,0 +1,221 @@
+.order_details {
+  .items-box {
+    .tableCell {
+      .item_details {
+        .order_small_img {
+          width: 50px;
+          border: 2px solid #b4b4b4;
+          padding: 5px;
+          height: 50px;
+          margin-right: 5px;
+        }
+        .order_name_gen {
+          .gen {
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+      .seller_name {
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #6c6c6c;
+      }
+      .quantity {
+        font-weight: 600;
+        border: 1px solid #b4b4b4;
+        border-radius: 15px;
+        padding: 3px 15px;
+
+        width: 10px;
+        margin: 0px 3px;
+      }
+      .order_cart_price {
+        font-weight: 800;
+        font-size: 23px;
+      }
+    }
+  }
+
+  .top-split {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .order-table-data {
+    position: relative;
+    width: 270px;
+    height: 210px;
+    -webkit-box-shadow: 0px 0px 7px -1px #b4b4b4;
+    box-shadow: 0px 0px 7px -1px #b4b4b4;
+  }
+  .order-table-data tr {
+    border: 2px solid #b4b4b4;
+  }
+  .order-table-data tbody tr td {
+    border-top: 3px solid #b4b4b4;
+  }
+  .order-table-data .t-header {
+    font-size: 20px;
+    font-weight: 600;
+    padding: 5px;
+  }
+  .order-table-data .items-p {
+    font-weight: 800;
+  }
+  .order-table-data .items-d {
+    font-weight: 600;
+    text-align: center;
+  }
+  .order-table-data .grand {
+    color: #f62f5e;
+    font-size: 20px;
+  }
+  .order-screen .top-box {
+    width: 590px;
+    margin: 20px 0px;
+    -webkit-box-shadow: 0px 0px 7px -1px #b4b4b4;
+    box-shadow: 0px 0px 7px -1px #b4b4b4;
+    padding: 10px;
+  }
+
+  .order-screen .top-box .alert-danger {
+    width: 100%;
+  }
+  .order-screen .top-box #load-err {
+    display: inline-block;
+    box-shadow: 1px 2px 2px -2px;
+    border-radius: 0.5rem;
+
+    background-color: lightgreen;
+    color: green;
+  }
+
+  .order-a-ship {
+    padding: 20px 0px;
+    line-height: 20px;
+  }
+  .top-box .place-deliver {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    flex-wrap: wrap;
+    top: 10px;
+    width: 100%;
+  }
+  .place-deliver .admin-approve-btn button {
+    /* position: relative;
+  top: 3px; */
+    width: 150px;
+    height: 40px;
+    background-color: #f62f5e;
+    color: #fff;
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .sec-box {
+    margin-bottom: 20px;
+   
+    -webkit-box-shadow: 0px 0px 7px -1px #b4b4b4;
+    box-shadow: 0px 0px 7px -1px #b4b4b4;
+    padding: 10px;
+  }
+  .sec-box-body {
+    padding: 20px 0px;
+  }
+  .sec-box .alert-danger {
+    position: relative;
+    width: 140px;
+  }
+  .sec-box #load-err {
+    display: inline-block;
+    box-shadow: 1px 2px 2px -2px;
+    border-radius: 0.5rem;
+    background-color: lightgreen;
+    color: green;
+  }
+  .sec-box .not-paid-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .sec-box .payment_method {
+    color: #6c6c6c;
+    font-weight: 600;
+  }
+  .sec-box .sec-pay-now {
+    width: 150px;
+    height: 40px;
+    background-color: #f62f5e;
+    color: #fff;
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .order-screen .order-items {
+    padding: 20px;
+    -webkit-box-shadow: 0px 0px 7px -1px #b4b4b4;
+    box-shadow: 0px 0px 7px -1px #b4b4b4;
+  }
+
+  @media screen and (max-width: 900px) {
+    .top-split {
+      flex-wrap: wrap-reverse;
+    }
+    .order-screen .top-box {
+      width: 100%;
+    }
+    .order-table-data {
+      width: 100%;
+      margin-top: 10px;
+    }
+  }
+  @media screen and (max-width: 900px) {
+    .place-deliver .admin-approve-btn button {
+      margin-top: 15px;
+    }
+  }
+  @media screen and (max-width: 500px) {
+    .sec-box .not-paid-btn {
+      display: grid;
+    }
+    .sec-box .sec-pay-now {
+      margin-top: 15px;
+    }
+  }
+  @media screen and (max-width: 387px) {
+    .top-box .place-deliver {
+      display: grid;
+    }
+    .order-screen .order-header {
+      font-size: 20px;
+      text-align: center;
+    }
+    .order-screen h2 {
+      font-size: 16px;
+    }
+  }
+  @media screen and (max-width: 330px) {
+    .sec-box .alert-danger {
+      width: 100%;
+    }
+    .order-screen .top-box .alert-danger {
+      width: 100%;
+    }
+
+    .sec-box-body {
+      width: 100%;
+    }
+  }
+}

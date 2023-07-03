@@ -1,0 +1,25 @@
+.alert {
+  padding: 1rem;
+  border: 0.1rem solid transparent;
+  border-radius: 0.5rem;
+  font-weight: 700;
+}
+.alert-info {
+  color: #2020ae;
+  background-color: #e0e0ff;
+}
+.alert-danger {
+  color: #a02020;
+  background-color: #ffe0e0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 1px 2px 2px -2px;
+}
+#load-err {
+  display: flex;
+  justify-content: center;
+
+  margin-top: 5px;
+}

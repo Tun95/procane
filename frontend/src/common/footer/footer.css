@@ -1,0 +1,65 @@
+footer {
+  background-color: var(--color-black);
+  padding: 100px 0;
+  color: var(--color-white);
+}
+footer a {
+  color: var(--color-white);
+}
+footer .container .box ul li a {
+  color: var(--color-white);
+}
+footer h1 {
+  margin-bottom: 30px;
+  color: var(--color-primary);
+  font-weight: 800;
+  font-style: italic;
+}
+footer .img {
+  background-color: #0c2a4d;
+  padding: 15px 20px;
+  border-radius: 5px;
+}
+footer .img i {
+  font-size: 20px;
+  margin: 5px;
+}
+footer .img span {
+  margin-top: 5px;
+}
+footer p {
+  font-size: 14px;
+  font-weight: 300;
+  opacity: 0.5;
+  margin-bottom: 20px;
+}
+footer h2 {
+  margin-bottom: 20px;
+}
+footer li {
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+@media screen and (max-width: 1400px) {
+  .footer-wrap .icon {
+    display: grid;
+  }
+  .footer-wrap .app-store {
+    margin-top: 10px;
+  }
+}
+@media screen and (max-width: 1024px) {
+  .footer-wrap {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media screen and (max-width: 600px) {
+  .footer-wrap {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media screen and (max-width: 425px) {
+  .footer-wrap {
+    grid-template-columns: 1fr;
+  }
+}
