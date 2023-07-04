@@ -319,10 +319,31 @@ function Payment(props) {
         order_id: razororder.id,
         handler: function (response) {
           if (response.razorpay_payment_id) {
-            dispatch({ type: "PAY_SUCCESS", payload: response });
+            dispatch({ type: "PAY_REQUEST" });
             toast.success(`${response.razorpay_payment_id} Order is paid`, {
               position: "bottom-center",
             });
+            fetch(`${request}/api/orders/${order._id}/razorpay/success`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${userInfo.token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(response),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.success) {
+                  dispatch({ type: "PAY_SUCCESS", payload: response });
+                } else {
+                  dispatch({ type: "PAY_FAIL", payload: data.message });
+                  toast.error(data.message, { position: "bottom-center" });
+                }
+              })
+              .catch((error) => {
+                dispatch({ type: "PAY_FAIL", payload: getError(error) });
+                toast.error(getError(error), { position: "bottom-center" });
+              });
           } else {
             toast.error("Payment canceled or failed", {
               position: "bottom-center",

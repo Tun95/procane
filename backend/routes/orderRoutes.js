@@ -79,7 +79,9 @@ orderRouter.get(
   })
 );
 
-//ORDER INFO
+//===========
+//PLACE ORDER
+//===========
 orderRouter.post(
   "/",
   isAuth,
@@ -429,35 +431,6 @@ orderRouter.post(
 //=============
 //RAZORPAY
 //============
-const fetchExchangeRate = async (baseCurrency, targetCurrency) => {
-  try {
-    const response = await fetch(
-      `https://api.exchangerate-api.com/v4/latest/${baseCurrency}`
-    );
-    const data = await response.json();
-    const exchangeRates = data.rates;
-    const baseRate = exchangeRates[baseCurrency];
-    const targetRate = exchangeRates[targetCurrency];
-    if (!baseRate || !targetRate) {
-      throw new Error("Invalid currency");
-    }
-    const exchangeRate = targetRate / baseRate;
-    return exchangeRate;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch exchange rates");
-  }
-};
-
-const convertCurrency = async (value, fromCurrency, toCurrency) => {
-  const exchangeRate = await fetchExchangeRate(fromCurrency, toCurrency);
-  if (exchangeRate) {
-    const convertedValue = value * exchangeRate;
-    return convertedValue;
-  } else {
-    throw new Error("Failed to convert currency");
-  }
-};
 orderRouter.post(
   "/:id/razorpay",
   isAuth,
@@ -495,67 +468,178 @@ orderRouter.post(
         id: razorpayOrder.id,
         status: "created",
       };
-      if (!order.isPaid) {
-        res.status(400).send({ message: "Payment was not successful" });
-        return;
-      } else {
-        order.isPaid = true;
-        order.paidAt = Date.now();
-      }
-
       order.paymentMethod = req.body.paymentMethod;
       order.currencySign = req.body.currencySign;
+
+      const updatedOrder = await order.save();
+
+      res.json(updatedOrder);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Something went wrong" });
+    }
+  })
+);
+
+//====================
+//RAZORPAY SUCCESS PAY
+//====================
+// const fetchExchangeRate = async (baseCurrency, targetCurrency) => {
+//   try {
+//     const response = await fetch(
+//       `https://api.exchangerate-api.com/v4/latest/${baseCurrency}`
+//     );
+//     const data = await response.json();
+//     const exchangeRates = data.rates;
+//     const baseRate = exchangeRates[baseCurrency];
+//     const targetRate = exchangeRates[targetCurrency];
+//     if (!baseRate || !targetRate) {
+//       throw new Error("Invalid currency");
+//     }
+//     const exchangeRate = targetRate / baseRate;
+//     return exchangeRate;
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error("Failed to fetch exchange rates");
+//   }
+// };
+
+// const convertCurrency = async (value, fromCurrency, toCurrency) => {
+//   const exchangeRate = await fetchExchangeRate(fromCurrency, toCurrency);
+//   if (exchangeRate) {
+//     const convertedValue = value * exchangeRate;
+//     return convertedValue;
+//   } else {
+//     throw new Error("Failed to convert currency");
+//   }
+// };
+
+async function convertCurrency(amount, toCurrency) {
+  const apiKey = process.env.EXCHANGE_RATE_API_KEY;
+  const apiUrl = `https://v6.exchangerate-api.com/v6/${apiKey}/pair/USD/${toCurrency}/${amount}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+    const convertedAmount = response.data.conversion_result;
+    return convertedAmount;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to convert currency");
+  }
+}
+
+orderRouter.post(
+  "/:id/razorpay/success",
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    const orderId = req.params.id;
+    const paymentResponse = req.body;
+
+    const order = await Order.findById(orderId).populate("user", "email name");
+
+    if (!order) {
+      res.status(404).send({ message: "Order Not Found" });
+      return;
+    }
+
+    if (order.isPaid) {
+      res.status(400).send({ message: "Order is already paid" });
+      return;
+    }
+
+    if (paymentResponse.razorpay_payment_id) {
+      order.isPaid = true;
+      order.paidAt = Date.now();
+      order.paymentResult = {
+        id: paymentResponse.razorpay_payment_id,
+        status: paymentResponse.status,
+      };
 
       for (const index in order.orderItems) {
         const item = order.orderItems[index];
         const product = await Product.findById(item.product);
+
         // Check if the item quantity is greater than the available countInStock
         if (item.quantity > product.countInStock) {
           throw new Error(`Insufficient stock for product: ${product.name}`);
         }
+
         // Decrease the countInStock and increase the numSales
         product.countInStock -= item.quantity;
         product.numSales += item.quantity;
         await product.save();
       }
+      // Convert the currency if needed
+      let convertedCurrencySign = order.currencySign;
+      let convertedItemsPrice = order.itemsPrice;
+      let convertedTaxPrice = order.taxPrice;
+      let convertedShippingPrice = order.shippingPrice;
+      let convertedGrandTotal = order.grandTotal;
+      let convertedPrice = order.price;
 
-      const updatedOrder = await order.save();
+      if (order.currencySign !== "USD") {
+        try {
+          const currencySignMapping = {
+            NGN: "₦",
+            EUR: "€",
+            GBP: "£",
+            INR: "₹",
+          };
 
-      const convertedItemsPrice = await convertCurrency(
-        order.itemsPrice,
-        "USD",
-        order.currencySign
-      );
-      const convertedTaxPrice = await convertCurrency(
-        order.taxPrice,
-        "USD",
-        order.currencySign
-      );
-      const convertedShippingPrice = await convertCurrency(
-        order.shippingPrice,
-        "USD",
-        order.currencySign
-      );
-      const convertedGrandTotal = await convertCurrency(
-        order.grandTotal,
-        "USD",
-        order.currencySign
-      );
+          convertedItemsPrice = await convertCurrency(
+            order.itemsPrice,
+            order.currencySign
+          );
+          convertedTaxPrice = await convertCurrency(
+            order.taxPrice,
+            order.currencySign
+          );
+          convertedShippingPrice = await convertCurrency(
+            order.shippingPrice,
+            order.currencySign
+          );
+          convertedGrandTotal = await convertCurrency(
+            order.grandTotal,
+            order.currencySign
+          );
+          convertedCurrencySign = currencySignMapping[order.currencySign];
+        } catch (error) {
+          console.log(error);
+          throw new Error("Failed to convert currency");
+        }
+      }
 
-      order.itemsPrice = convertedItemsPrice;
-      order.taxPrice = convertedTaxPrice;
-      order.shippingPrice = convertedShippingPrice;
-      order.grandTotal = convertedGrandTotal;
-
-      // Rest of the code...
+      const convertPrice = async (price, toCurrency) => {
+        try {
+          const convertedPrice = await convertCurrency(
+            price,
+            order.currencySign,
+            toCurrency
+          );
+          const currencySignMapping = {
+            NGN: "₦",
+            EUR: "€",
+            GBP: "£",
+            INR: "₹",
+          };
+          const formattedPrice = new Intl.NumberFormat("en", {
+            style: "currency",
+            currency: toCurrency,
+          }).format(convertedPrice);
+          return `${formattedPrice}`;
+        } catch (error) {
+          console.log(error);
+          throw new Error("Failed to convert price");
+        }
+      };
       const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
         <p>
-        Hi ${order.user.name},</p>
+        Hi ${order.user.lastName} ${order.user.firstName},</p>
         <p>We have finished processing your order.</p>
         <h2>[Order ${order._id}] (${order.createdAt
         .toString()
         .substring(0, 10)})</h2>
-       
+        
             <table>
         <thead>
         <tr>
@@ -567,46 +651,55 @@ orderRouter.post(
         <td><strong align="right">Price</strong></td>
         </thead>
         <tbody>
-        ${order.orderItems
-          .map(
-            (item) => `
-          <tr>
-          <td>${item.name}</td>
-          <td align="left">${item.keygen}</td>
-          <td align="left">${item.size === "" ? "" : item.size}</td>
-          <td align="center"><img src=${item.color} alt=""/></td>
-          <td align="center">${item.quantity}</td>
-          <td align="right"> ${currencySign}${(
-              item.price * exchangeRate
-            ).toFixed(2)}</td>
-          </tr>
-        `
-          )
-          .join("\n")}
+     ${await Promise.all(
+       order.orderItems.map(async (item) => {
+         let convertedPrice = "";
+         if (order.currencySign === "INR") {
+           convertedPrice = await convertPrice(item.price.toFixed(2), "INR");
+         } else if (order.currencySign === "NGN") {
+           convertedPrice = await convertPrice(item.price.toFixed(2), "NGN");
+         } else if (order.currencySign === "EUR") {
+           convertedPrice = await convertPrice(item.price.toFixed(2), "EUR");
+         } else if (order.currencySign === "GBP") {
+           convertedPrice = await convertPrice(item.price.toFixed(2), "GBP");
+         }
+         return `
+      <tr>
+        <td>${item.name}</td>
+        <td align="left">${item.keygen}</td>
+        <td align="left">${item.size === "" ? "" : item.size}</td>
+        <td align="center"><img src=${
+          item.color ? item.color : ""
+        } alt=""/></td>
+        <td align="center">${item.quantity}</td>
+        <td align="right">${convertedCurrencySign}${convertedPrice}</td>
+      </tr>
+    `;
+       })
+     )}
         </tbody>
         <tfoot>
         <tr>
         <td colspan="2">Items Price:</td>
-        <td align="right"> ${itemPrice}</td>
+        <td align="right"> ${convertedCurrencySign}${convertedItemsPrice}</td>
         </tr>
         <tr>
         <td colspan="2">Tax Price:</td>
-        <td align="right"> ${taxPrice}</td>
+        <td align="right"> ${convertedCurrencySign}${convertedTaxPrice}</td>
         </tr>
         <tr>
         <td colspan="2">Shipping Price:</td>
-        <td align="right"> ${shippingPrice}</td>
+        <td align="right">  ${convertedCurrencySign}${convertedShippingPrice}</td>
         </tr>
         <tr>
         <td colspan="2"><strong>Total Price:</strong></td>
-        <td align="right"><strong> ${grandTotal}</strong></td>
+        <td align="right"><strong> ${convertedCurrencySign}${convertedGrandTotal}</strong></td>
         </tr>
         <tr>
         <td colspan="2">Payment Method:</td>
         <td align="right">${order.paymentMethod}</td>
         </tr>
         </table>
-        
         <h2>Shipping address</h2>
         <p>
         ${order.shippingAddress.firstName},<br/>
@@ -623,8 +716,6 @@ orderRouter.post(
         Thanks for shopping with us.
         </p>
         </body></html>`;
-
-      // Sending the email
       const client = Sib.ApiClient.instance;
       const apiKey = client.authentications["api-key"];
       apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
@@ -653,243 +744,17 @@ orderRouter.post(
         .then(console.log)
         .catch(console.log);
 
-      res.json(updatedOrder);
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: "Something went wrong" });
+      await order.save();
+      res.json({ success: true, message: "Payment successful" });
+    } else {
+      res.json({ success: false, message: "Payment canceled or failed" });
     }
   })
 );
 
-// const fetchExchangeRate = async (order, baseCurrency) => {
-//   const exchangeRateAPIKey = process.env.EXCHANGE_RATE_API_KEY;
-//   const currencySign = order.currencySign;
-
-//   try {
-//     const response = await fetch(
-//       `https://v6.exchangerate-api.com/v6/${exchangeRateAPIKey}/latest/${baseCurrency}`
-//     );
-//     const data = await response.json();
-//     const exchangeRates = data.conversion_rates;
-//     const baseRate = exchangeRates[baseCurrency];
-//     const targetRate = exchangeRates[currencySign];
-//     if (!baseRate || !targetRate) {
-//       throw new Error("Invalid currency");
-//     }
-//     const exchangeRate = targetRate / baseRate;
-//     return exchangeRate;
-//   } catch (error) {
-//     console.log(error);
-//     throw new Error("Failed to fetch exchange rates");
-//   }
-// };
-
-// // Function to convert currency
-// const convertCurrency = async (value, fromCurrency, toCurrency) => {
-//   const order = { currencySign: fromCurrency }; // Replace this with your actual order object
-//   const exchangeRate = await fetchExchangeRate(order, fromCurrency);
-//   if (exchangeRate) {
-//     const convertedValue = value * exchangeRate;
-//     return convertedValue;
-//   } else {
-//     throw new Error("Failed to convert currency");
-//   }
-// };
-
-// orderRouter.post(
-//   "/:id/razorpay",
-//   isAuth,
-//   expressAsyncHandler(async (req, res) => {
-//     const razorpay = new Razorpay({
-//       key_id: process.env.RAZORPAY_KEY_ID,
-//       key_secret: process.env.RAZORPAY_SECRET,
-//     });
-//     try {
-//       const { amount, currency } = req.body;
-//       const options = {
-//         amount: amount, // Convert amount to paise and round to the nearest integer
-//         currency: currency,
-//         receipt: "order_receipt",
-//         payment_capture: 1, // Automatically capture the payment
-//       };
-
-//       const razorpayOrder = await razorpay.orders.create(options);
-
-//       const order = await Order.findById(req.params.id).populate(
-//         "user",
-//         "email name"
-//       );
-
-//       if (!order) {
-//         res.status(404).send({ message: "Order Not Found" });
-//         return;
-//       }
-
-//       if (order.isPaid) {
-//         res.status(400).send({ message: "Order is already paid" });
-//         return;
-//       }
-
-//       order.isPaid = true;
-//       order.paidAt = Date.now();
-//       order.paymentResult = {
-//         id: razorpayOrder.id,
-//         status: "created",
-//       };
-//       order.paymentMethod = req.body.paymentMethod;
-//       order.currencySign = req.body.currencySign;
-//       for (const index in order.orderItems) {
-//         const item = order.orderItems[index];
-//         const product = await Product.findById(item.product);
-//         product.countInStock -= item.quantity;
-//         product.numSales += item.quantity;
-//         await product.save();
-//       }
-
-//       // Convert currency values
-//       const convertedItemsPrice = await convertCurrency(
-//         order.itemsPrice,
-//         "USD",
-//         order.currencySign
-//       );
-//       const convertedTaxPrice = await convertCurrency(
-//         order.taxPrice,
-//         "USD",
-//         order.currencySign
-//       );
-//       const convertedShippingPrice = await convertCurrency(
-//         order.shippingPrice,
-//         "USD",
-//         order.currencySign
-//       );
-//       const convertedGrandTotal = await convertCurrency(
-//         order.grandTotal,
-//         "USD",
-//         order.currencySign
-//       );
-
-//       order.itemsPrice = convertedItemsPrice;
-//       order.taxPrice = convertedTaxPrice;
-//       order.shippingPrice = convertedShippingPrice;
-//       order.grandTotal = convertedGrandTotal;
-
-//       const updatedOrder = await order.save();
-
-//       // Rest of the code...
-//       const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
-//         <p>
-//         Hi ${order.user.name},</p>
-//         <p>We have finished processing your order.</p>
-//         <h2>[Order ${order._id}] (${order.createdAt
-//         .toString()
-//         .substring(0, 10)})</h2>
-
-//             <table>
-//         <thead>
-//         <tr>
-//         <td><strong>Product</strong></td>
-//         <td><strong>Keygen</strong></td>
-//         <td><strong>Size</strong></td>
-//         <td><strong>Color</strong></td>
-//         <td><strong>Quantity</strong></td>
-//         <td><strong align="right">Price</strong></td>
-//         </thead>
-//         <tbody>
-//         ${order.orderItems
-//           .map(
-//             (item) => `
-//           <tr>
-//           <td>${item.name}</td>
-//           <td align="left">${item.keygen}</td>
-//           <td align="left">${item.size === "" ? "" : item.size}</td>
-//           <td align="center"><img src=${item.color} alt=""/></td>
-//           <td align="center">${item.quantity}</td>
-//           <td align="right"> ${currencySign}${(
-//               item.price * exchangeRate
-//             ).toFixed(2)}</td>
-//           </tr>
-//         `
-//           )
-//           .join("\n")}
-//         </tbody>
-//         <tfoot>
-//         <tr>
-//         <td colspan="2">Items Price:</td>
-//         <td align="right"> ${itemPrice}</td>
-//         </tr>
-//         <tr>
-//         <td colspan="2">Tax Price:</td>
-//         <td align="right"> ${taxPrice}</td>
-//         </tr>
-//         <tr>
-//         <td colspan="2">Shipping Price:</td>
-//         <td align="right"> ${shippingPrice}</td>
-//         </tr>
-//         <tr>
-//         <td colspan="2"><strong>Total Price:</strong></td>
-//         <td align="right"><strong> ${grandTotal}</strong></td>
-//         </tr>
-//         <tr>
-//         <td colspan="2">Payment Method:</td>
-//         <td align="right">${order.paymentMethod}</td>
-//         </tr>
-//         </table>
-
-//         <h2>Shipping address</h2>
-//         <p>
-//         ${order.shippingAddress.firstName},<br/>
-//         ${order.shippingAddress.lastName},<br/>
-//         ${order.shippingAddress.address},<br/>
-//         ${order.shippingAddress.city},<br/>
-//         ${order.shippingAddress.zipCode}<br/>
-//         ${order.shippingAddress.cState}<br/>
-//         ${order.shippingAddress.country},<br/>
-//         ${order.shippingAddress.shipping},<br/>
-//         </p>
-//         <hr/>
-//         <p>
-//         Thanks for shopping with us.
-//         </p>
-//         </body></html>`;
-//       const client = Sib.ApiClient.instance;
-//       const apiKey = client.authentications["api-key"];
-//       apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
-
-//       const tranEmailApi = new Sib.TransactionalEmailsApi();
-//       const sender = {
-//         name: process.env.SHOP_NAME,
-//         email: process.env.EMAIL_ADDRESS,
-//       };
-//       const receivers = [
-//         {
-//           name: `${order.user.firstName} ${order.user.lastName}`,
-//           email: `${order.user.email}`,
-//         },
-//       ];
-//       tranEmailApi
-//         .sendTransacEmail({
-//           sender,
-//           to: receivers,
-//           subject: `New Order ${order._id}`,
-//           htmlContent: payOrderEmailTemplate,
-//           params: {
-//             role: "Frontend",
-//           },
-//         })
-//         .then(console.log)
-//         .catch(console.log);
-
-//       res.json(updatedOrder);
-//     } catch (error) {
-//       console.log(error);
-//       res.status(500).json({ error: "Something went wrong" });
-//     }
-//   })
-// );
-
-//=======
-//PAYMENT
-//=======
+//=====================
+//OTHER PAYMENT METHODS
+//=====================
 orderRouter.put(
   "/:id/pay",
   isAuth,
