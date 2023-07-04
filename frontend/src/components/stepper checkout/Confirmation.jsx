@@ -33,8 +33,6 @@ const reducer = (state, action) => {
   }
 };
 function Confirmation(props) {
-  const { express, expressCharges, standardCharges, tax } = props;
-
   const navigate = useNavigate();
   const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
   const {
@@ -42,6 +40,18 @@ function Confirmation(props) {
     settings,
     cart: { cartItems, shippingAddress },
   } = state;
+
+  const { express, expressCharges, standardCharges, tax } =
+    (settings &&
+      settings
+        .map((s) => ({
+          express: s.express,
+          expressCharges: s.expressCharges,
+          standardCharges: s.standardCharges,
+          tax: s.tax,
+        }))
+        .find((props) => !isNaN(props.expressCharges))) ||
+    {};
 
   const itemsPrice = cartItems.reduce(
     (a, c) => a + (c.price - (c.price * c.discount) / 100) * c.quantity,
@@ -55,6 +65,7 @@ function Confirmation(props) {
     Number(taxPrice) +
     Number(shippingPrice)
   ).toFixed(0);
+  console.log(grandTotal);
 
   useEffect(() => {
     if (!shippingAddress.address || cartItems.length === 0) {
@@ -105,8 +116,6 @@ function Confirmation(props) {
       }
     }
   };
-
-  console.log(cartItems?.seller);
   return (
     <>
       <div className="form_container">
@@ -197,42 +206,40 @@ function Confirmation(props) {
                   <TableContainer component={Paper} className="table">
                     <Table aria-label="simple table">
                       <TableBody>
-                        {settings?.map((s, index) => (
-                          <TableRow key={index}>
-                            <TableCell className="tableCell tableCellPrice a_flex">
-                              <h4>TAXPRICE</h4>
-                              <span>{s.tax}%</span>
-                            </TableCell>
-                            <TableCell className="tableCell a_flex">
-                              <h4>Shipping</h4>{" "}
-                              <span>
-                                {shippingAddress.shipping === s.express ? (
-                                  <div className="price">
-                                    {convertCurrency(s.expressCharges)}
-                                  </div>
-                                ) : (
-                                  <span>
-                                    {s.standardCharges === "" ? (
-                                      "free"
-                                    ) : (
-                                      <span className="price">
-                                        {convertCurrency(s.standardCharges)}
-                                      </span>
-                                    )}
-                                  </span>
-                                )}
-                              </span>
-                            </TableCell>
-                            <TableCell className="tableCell tableCellPrice a_flex">
-                              <h4>Subtotal</h4>
-                              <span>{convertCurrency(itemsPrice)}</span>
-                            </TableCell>
-                            <TableCell className="tableCell tableCellPrice a_flex">
-                              <h4>Grandtotal</h4>
-                              <span>{convertCurrency(grandTotal)}</span>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                        <TableRow>
+                          <TableCell className="tableCell tableCellPrice a_flex">
+                            <h4>TAXPRICE</h4>
+                            <span>{tax}%</span>
+                          </TableCell>
+                          <TableCell className="tableCell a_flex">
+                            <h4>Shipping</h4>{" "}
+                            <span>
+                              {shippingAddress.shipping === express ? (
+                                <div className="price">
+                                  {convertCurrency(expressCharges)}
+                                </div>
+                              ) : (
+                                <span>
+                                  {standardCharges === "" ? (
+                                    "free"
+                                  ) : (
+                                    <span className="price">
+                                      {convertCurrency(standardCharges)}
+                                    </span>
+                                  )}
+                                </span>
+                              )}
+                            </span>
+                          </TableCell>
+                          <TableCell className="tableCell tableCellPrice a_flex">
+                            <h4>Subtotal</h4>
+                            <span>{convertCurrency(itemsPrice)}</span>
+                          </TableCell>
+                          <TableCell className="tableCell tableCellPrice a_flex">
+                            <h4>Grandtotal</h4>
+                            <span>{convertCurrency(grandTotal)}</span>
+                          </TableCell>
+                        </TableRow>
                       </TableBody>
                     </Table>
                   </TableContainer>

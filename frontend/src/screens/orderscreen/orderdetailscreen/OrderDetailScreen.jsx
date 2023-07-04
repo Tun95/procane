@@ -1,19 +1,14 @@
-import React, { useContext } from 'react'
-import { Context } from '../../../context/Context';
-import OrderDetails from '../../../components/orders/orderdetails/OrderDetails';
+import React from "react";
+import OrderDetails from "../../../components/orders/orderdetails/OrderDetails";
 
 function OrderDetailScreen() {
-	const { state } = useContext(Context);
-  const { settings } = state;
   return (
     <>
-      {settings?.map((s, index) => (
-        <div key={index} className="container">
-          <OrderDetails webname={s.webname} currencySign={s.currencySign} />
-        </div>
-      ))}
+      <div className="container">
+        <OrderDetails />
+      </div>
     </>
   );
 }
 
-export default OrderDetailScreen
+export default OrderDetailScreen;

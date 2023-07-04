@@ -458,7 +458,6 @@ const convertCurrency = async (value, fromCurrency, toCurrency) => {
     throw new Error("Failed to convert currency");
   }
 };
-
 orderRouter.post(
   "/:id/razorpay",
   isAuth,
@@ -492,22 +491,35 @@ orderRouter.post(
         res.status(400).send({ message: "Order is already paid" });
         return;
       }
-
-      order.isPaid = true;
-      order.paidAt = Date.now();
       order.paymentResult = {
         id: razorpayOrder.id,
         status: "created",
       };
+      if (!order.isPaid) {
+        res.status(400).send({ message: "Payment was not successful" });
+        return;
+      } else {
+        order.isPaid = true;
+        order.paidAt = Date.now();
+      }
+
       order.paymentMethod = req.body.paymentMethod;
       order.currencySign = req.body.currencySign;
+
       for (const index in order.orderItems) {
         const item = order.orderItems[index];
         const product = await Product.findById(item.product);
+        // Check if the item quantity is greater than the available countInStock
+        if (item.quantity > product.countInStock) {
+          throw new Error(`Insufficient stock for product: ${product.name}`);
+        }
+        // Decrease the countInStock and increase the numSales
         product.countInStock -= item.quantity;
         product.numSales += item.quantity;
         await product.save();
       }
+
+      const updatedOrder = await order.save();
 
       const convertedItemsPrice = await convertCurrency(
         order.itemsPrice,
@@ -534,8 +546,6 @@ orderRouter.post(
       order.taxPrice = convertedTaxPrice;
       order.shippingPrice = convertedShippingPrice;
       order.grandTotal = convertedGrandTotal;
-
-      const updatedOrder = await order.save();
 
       // Rest of the code...
       const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
@@ -899,10 +909,16 @@ orderRouter.put(
         email_address: req.body.email_address,
       };
       order.paymentMethod = req.body.paymentMethod;
+      order.currencySign = req.body.currencySign;
 
       for (const index in order.orderItems) {
         const item = order.orderItems[index];
         const product = await Product.findById(item.product);
+        // Check if the item quantity is greater than the available countInStock
+        if (item.quantity > product.countInStock) {
+          throw new Error(`Insufficient stock for product: ${product.name}`);
+        }
+        // Decrease the countInStock and increase the numSales
         product.countInStock -= item.quantity;
         product.numSales += item.quantity;
         await product.save();

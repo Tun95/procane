@@ -287,8 +287,7 @@ export function ContextProvider(props) {
   const [toCurrency, setToCurrency] = useState(
     localStorage.getItem("toCurrency") || "USD"
   );
-
-  const [conversionRate, setConversionRate] = useState(null);
+  const [conversionRates, setConversionRates] = useState(null);
 
   const formatPrice = (price, grandTotal) => {
     const formatter = new Intl.NumberFormat("en-GB", {
@@ -300,7 +299,6 @@ export function ContextProvider(props) {
     if (grandTotal) {
       const formattedGrandTotal = formatter.format(grandTotal);
       const formattedPrice = formatter.format(price);
-
       const formattedPriceWithoutSymbol = formattedPrice.replace(
         formattedGrandTotal,
         ""
@@ -325,32 +323,14 @@ export function ContextProvider(props) {
         ? Number(price.replace(/[^0-9.-]+/g, ""))
         : price;
 
-    if (
-      toCurrency === "INR" ||
-      toCurrency === "NGN" ||
-      toCurrency === "GBP" ||
-      toCurrency === "EUR"
-    ) {
+    if (conversionRates && toCurrency in conversionRates) {
+      const conversionRate = conversionRates[toCurrency];
+
       const convertedPrice = numericPrice * conversionRate;
       const convertedItemsPrice = itemsPrice * conversionRate;
       const convertedShippingPrice = shippingPrice * conversionRate;
       const convertedTaxPrice = taxPrice * conversionRate;
       const convertedSalesPrice = sales * conversionRate;
-
-      return formatPrice(
-        convertedPrice,
-        grandTotal,
-        convertedItemsPrice,
-        convertedShippingPrice,
-        convertedTaxPrice,
-        convertedSalesPrice
-      );
-    } else if (toCurrency === "USD") {
-      const convertedPrice = numericPrice / conversionRate;
-      const convertedItemsPrice = itemsPrice / conversionRate;
-      const convertedShippingPrice = shippingPrice / conversionRate;
-      const convertedTaxPrice = taxPrice / conversionRate;
-      const convertedSalesPrice = sales / conversionRate;
 
       return formatPrice(
         convertedPrice,
@@ -371,24 +351,39 @@ export function ContextProvider(props) {
       );
     }
   };
+  const convertToNumeric = (price) => {
+    const numericPrice =
+      typeof price === "string"
+        ? Number(price.replace(/[^0-9.-]+/g, ""))
+        : price;
+
+    if (conversionRates && toCurrency in conversionRates) {
+      const conversionRate = conversionRates[toCurrency];
+      const convertedPrice = numericPrice * conversionRate;
+
+      return Math.round(convertedPrice); // Round to the nearest whole number
+    } else {
+      return Math.round(numericPrice); // Round to the nearest whole number
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem("toCurrency", toCurrency);
 
-    const fetchConversionRate = async () => {
+    const fetchConversionRates = async () => {
       try {
         const response = await fetch(
           "https://api.exchangerate-api.com/v4/latest/USD"
         );
         const data = await response.json();
-        const rate = data.rates[toCurrency];
-        setConversionRate(rate);
+        setConversionRates(data.rates);
+        console.log("Exchange Rates:", data.rates);
       } catch (error) {
         console.log("Error fetching exchange rate data:", error);
       }
     };
 
-    fetchConversionRate();
+    fetchConversionRates();
   }, [toCurrency]);
 
   const value = {
@@ -397,6 +392,7 @@ export function ContextProvider(props) {
     toCurrency,
     setToCurrency,
     convertCurrency,
+    convertToNumeric,
     formatPrice,
     darkMode,
     toggle,

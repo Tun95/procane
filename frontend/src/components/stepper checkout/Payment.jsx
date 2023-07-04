@@ -16,6 +16,7 @@ import razorpay from "../../assets/razorpay.png";
 import { request } from "../../base url/BaseUrl";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import StripeCheckout from "react-stripe-checkout";
+import LoadingBox from "../utilities/message loading/LoadingBox";
 
 const steps = ["Billing Address", "Confirmation", "Payment Method", "Finish"];
 const reducer = (state, action) => {
@@ -43,8 +44,6 @@ const reducer = (state, action) => {
 function Payment(props) {
   const navigate = useNavigate();
 
-  const {} = props;
-
   let PayPal = "PayPal";
   let Stripe = "Stripe";
   let RazorPay = "RazorPay";
@@ -56,6 +55,7 @@ function Payment(props) {
     state,
     dispatch: ctxDispatch,
     convertCurrency,
+    convertToNumeric,
     toCurrency,
   } = useContext(Context);
   const {
@@ -68,6 +68,9 @@ function Payment(props) {
   const [paymentMethodName, setPaymentMethod] = useState(
     paymentMethod || PayPal
   );
+  const selectPaymentMethod = (method) => {
+    setPaymentMethod(method);
+  };
   console.log(paymentMethodName);
 
   //STRIPE MODAL
@@ -89,7 +92,7 @@ function Payment(props) {
   };
 
   //PAYPAL MODAL
-  const [openPaypalModal, is0penPaypalModal] = useState(false);
+  const [openPaypalModal, is0penPaypalModal] = useState(true);
   const closePaypalModal = () => {
     is0penPaypalModal(false);
     document.body.style.overflow = "unset";
@@ -107,7 +110,7 @@ function Payment(props) {
   };
 
   //RAZORPAY
-  const [openRazorPayModal, is0penRazorPayModal] = useState(true);
+  const [openRazorPayModal, is0penRazorPayModal] = useState(false);
   const closeRazorPayModal = () => {
     is0penRazorPayModal(false);
     document.body.style.overflow = "unset";
@@ -241,13 +244,6 @@ function Payment(props) {
     toast.error(getError(err), { position: "bottom-center" });
   }
 
-  //Navigation
-  // useEffect(() => {
-  //   if (order.isPaid) {
-  //     navigate("/finish");
-  //   }
-  // }, [navigate, cartItems, order.isPaid]);
-
   const submitHandler = (e) => {
     e.preventDefault();
     // ctxDispatch({ type: "SAVE_PAYMENT_METHOD", payload: paymentMethodName });
@@ -257,8 +253,8 @@ function Payment(props) {
   // CASH METHOD
   //============
   const cashSubmitHandler = async (details) => {
+    dispatch({ type: "PAY_REQUEST" });
     try {
-      // dispatch({ type: "PAY_REQUEST" });
       await axios.put(
         `${request}/api/orders/${order._id}/pay`,
         { details, paymentMethod: paymentMethodName, currencySign },
@@ -282,11 +278,12 @@ function Payment(props) {
   //=========
   //RAZORPAY
   //=========
-  const conversionRate = settings
-    ?.map((s) => Number(s.rate))
-    ?.find((rate) => !isNaN(rate));
-  const razorGrandTotal = Math.floor(order.grandTotal * conversionRate);
+  // const conversionRate = settings
+  //   ?.map((s) => Number(s.rate))
+  //   ?.find((rate) => !isNaN(rate));
+  const razorGrandTotal = Number(convertToNumeric(order.grandTotal));
   const razorPaySubmitHandler = async () => {
+    dispatch({ type: "PAY_REQUEST" });
     try {
       if (razorGrandTotal > 500000) {
         toast.error("Payment amount exceeds the maximum limit for RazorPay", {
@@ -314,17 +311,23 @@ function Payment(props) {
 
       const options = {
         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
-        amount: parseInt(razorGrandTotal * 100),
+        amount: razorGrandTotal * 100,
         currency: toCurrency,
         name: "ProCanes",
         description: "payment",
         image: "https://your-store-logo.png", // URL of your store's logo
         order_id: razororder.id,
         handler: function (response) {
-          dispatch({ type: "PAY_SUCCESS" });
-          toast.success(`${response.razorpay_payment_id} Order is paid`, {
-            position: "bottom-center",
-          });
+          if (response.razorpay_payment_id) {
+            dispatch({ type: "PAY_SUCCESS", payload: response });
+            toast.success(`${response.razorpay_payment_id} Order is paid`, {
+              position: "bottom-center",
+            });
+          } else {
+            toast.error("Payment canceled or failed", {
+              position: "bottom-center",
+            });
+          }
         },
         prefill: {
           name: `${userInfo.lastName} ${userInfo.firstName}`,
@@ -410,6 +413,13 @@ function Payment(props) {
     }
   };
 
+  //Navigation
+  useEffect(() => {
+    if (order.isPaid) {
+      navigate("/finish");
+    }
+  }, [navigate, cartItems, order.isPaid]);
+
   return (
     <>
       <div className="form_container">
@@ -436,16 +446,19 @@ function Payment(props) {
                     <label
                       className={
                         openRazorPayModal
-                          ? "active payment_label"
-                          : "payment_label"
+                          ? "active payment_label "
+                          : "payment_label "
                       }
-                      htmlFor="razorpay"
-                      onClick={RazorPayOrderModal}
+                      onClick={() => {
+                        RazorPayOrderModal();
+                        selectPaymentMethod(RazorPay);
+                      }}
                     >
                       <div className="label-svg">
                         <div className="svg">
                           <img src={razorpay} alt="" />
                         </div>
+
                         <span className="a_flex input_text">
                           <input
                             type="radio"
@@ -458,8 +471,8 @@ function Payment(props) {
                           <span>
                             <strong>
                               Pay{" "}
-                              {convertCurrency(order.grandTotal?.toFixed(2))}
-                              &#160; with RazorPay
+                              {convertCurrency(order.grandTotal?.toFixed(2))}{" "}
+                              with RazorPay
                             </strong>
                           </span>
                         </span>
@@ -472,7 +485,10 @@ function Payment(props) {
                           : "payment_label"
                       }
                       htmlFor="stripe"
-                      onClick={StripeModal}
+                      onClick={() => {
+                        StripeModal();
+                        selectPaymentMethod(Stripe);
+                      }}
                     >
                       <div className="label-svg">
                         <div className="svg">
@@ -504,7 +520,10 @@ function Payment(props) {
                           : "payment_label "
                       }
                       htmlFor="paypal"
-                      onClick={PaypalOrderModal}
+                      onClick={() => {
+                        PaypalOrderModal();
+                        selectPaymentMethod(PayPal);
+                      }}
                     >
                       <div className="label-svg">
                         <div className="svg">
@@ -515,9 +534,9 @@ function Payment(props) {
                           <input
                             type="radio"
                             required
-                            checked={openPaypalModal === true}
                             name="payment"
                             id="paypal"
+                            checked={openPaypalModal === true}
                             value={PayPal}
                             onChange={(e) => setPaymentMethod(e.target.value)}
                           />
@@ -538,7 +557,10 @@ function Payment(props) {
                           : "payment_label "
                       }
                       htmlFor="cash"
-                      onClick={CashOrderModal}
+                      onClick={() => {
+                        CashOrderModal();
+                        selectPaymentMethod(Cash);
+                      }}
                     >
                       <div className="label-svg">
                         <div className="svg">
@@ -668,7 +690,6 @@ function Payment(props) {
                         )}
                         {openPaypalModal && (
                           <div className="paypal-details">
-                            {/* {!order.isPaid && ( */}
                             <div className="paypal-btn">
                               {/* {isPending && ( */}
                               <PayPalButtons
@@ -677,8 +698,8 @@ function Payment(props) {
                                 onError={onError}
                               ></PayPalButtons>
                               {/* )} */}
+                              Papay
                             </div>
-                            {/* )} */}
                           </div>
                         )}
                         {/* {openPayStackModal && (
@@ -691,28 +712,44 @@ function Payment(props) {
                       )} */}
                         {openCashModal && (
                           <div className="paypal-details paystack_btn cash_btn_style">
-                            <button
-                              className="cash_btn l_flex"
-                              onClick={cashSubmitHandler}
-                            >
-                              <img src={cash} alt="" />
-                              <span className="cash_text">
-                                Cash on Delivery
-                              </span>
-                            </button>
+                            {loadingPay ? (
+                              <LoadingBox>
+                                <button className="cash_btn l_flex" disabled>
+                                  <img src={cash} alt="" />
+                                  <span className="cash_text">
+                                    Cash on Delivery
+                                  </span>
+                                </button>
+                              </LoadingBox>
+                            ) : (
+                              <button
+                                className="cash_btn l_flex"
+                                onClick={cashSubmitHandler}
+                              >
+                                <img src={cash} alt="" />
+                                <span className="cash_text">
+                                  Cash on Delivery
+                                </span>
+                              </button>
+                            )}
                           </div>
                         )}
                         {openRazorPayModal && (
                           <div className="paypal-details paystack_btn cash_btn_style">
-                            <button
-                              className="cash_btn l_flex"
-                              onClick={razorPaySubmitHandler}
-                            >
-                              <img src={razorpay} alt="" />
-                              {/* <span className="cash_text">
-                                
-                              </span> */}
-                            </button>
+                            {loadingPay ? (
+                              <LoadingBox>
+                                <button className="cash_btn l_flex" disabled>
+                                  <img src={razorpay} alt="" />
+                                </button>
+                              </LoadingBox>
+                            ) : (
+                              <button
+                                className="cash_btn l_flex"
+                                onClick={razorPaySubmitHandler}
+                              >
+                                <img src={razorpay} alt="" />
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>

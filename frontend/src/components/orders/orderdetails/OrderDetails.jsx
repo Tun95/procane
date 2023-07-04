@@ -39,10 +39,12 @@ const reducer = (state, action) => {
       return state;
   }
 };
-function OrderDetails({ currencySign, webname }) {
+function OrderDetails() {
   const navigate = useNavigate();
   const { state, convertCurrency } = useContext(Context);
-  const { userInfo } = state;
+  const { userInfo, settings } = state;
+
+ const webname = (settings && settings.map((s) => s.webname)) || [];
 
   const params = useParams();
   const { id: orderId } = params;

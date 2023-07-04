@@ -6,6 +6,7 @@ import Rating from "../../utilities/rating/Ratings";
 import { Context } from "../../../context/Context";
 import { request } from "../../../base url/BaseUrl";
 import { toast } from "react-toastify";
+import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 
 const NextArrow = (props) => {
   const { onClick } = props;
@@ -163,12 +164,18 @@ function RelatedCard({ products }) {
                       {convertCurrency(product.price)}
                     </div>
                   )}
-                  <button
-                    className="dark-btn"
-                    onClick={() => addToCartHandler(product)}
-                  >
-                    <i className="fa fa-plus"></i>
-                  </button>
+                  {product.countInStock === 0 ? (
+                    <button className="disabled l_flex" disabled>
+                      <DoDisturbIcon className="" />
+                    </button>
+                  ) : (
+                    <button
+                      className="dark-btn"
+                      onClick={() => addToCartHandler(product)}
+                    >
+                      <i className="fa fa-plus"></i>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

@@ -97,7 +97,10 @@
       }
     }
   }
-
+  .disabled {
+    color: var(--color-gray);
+    border-color: var(--color-gray);
+  }
   textarea {
     color: var(--color-light-gray);
   }
