@@ -360,7 +360,7 @@ orderRouter.get(
   "/:id",
   isAuth,
   expressAsyncHandler(async (req, res) => {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate("user");
     if (order) {
       res.send(order);
     } else {
@@ -535,7 +535,7 @@ orderRouter.post(
     const orderId = req.params.id;
     const paymentResponse = req.body;
 
-    const order = await Order.findById(orderId).populate("user", "email name");
+    const order = await Order.findById(orderId).populate("user");
 
     if (!order) {
       res.status(404).send({ message: "Order Not Found" });
@@ -575,7 +575,6 @@ orderRouter.post(
       let convertedTaxPrice = order.taxPrice;
       let convertedShippingPrice = order.shippingPrice;
       let convertedGrandTotal = order.grandTotal;
-      let convertedPrice = order.price;
 
       if (order.currencySign !== "USD") {
         try {
@@ -672,7 +671,11 @@ orderRouter.post(
           item.color ? item.color : ""
         } alt=""/></td>
         <td align="center">${item.quantity}</td>
-        <td align="right">${convertedCurrencySign}${convertedPrice}</td>
+        <td align="right">${
+          order.currencySign === "USD"
+            ? `$${item.price.toFixed(2)}`
+            : convertedCurrencySign + convertedPrice
+        }</td>
       </tr>
     `;
        })
@@ -681,19 +684,35 @@ orderRouter.post(
         <tfoot>
         <tr>
         <td colspan="2">Items Price:</td>
-        <td align="right"> ${convertedCurrencySign}${convertedItemsPrice}</td>
+        <td align="right"> ${
+          order.currencySign === "USD"
+            ? `$${order.itemsPrice.toFixed(2)}`
+            : convertedCurrencySign + convertedItemsPrice
+        }</td>
         </tr>
         <tr>
         <td colspan="2">Tax Price:</td>
-        <td align="right"> ${convertedCurrencySign}${convertedTaxPrice}</td>
+        <td align="right">${
+          order.currencySign === "USD"
+            ? `$${order.taxPrice.toFixed(2)}`
+            : convertedCurrencySign + convertedTaxPrice
+        }</td>
         </tr>
         <tr>
         <td colspan="2">Shipping Price:</td>
-        <td align="right">  ${convertedCurrencySign}${convertedShippingPrice}</td>
+        <td align="right">${
+          order.currencySign === "USD"
+            ? `$${order.shippingPrice.toFixed(2)}`
+            : convertedCurrencySign + convertedShippingPrice
+        }</td>
         </tr>
         <tr>
         <td colspan="2"><strong>Total Price:</strong></td>
-        <td align="right"><strong> ${convertedCurrencySign}${convertedGrandTotal}</strong></td>
+        <td align="right"><strong>${
+          order.currencySign === "USD"
+            ? `$${order.grandTotal.toFixed(2)}`
+            : convertedCurrencySign + convertedGrandTotal
+        }</strong></td>
         </tr>
         <tr>
         <td colspan="2">Payment Method:</td>
