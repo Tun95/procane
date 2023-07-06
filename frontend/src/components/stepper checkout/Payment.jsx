@@ -985,13 +985,17 @@ function Payment(props) {
                         {openPaypalModal && (
                           <div className="paypal-details">
                             <div className="paypal-btn">
-                              {/* {isPending && ( */}
-                              <PayPalButtons
-                                createOrder={createOrder}
-                                onApprove={onApprove}
-                                onError={onError}
-                              ></PayPalButtons>
-                              {/* )} */}
+                              {toCurrency === "USD" ||
+                              toCurrency === "EUR" ||
+                              toCurrency === "GBP" ? (
+                                <PayPalButtons
+                                  createOrder={createOrder}
+                                  onApprove={onApprove}
+                                  onError={onError}
+                                ></PayPalButtons>
+                              ) : (
+                                ""
+                              )}
                             </div>
                           </div>
                         )}
