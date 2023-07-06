@@ -992,7 +992,6 @@ function Payment(props) {
                                 onError={onError}
                               ></PayPalButtons>
                               {/* )} */}
-                              Papay
                             </div>
                           </div>
                         )}
@@ -1006,7 +1005,7 @@ function Payment(props) {
                         )}
                         {openCashModal && (
                           <div className="paypal-details paystack_btn cash_btn_style">
-                            {/* {loadingPay ? (
+                            {loadingPay ? (
                               <LoadingBox>
                                 <button className="cash_btn l_flex" disabled>
                                   <img src={cash} alt="" />
@@ -1015,17 +1014,17 @@ function Payment(props) {
                                   </span>
                                 </button>
                               </LoadingBox>
-                            ) : ( */}
-                            <button
-                              className="cash_btn l_flex"
-                              onClick={cashSubmitHandler}
-                            >
-                              <img src={cash} alt="" />
-                              <span className="cash_text">
-                                Cash on Delivery
-                              </span>
-                            </button>
-                            {/* )} */}
+                            ) : (
+                              <button
+                                className="cash_btn l_flex"
+                                onClick={cashSubmitHandler}
+                              >
+                                <img src={cash} alt="" />
+                                <span className="cash_text">
+                                  Cash on Delivery
+                                </span>
+                              </button>
+                            )}
                           </div>
                         )}
                         {openRazorPayModal && (
