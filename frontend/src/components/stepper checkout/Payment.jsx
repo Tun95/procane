@@ -15,9 +15,11 @@ import cash from "../../assets/cash.png";
 import razorpay from "../../assets/razorpay.png";
 import razordark from "../../assets/razordark.png";
 import paytm from "../../assets/paytm.png";
+import paystackImg from "../../assets/paystack-logo.png";
 import { request } from "../../base url/BaseUrl";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import StripeCheckout from "react-stripe-checkout";
+import { PaystackButton } from "react-paystack";
 import LoadingBox from "../utilities/message loading/LoadingBox";
 
 const steps = ["Billing Address", "Confirmation", "Payment Method", "Finish"];
@@ -98,7 +100,7 @@ function Payment(props) {
 
   const StripeModal = () => {
     closePaypalModal();
-    // closePayStackModal();
+    closePayStackModal();
     closeCashModal();
     closePayTmModal();
     closeRazorPayModal();
@@ -121,7 +123,26 @@ function Payment(props) {
     closeCashModal();
     closeRazorPayModal();
     closePayTmModal();
-    // closePayStackModal();
+    closePayStackModal();
+  };
+
+  //PAYSTACK MODAL
+  const [openPayStackModal, is0penPayStackModal] = useState(false);
+  const closePayStackModal = () => {
+    is0penPayStackModal(false);
+    document.body.style.overflow = "unset";
+  };
+  const showPayStackModal = () => {
+    is0penPayStackModal(true);
+  };
+
+  const PayStackOrderModal = () => {
+    closeStripeModal();
+    closePaypalModal();
+    closePayTmModal();
+    closeRazorPayModal();
+    closeCashModal();
+    showPayStackModal();
   };
 
   //RAZORPAY
@@ -138,7 +159,7 @@ function Payment(props) {
     closePaypalModal();
     closeCashModal();
     closePayTmModal();
-    // closePayStackModal();
+    closePayStackModal();
     showRazorPayModal();
   };
 
@@ -157,7 +178,7 @@ function Payment(props) {
     closePaypalModal();
     closeRazorPayModal();
     closeCashModal();
-    // closePayStackModal();
+    closePayStackModal();
     showPayTmModal();
   };
 
@@ -176,7 +197,7 @@ function Payment(props) {
     closePaypalModal();
     closeRazorPayModal();
     closePayTmModal();
-    // closePayStackModal();
+    closePayStackModal();
     showCashModal();
   };
 
@@ -285,15 +306,66 @@ function Payment(props) {
     // ctxDispatch({ type: "SAVE_PAYMENT_METHOD", payload: paymentMethodName });
     // localStorage.setItem("paymentMethod", paymentMethodName);
   };
+
+  //==========
+  //PAYSTACK
+  //==========
+  const payStackGrandTotal = Number(convertToNumeric(order.grandTotal));
+  const config = {
+    reference: new Date().getTime().toString(),
+    email: userInfo.email,
+    amount: payStackGrandTotal * 100, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
+    currency: toCurrency,
+    publicKey: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,
+  };
+  // you can call this function anything
+  const handlePaystackSuccessAction = async (details) => {
+    // Implementation for whatever you want to do with reference and after success call.
+    try {
+      // dispatch({ type: "PAY_REQUEST" });
+      const { data } = await axios.put(
+        `${request}/api/orders/${order._id}/pay`,
+        { details, paymentMethod: paymentMethodName, currencySign },
+        {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+      dispatch({ type: "PAY_SUCCESS", payload: data });
+      toast.success("Order is paid", { position: "bottom-center" });
+      if (!order.isPaid) {
+        navigate("/finish");
+      }
+    } catch (err) {
+      dispatch({ type: "PAY_FAIL", payload: getError(err) });
+      toast.error(getError(err), { position: "bottom-center" });
+    }
+  };
+
+  // you can call this function anything
+  const handlePaystackCloseAction = () => {
+    // implementation for  whatever you want to do when the Paystack dialog closed.
+  };
+  const componentProps = {
+    ...config,
+    text: (
+      <span className="paystack_btn_style">
+        <img src={paystackImg} alt="" className="paystack_btn_img" />
+      </span>
+    ),
+    onSuccess: (reference) => handlePaystackSuccessAction(reference),
+    onClose: handlePaystackCloseAction,
+  };
   //============
   // CASH METHOD
   //============
-  const cashSubmitHandler = async (details) => {
-    dispatch({ type: "PAY_REQUEST" });
+  const cashSubmitHandler = async () => {
     try {
       await axios.put(
         `${request}/api/orders/${order._id}/pay`,
-        { details, paymentMethod: paymentMethodName, currencySign },
+        {
+          paymentMethod: paymentMethodName,
+          currencySign,
+        },
         {
           headers: { authorization: `Bearer ${userInfo.token}` },
         }
@@ -737,6 +809,42 @@ function Payment(props) {
                     </label>
                     <label
                       className={
+                        openPayStackModal
+                          ? "active payment_label"
+                          : "payment_label"
+                      }
+                      htmlFor="stripe"
+                      onClick={() => {
+                        PayStackOrderModal();
+                        selectPaymentMethod(PayStack);
+                      }}
+                    >
+                      <div className="label-svg">
+                        <div className="svg">
+                          <img src={paystackImg} alt="" />
+                        </div>
+                        <span className="a_flex input_text">
+                          <input
+                            type="radio"
+                            required
+                            name="payment"
+                            id="stripe"
+                            value={PayStack}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                          />
+                          <span>
+                            <strong>
+                              Pay{" "}
+                              {convertCurrency(order.grandTotal?.toFixed(2)) ||
+                                0}
+                              &#160; with PayStack
+                            </strong>
+                          </span>
+                        </span>
+                      </div>
+                    </label>
+                    <label
+                      className={
                         openCashModal
                           ? "active payment_label "
                           : "payment_label "
@@ -774,7 +882,7 @@ function Payment(props) {
                     </label>
                   </div>
                   <div className="paypal-stripe">
-                    {!order.isPaid && (
+                    {!order.isPaid ? (
                       <div>
                         {openStripeModal && (
                           <div className="stripe-details">
@@ -888,17 +996,17 @@ function Payment(props) {
                             </div>
                           </div>
                         )}
-                        {/* {openPayStackModal && (
-                        <div className="paypal-details paystack_btn">
-                          <PaystackButton
-                            {...componentProps}
-                            className="paystack_btn_style"
-                          />
-                        </div>
-                      )} */}
+                        {openPayStackModal && (
+                          <div className="paypal-details paystack_btn">
+                            <PaystackButton
+                              {...componentProps}
+                              className="paystack_btn_style"
+                            />
+                          </div>
+                        )}
                         {openCashModal && (
                           <div className="paypal-details paystack_btn cash_btn_style">
-                            {loadingPay ? (
+                            {/* {loadingPay ? (
                               <LoadingBox>
                                 <button className="cash_btn l_flex" disabled>
                                   <img src={cash} alt="" />
@@ -907,17 +1015,17 @@ function Payment(props) {
                                   </span>
                                 </button>
                               </LoadingBox>
-                            ) : (
-                              <button
-                                className="cash_btn l_flex"
-                                onClick={cashSubmitHandler}
-                              >
-                                <img src={cash} alt="" />
-                                <span className="cash_text">
-                                  Cash on Delivery
-                                </span>
-                              </button>
-                            )}
+                            ) : ( */}
+                            <button
+                              className="cash_btn l_flex"
+                              onClick={cashSubmitHandler}
+                            >
+                              <img src={cash} alt="" />
+                              <span className="cash_text">
+                                Cash on Delivery
+                              </span>
+                            </button>
+                            {/* )} */}
                           </div>
                         )}
                         {openRazorPayModal && (
@@ -967,7 +1075,7 @@ function Payment(props) {
                           </div>
                         )}
                       </div>
-                    )}
+                    ) : null}
                   </div>
                 </span>
               </div>

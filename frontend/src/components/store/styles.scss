@@ -39,6 +39,10 @@
         line-height: 30px;
         .product_filter {
           margin: 10px 0px;
+          .search-box {
+            position: relative;
+            right: 0px;
+          }
           .search_filter {
             background: transparent;
           }
