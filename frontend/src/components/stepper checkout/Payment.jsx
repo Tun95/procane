@@ -16,6 +16,7 @@ import razorpay from "../../assets/razorpay.png";
 import razordark from "../../assets/razordark.png";
 import paytm from "../../assets/paytm.png";
 import paystackImg from "../../assets/paystack-logo.png";
+import paystacklight from "../../assets/paystacklight.png";
 import { request } from "../../base url/BaseUrl";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import StripeCheckout from "react-stripe-checkout";
@@ -359,6 +360,7 @@ function Payment(props) {
   // CASH METHOD
   //============
   const cashSubmitHandler = async () => {
+    dispatch({ type: "PAY_REQUEST" });
     try {
       await axios.put(
         `${request}/api/orders/${order._id}/pay`,
@@ -821,7 +823,11 @@ function Payment(props) {
                     >
                       <div className="label-svg">
                         <div className="svg">
-                          <img src={paystackImg} alt="" />
+                          {darkMode ? (
+                            <img src={paystackImg} alt="" />
+                          ) : (
+                            <img src={paystacklight} alt="" />
+                          )}
                         </div>
                         <span className="a_flex input_text">
                           <input
@@ -1009,72 +1015,62 @@ function Payment(props) {
                         )}
                         {openCashModal && (
                           <div className="paypal-details paystack_btn cash_btn_style">
-                            {loadingPay ? (
-                              <LoadingBox>
-                                <button className="cash_btn l_flex" disabled>
+                            <button
+                              className="cash_btn l_flex"
+                              onClick={cashSubmitHandler}
+                              disabled={loadingPay}
+                            >
+                              {loadingPay ? (
+                                <React.Fragment>
+                                  <LoadingBox></LoadingBox>
+                                </React.Fragment>
+                              ) : (
+                                <React.Fragment>
                                   <img src={cash} alt="" />
                                   <span className="cash_text">
                                     Cash on Delivery
                                   </span>
-                                </button>
-                              </LoadingBox>
-                            ) : (
-                              <button
-                                className="cash_btn l_flex"
-                                onClick={cashSubmitHandler}
-                              >
-                                <img src={cash} alt="" />
-                                <span className="cash_text">
-                                  Cash on Delivery
-                                </span>
-                              </button>
-                            )}
+                                </React.Fragment>
+                              )}
+                            </button>
                           </div>
                         )}
                         {openRazorPayModal && (
                           <div className="paypal-details paystack_btn cash_btn_style">
-                            {loadingPay ? (
-                              <LoadingBox>
-                                <button
-                                  className="cash_btn razor_tm l_flex"
-                                  disabled
-                                >
-                                  {darkMode ? (
-                                    <img src={razordark} alt="" />
-                                  ) : (
-                                    <img src={razorpay} alt="" />
-                                  )}
-                                </button>
-                              </LoadingBox>
-                            ) : (
-                              <button
-                                className="cash_btn razor_tm l_flex"
-                                onClick={razorPaySubmitHandler}
-                              >
-                                <img src={razordark} alt="" />
-                              </button>
-                            )}
+                            <button
+                              className="cash_btn l_flex"
+                              onClick={razorPaySubmitHandler}
+                              disabled={loadingPay}
+                            >
+                              {loadingPay ? (
+                                <React.Fragment>
+                                  <LoadingBox></LoadingBox>
+                                </React.Fragment>
+                              ) : (
+                                <React.Fragment>
+                                  <img src={razordark} alt="" />
+                                </React.Fragment>
+                              )}
+                            </button>
                           </div>
                         )}
                         {openPayTmModal && (
                           <div className="paypal-details paystack_btn cash_btn_style">
-                            {loadingPay ? (
-                              <LoadingBox>
-                                <button
-                                  className="cash_btn razor_tm l_flex"
-                                  disabled
-                                >
+                            <button
+                              className="cash_btn l_flex"
+                              onClick={payTmSubmitHandler}
+                              disabled={loadingPay}
+                            >
+                              {loadingPay ? (
+                                <React.Fragment>
+                                  <LoadingBox></LoadingBox>
+                                </React.Fragment>
+                              ) : (
+                                <React.Fragment>
                                   <img src={paytm} alt="" />
-                                </button>
-                              </LoadingBox>
-                            ) : (
-                              <button
-                                className="cash_btn razor_tm l_flex"
-                                onClick={payTmSubmitHandler}
-                              >
-                                <img src={paytm} alt="" />
-                              </button>
-                            )}
+                                </React.Fragment>
+                              )}
+                            </button>
                           </div>
                         )}
                       </div>
