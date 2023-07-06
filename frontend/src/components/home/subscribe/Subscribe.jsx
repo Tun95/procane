@@ -55,9 +55,9 @@ function Subscribe() {
       <div className="box_shadow subscribe_box">
         <div className="container">
           <div className="form_group">
-            <form action="" onSubmit={submitHandler} className=" c_flex">
+            <form action="" onSubmit={submitHandler} className=" d_flex">
               <div className=" search-box ">
-                <EmailIcon className="email_box"/>
+                <EmailIcon className="email_box" />
                 <input
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -66,12 +66,19 @@ function Subscribe() {
                   placeholder="Email"
                 />
               </div>
+
               <div className="btn">
                 <button onClick={submitHandler}>subscribe</button>
               </div>
             </form>
           </div>
         </div>
+        <span>
+          <small className="text_small">
+            Subscribe to our newsletter today for furniture updates, exclusive
+            offers, and design inspiration{" "}
+          </small>
+        </span>
       </div>
     </div>
   );

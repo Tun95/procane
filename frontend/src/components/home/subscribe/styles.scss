@@ -1,10 +1,23 @@
 .subscribe_box {
   background-color: var(--color-white);
+  span {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    .text_small {
+      text-align: center;
+      display: flex;
+      justify-self: center;
+    }
+  }
   .container {
     width: 50%;
+
     .search-box {
       width: 100%;
       margin-right: 10px;
+      position: relative;
+      right: 0px;
       .email_box {
         margin-left: 5px;
         color: var(--color-gray);
