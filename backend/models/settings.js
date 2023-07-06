@@ -104,6 +104,33 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: "Our stores info here",
     },
+
+    razorkeyid: {
+      type: String,
+      default: "rzp_test_yyI1vXw8dNpnfO",
+    },
+    razorsecret: {
+      type: String,
+      default: "kIwDzb0JYPzwzoePpseCBEXe",
+    },
+    paytmid: {
+      type: String,
+      default: "frogiro89f409r099rofhepko",
+    },
+    paytmkey: {
+      type: String,
+      default: "frogiro89f409r099rofhepko",
+    },
+    exhangerate: {
+      type: String,
+      default: "10270e08382c90d68a845cdd",
+    },
+    stripe: {
+      type: String,
+      default:
+        "sk_test_51LddZCG74SnLVBhQgEpJEtwmrZun228Px4rYGTLUZ1xC81NzN2TP2svtDGXT3UPaYcEy8jtfj6X6k5EbzcEROpFu00eKwTYye4",
+    },
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

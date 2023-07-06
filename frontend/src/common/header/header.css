@@ -57,7 +57,8 @@
 
 .search-box {
   min-width: 40%;
-
+  position: relative;
+  right: 90px;
   display: flex;
   align-items: center;
   height: 40px;

@@ -87,6 +87,15 @@ TimeAgo.addLocale(ru);
 function App() {
   const { darkMode, state } = useContext(Context);
   const { settings } = state;
+  const { whatsapp, webname } =
+    (settings &&
+      settings
+        .map((s) => ({
+          whatsapp: s.whatsapp,
+          webname: s.webname,
+        }))
+        .find(() => true)) ||
+    {};
 
   return (
     <div className={darkMode ? "app dark" : "app"}>
@@ -425,14 +434,13 @@ function App() {
 
           {/* SELLER ROUTES */}
         </Routes>
-        {settings?.map((s, index) => (
-          <FloatingWhatsApp
-            key={index}
-            phoneNumber={s.whatsapp}
-            accountName={s.webname}
-            // avatar={procane}
-          />
-        ))}
+
+        <FloatingWhatsApp
+          phoneNumber={whatsapp}
+          accountName={webname}
+          // avatar={procane}
+        />
+
         <Footer />
       </Router>
     </div>

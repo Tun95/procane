@@ -209,14 +209,14 @@ function Confirmation(props) {
                         <TableRow>
                           <TableCell className="tableCell tableCellPrice a_flex">
                             <h4>TAXPRICE</h4>
-                            <span>{tax}%</span>
+                            <span>{tax || 0}%</span>
                           </TableCell>
                           <TableCell className="tableCell a_flex">
                             <h4>Shipping</h4>{" "}
                             <span>
                               {shippingAddress.shipping === express ? (
                                 <div className="price">
-                                  {convertCurrency(expressCharges)}
+                                  {convertCurrency(expressCharges) || 0}
                                 </div>
                               ) : (
                                 <span>
@@ -224,7 +224,7 @@ function Confirmation(props) {
                                     "free"
                                   ) : (
                                     <span className="price">
-                                      {convertCurrency(standardCharges)}
+                                      {convertCurrency(standardCharges) || 0}
                                     </span>
                                   )}
                                 </span>
@@ -233,11 +233,11 @@ function Confirmation(props) {
                           </TableCell>
                           <TableCell className="tableCell tableCellPrice a_flex">
                             <h4>Subtotal</h4>
-                            <span>{convertCurrency(itemsPrice)}</span>
+                            <span>{convertCurrency(itemsPrice) || 0}</span>
                           </TableCell>
                           <TableCell className="tableCell tableCellPrice a_flex">
                             <h4>Grandtotal</h4>
-                            <span>{convertCurrency(grandTotal)}</span>
+                            <span>{convertCurrency(grandTotal) || 0}</span>
                           </TableCell>
                         </TableRow>
                       </TableBody>

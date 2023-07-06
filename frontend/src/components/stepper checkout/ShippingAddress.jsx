@@ -243,7 +243,7 @@ function ShippingAddress() {
             <div className="delivery">
               <h2>Delivery options*</h2>
               {settings?.map((s, index) => (
-                <div className="delivery-container c_flex product">
+                <div key={index} className="delivery-container c_flex product">
                   <span className="a_flex">
                     <input
                       type="radio"

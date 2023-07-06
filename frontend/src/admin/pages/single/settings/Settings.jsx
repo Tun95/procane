@@ -62,10 +62,12 @@ function Settings() {
   const [terms, setTerms] = useState("");
   const [returns, setReturns] = useState("");
   const [privacy, setPrivacy] = useState("");
-  const [currency, setCurrency] = useState("");
-  const [rate, setRate] = useState();
+  const [razorkeyid, setRazorKeyId] = useState("");
+  const [razorsecret, setRazorSecret] = useState();
+  const [paytmid, setPaytmId] = useState("");
+  const [paytmkey, setPaytmKey] = useState("");
+  const [exhangerate, setExhangeRate] = useState("");
   const [tax, setTax] = useState("");
-  const [shipping, setShipping] = useState("");
   const [express, setExpress] = useState("");
   const [expressCharges, setExpressCharges] = useState("");
   const [standard, setStandard] = useState("");
@@ -98,10 +100,12 @@ function Settings() {
         setTerms(data.terms);
         setReturns(data.returns);
         setPrivacy(data.privacy);
-        setCurrency(data.currency);
-        setRate(data.rate);
+        setRazorKeyId(data.razorkeyid);
+        setRazorSecret(data.razorsecret);
+        setPaytmId(data.paytmid);
+        setPaytmKey(data.paytmkey);
+        setExhangeRate(data.exhangerate);
         setTax(data.tax);
-        setShipping(data.shipping);
         setExpress(data.express);
         setExpressCharges(data.expressCharges);
         setStandard(data.standard);
@@ -146,10 +150,12 @@ function Settings() {
           terms,
           returns,
           privacy,
-          currency,
-          rate,
+          razorkeyid,
+          razorsecret,
+          paytmid,
+          paytmkey,
+          exhangerate,
           tax,
-          shipping,
           express,
           expressCharges,
           standard,
@@ -361,22 +367,52 @@ function Settings() {
                       </div>
                       <div className="lower_form">
                         <div>
+                          <h4>KEYS:</h4>
                           <div className="lower_group">
-                            <small>Your Currency Short name:</small>
-                            <input
-                              value={currency}
-                              onChange={(e) => setCurrency(e.target.value)}
-                              type="text"
-                              placeholder="currency e.g GBP"
-                            />
+                            <small>RazorPay API ID &amp; Key:</small>
+                            <span className="d_flex">
+                              <input
+                                className="sub_input"
+                                value={razorkeyid}
+                                onChange={(e) => setRazorKeyId(e.target.value)}
+                                type="text"
+                                placeholder="RazorPay Id"
+                              />
+                              <input
+                                className="sub_input"
+                                value={razorsecret}
+                                onChange={(e) => setRazorSecret(e.target.value)}
+                                type="text"
+                                placeholder="RazorPay secret key"
+                              />
+                            </span>
                           </div>
                           <div className="lower_group">
-                            <small>Rate of conversion from USD to INR:</small>
+                            <small>PayTm API Id &amp; Key:</small>
+                            <span className="d_flex">
+                              <input
+                                className="sub_input"
+                                value={paytmid}
+                                onChange={(e) => setPaytmId(e.target.value)}
+                                type="text"
+                                placeholder="paytm id"
+                              />
+                              <input
+                                className="sub_input"
+                                value={paytmkey}
+                                onChange={(e) => setPaytmKey(e.target.value)}
+                                type="text"
+                                placeholder="paytm key"
+                              />
+                            </span>
+                          </div>
+                          <div className="lower_group">
+                            <small>Exhange Rate API key:</small>
                             <input
-                              value={rate}
-                              onChange={(e) => setRate(e.target.value)}
+                              value={exhangerate}
+                              onChange={(e) => setExhangeRate(e.target.value)}
                               type="text"
-                              placeholder="sign e.g £"
+                              placeholder="shipping e.g 20"
                             />
                           </div>
                           <div className="lower_group">
@@ -388,15 +424,7 @@ function Settings() {
                               placeholder="tax e.g 14"
                             />
                           </div>
-                          <div className="lower_group">
-                            <small>Shipping Price:</small>
-                            <input
-                              value={shipping}
-                              onChange={(e) => setShipping(e.target.value)}
-                              type="text"
-                              placeholder="shipping e.g 20"
-                            />
-                          </div>
+
                           <div className="lower_group">
                             <small>Shipping Method &amp; Price:</small>
                             <span className="d_flex">

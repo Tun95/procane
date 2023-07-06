@@ -194,7 +194,12 @@ function SideBar() {
           {userItemList?.map((item, index) => {
             const { text, icon } = item;
             return (
-              <ListItem disablePadding component={Link} to={item.to} key={index}>
+              <ListItem
+                disablePadding
+                component={Link}
+                to={item.to}
+                key={index}
+              >
                 <ListItemButton>
                   {icon && <ListItemIcon>{icon}</ListItemIcon>}
                   <ListItemText primary={text} />
@@ -284,8 +289,8 @@ function SideBar() {
 
   return (
     <div>
-      {["right"]?.map((anchor) => (
-        <React.Fragment key={anchor}>
+      {["right"]?.map((anchor, index) => (
+        <React.Fragment key={index}>
           <Button
             className="menu_btn_icon"
             onClick={toggleDrawer(anchor, true)}

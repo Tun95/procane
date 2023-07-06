@@ -254,38 +254,6 @@ function Filter({
           <div className="price-range product_filter">
             <h4>Price range</h4>
             <div className="middle">
-              {/* <FormControl
-                variant="filled"
-                size="small"
-                className="formControl_width"
-              >
-                <Select
-                  labelId="mui-price-select-label"
-                  id="mui_simple_select"
-                  value={selectedPrices}
-                  multiple
-                  MenuProps={MenuProps}
-                  SelectDisplayProps={{
-                    style: { paddingTop: 8, paddingBottom: 8 },
-                  }}
-                  onChange={(e) => {
-                    const selectedValues = e.target.value;
-                    setSelectedPrices(selectedValues);
-                    navigate(getFilterUrl({ price: selectedValues }));
-                  }}
-                >
-                  {prices?.map((p, index) => (
-                    <MenuItem
-                      key={index}
-                      id="MuiMenuItem-root"
-                      value={p.price}
-                      disabled={p.disabled}
-                    >
-                      {p.priceSpan}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl> */}
               <FormControl
                 variant="filled"
                 size="small"

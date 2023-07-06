@@ -13,6 +13,8 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import cash from "../../assets/cash.png";
 import razorpay from "../../assets/razorpay.png";
+import razordark from "../../assets/razordark.png";
+import paytm from "../../assets/paytm.png";
 import { request } from "../../base url/BaseUrl";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import StripeCheckout from "react-stripe-checkout";
@@ -47,6 +49,7 @@ function Payment(props) {
   let PayPal = "PayPal";
   let Stripe = "Stripe";
   let RazorPay = "RazorPay";
+  let PayTm = "PayTm";
   let Cash = "Cash on Delivery";
   let PayStack = "PayStack";
 
@@ -57,12 +60,22 @@ function Payment(props) {
     convertCurrency,
     convertToNumeric,
     toCurrency,
+    darkMode,
   } = useContext(Context);
   const {
     userInfo,
     settings,
     cart: { cartItems, paymentMethod },
   } = state;
+  const { razorkeyid, paytmid } =
+    (settings &&
+      settings
+        .map((s) => ({
+          razorkeyid: s.razorkeyid,
+          paytmid: s.paytmid,
+        }))
+        .find(() => true)) ||
+    {};
 
   //PAYMENT METHOD
   const [paymentMethodName, setPaymentMethod] = useState(
@@ -87,6 +100,7 @@ function Payment(props) {
     closePaypalModal();
     // closePayStackModal();
     closeCashModal();
+    closePayTmModal();
     closeRazorPayModal();
     showStripeModal();
   };
@@ -106,6 +120,7 @@ function Payment(props) {
     closeStripeModal();
     closeCashModal();
     closeRazorPayModal();
+    closePayTmModal();
     // closePayStackModal();
   };
 
@@ -122,8 +137,28 @@ function Payment(props) {
     closeStripeModal();
     closePaypalModal();
     closeCashModal();
+    closePayTmModal();
     // closePayStackModal();
     showRazorPayModal();
+  };
+
+  //PAYTM
+  const [openPayTmModal, is0penPayTmModal] = useState(false);
+  const closePayTmModal = () => {
+    is0penPayTmModal(false);
+    document.body.style.overflow = "unset";
+  };
+  const showPayTmModal = () => {
+    is0penPayTmModal(true);
+  };
+
+  const PayTmOrderModal = () => {
+    closeStripeModal();
+    closePaypalModal();
+    closeRazorPayModal();
+    closeCashModal();
+    // closePayStackModal();
+    showPayTmModal();
   };
 
   //CASH MODAL
@@ -140,6 +175,7 @@ function Payment(props) {
     closeStripeModal();
     closePaypalModal();
     closeRazorPayModal();
+    closePayTmModal();
     // closePayStackModal();
     showCashModal();
   };
@@ -310,7 +346,7 @@ function Payment(props) {
       const razororder = await response.json();
 
       const options = {
-        key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+        key: razorkeyid,
         amount: razorGrandTotal * 100,
         currency: toCurrency,
         name: "ProCanes",
@@ -357,6 +393,92 @@ function Payment(props) {
       };
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
+    } catch (error) {
+      dispatch({ type: "PAY_FAIL", payload: getError(error) });
+      toast.error(getError(error), { position: "bottom-center" });
+    }
+  };
+
+  //=======
+  // PAYTM
+  //=======
+  const paytmMerchantId = paytmid;
+  const paytmGrandTotal = Number(convertToNumeric(order.grandTotal));
+  const payTmSubmitHandler = async () => {
+    dispatch({ type: "PAY_REQUEST" });
+    try {
+      if (paytmGrandTotal > 500000) {
+        toast.error("Payment amount exceeds the maximum limit for PayTm", {
+          position: "bottom-center",
+        });
+        return;
+      }
+      const response = await fetch(`${request}/api/orders/${order._id}/paytm`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: paytmGrandTotal,
+          currency: toCurrency,
+          paymentMethod: paymentMethodName,
+          currencySign: toCurrency,
+        }),
+      });
+      const paytmOrder = await response.json();
+
+      // Initialize the PayTm checkout JS library
+      const initializePayTmCheckout = () => {
+        window.paytm.startPayment({
+          order: {
+            orderId: paytmOrder.id,
+          },
+          handler: function (response) {
+            if (response.STATUS === "TXN_SUCCESS") {
+              dispatch({ type: "PAY_REQUEST" });
+              toast.success(`${response.TXNID} Order is paid`, {
+                position: "bottom-center",
+              });
+              fetch(`${request}/api/orders/${order._id}/paytm/success`, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${userInfo.token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(response),
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.success) {
+                    dispatch({ type: "PAY_SUCCESS", payload: response });
+                  } else {
+                    dispatch({ type: "PAY_FAIL", payload: data.message });
+                    toast.error(data.message, { position: "bottom-center" });
+                  }
+                })
+                .catch((error) => {
+                  dispatch({ type: "PAY_FAIL", payload: getError(error) });
+                  toast.error(getError(error), { position: "bottom-center" });
+                });
+            } else {
+              toast.error("Payment canceled or failed", {
+                position: "bottom-center",
+              });
+            }
+          },
+        });
+      };
+
+      // Load PayTm checkout JS library dynamically
+      const loadPayTmCheckoutJS = () => {
+        const script = document.createElement("script");
+        script.src = `https://securegw.paytm.in/merchantpgpui/checkoutjs/merchants/${paytmMerchantId}.js`;
+        script.onload = initializePayTmCheckout;
+        document.body.appendChild(script);
+      };
+
+      loadPayTmCheckoutJS();
     } catch (error) {
       dispatch({ type: "PAY_FAIL", payload: getError(error) });
       toast.error(getError(error), { position: "bottom-center" });
@@ -477,7 +599,11 @@ function Payment(props) {
                     >
                       <div className="label-svg">
                         <div className="svg">
-                          <img src={razorpay} alt="" />
+                          {darkMode ? (
+                            <img src={razordark} alt="" />
+                          ) : (
+                            <img src={razorpay} alt="" />
+                          )}
                         </div>
 
                         <span className="a_flex input_text">
@@ -492,8 +618,45 @@ function Payment(props) {
                           <span>
                             <strong>
                               Pay{" "}
-                              {convertCurrency(order.grandTotal?.toFixed(2))}{" "}
+                              {convertCurrency(order.grandTotal?.toFixed(2)) ||
+                                0}
                               with RazorPay
+                            </strong>
+                          </span>
+                        </span>
+                      </div>
+                    </label>
+                    <label
+                      className={
+                        openPayTmModal
+                          ? "active payment_label "
+                          : "payment_label "
+                      }
+                      onClick={() => {
+                        PayTmOrderModal();
+                        selectPaymentMethod(PayTm);
+                      }}
+                    >
+                      <div className="label-svg">
+                        <div className="svg">
+                          <img src={paytm} alt="" />
+                        </div>
+
+                        <span className="a_flex input_text">
+                          <input
+                            type="radio"
+                            required
+                            name="payment"
+                            id="paytm"
+                            value={PayTm}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                          />
+                          <span>
+                            <strong>
+                              Pay{" "}
+                              {convertCurrency(order.grandTotal?.toFixed(2)) ||
+                                0}{" "}
+                              with PayTm
                             </strong>
                           </span>
                         </span>
@@ -564,7 +727,8 @@ function Payment(props) {
                           <span>
                             <strong>
                               Pay{" "}
-                              {convertCurrency(order.grandTotal?.toFixed(2))}{" "}
+                              {convertCurrency(order.grandTotal?.toFixed(2)) ||
+                                0}{" "}
                               with PayPal
                             </strong>
                           </span>
@@ -600,7 +764,8 @@ function Payment(props) {
                           <span>
                             <strong>
                               Pay{" "}
-                              {convertCurrency(order.grandTotal?.toFixed(2))}
+                              {convertCurrency(order.grandTotal?.toFixed(2)) ||
+                                0}
                               &#160; with Cash on Delivery
                             </strong>
                           </span>
@@ -759,16 +924,44 @@ function Payment(props) {
                           <div className="paypal-details paystack_btn cash_btn_style">
                             {loadingPay ? (
                               <LoadingBox>
-                                <button className="cash_btn l_flex" disabled>
-                                  <img src={razorpay} alt="" />
+                                <button
+                                  className="cash_btn razor_tm l_flex"
+                                  disabled
+                                >
+                                  {darkMode ? (
+                                    <img src={razordark} alt="" />
+                                  ) : (
+                                    <img src={razorpay} alt="" />
+                                  )}
                                 </button>
                               </LoadingBox>
                             ) : (
                               <button
-                                className="cash_btn l_flex"
+                                className="cash_btn razor_tm l_flex"
                                 onClick={razorPaySubmitHandler}
                               >
-                                <img src={razorpay} alt="" />
+                                <img src={razordark} alt="" />
+                              </button>
+                            )}
+                          </div>
+                        )}
+                        {openPayTmModal && (
+                          <div className="paypal-details paystack_btn cash_btn_style">
+                            {loadingPay ? (
+                              <LoadingBox>
+                                <button
+                                  className="cash_btn razor_tm l_flex"
+                                  disabled
+                                >
+                                  <img src={paytm} alt="" />
+                                </button>
+                              </LoadingBox>
+                            ) : (
+                              <button
+                                className="cash_btn razor_tm l_flex"
+                                onClick={payTmSubmitHandler}
+                              >
+                                <img src={paytm} alt="" />
                               </button>
                             )}
                           </div>
