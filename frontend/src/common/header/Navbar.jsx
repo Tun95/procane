@@ -121,10 +121,11 @@ function Navbar() {
                   </Link>
                 </li>
               ) : (
-                <li>
-                  <Link to={`/`}>Become a merchant</Link>
-                </li>
+                ""
               )}
+              {/* <li>
+                <Link to={`/`}>Become a merchant</Link>
+              </li> */}
               {userInfo && (
                 <li>
                   <Link to="/track-order">track my order</Link>
