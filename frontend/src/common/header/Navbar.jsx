@@ -46,8 +46,8 @@ const StyledMenu = styled((props) => (
         color: theme.palette.text.secondary,
         marginRight: theme.spacing(1.5),
       },
-     "&:active": {
-       backgroundColor: alpha(
+      "&:active": {
+        backgroundColor: alpha(
           theme.palette.primary.main,
           theme.palette.action.selectedOpacity
         ),
@@ -120,7 +120,11 @@ function Navbar() {
                     vendor account
                   </Link>
                 </li>
-              ) : null}
+              ) : (
+                <li>
+                  <Link to={`/`}>Become a merchant</Link>
+                </li>
+              )}
               {userInfo && (
                 <li>
                   <Link to="/track-order">track my order</Link>
