@@ -106,7 +106,9 @@ userRouter.get(
 userRouter.get(
   "/info/:id",
   expressAsyncHandler(async (req, res) => {
-    const user = await User.findById(req.params.id).populate("products wish");
+    const user = await User.findById(req.params.id).populate(
+      "products wish apply"
+    );
 
     if (user) {
       res.send(user);
@@ -332,7 +334,7 @@ userRouter.get(
 userRouter.delete(
   "/:id",
   isAuth,
-   isAdmin,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
     if (user) {

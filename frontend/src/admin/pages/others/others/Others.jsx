@@ -15,6 +15,7 @@ import Sizes from "../../list/fiters/size/Sizes";
 import Settings from "../../single/settings/Settings";
 import SettingsScreen from "../settings/SettingsScreen";
 import Subscribers from "../../single/subcribers/Subscribers";
+import Applicants from "../../list/applicants/Aplicants";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -102,22 +103,22 @@ function OtherScreen() {
                   />
                   <Tab
                     className={value === 4 ? "activeTab" : "tab_sub"}
-                    label="Price Filter"
+                    label="Size Filter"
                     {...a11yProps(4)}
                   />
                   <Tab
                     className={value === 5 ? "activeTab" : "tab_sub"}
-                    label="Size Filter"
+                    label="Banners"
                     {...a11yProps(5)}
                   />
                   <Tab
                     className={value === 6 ? "activeTab" : "tab_sub"}
-                    label="Banners"
+                    label="Subscribers"
                     {...a11yProps(6)}
                   />
                   <Tab
                     className={value === 7 ? "activeTab" : "tab_sub"}
-                    label="Subscribers"
+                    label="Applicants"
                     {...a11yProps(7)}
                   />
                 </Tabs>
@@ -135,16 +136,16 @@ function OtherScreen() {
                 <Colors />
               </TabPanel>
               <TabPanel value={value} index={4}>
-                <Prices />
-              </TabPanel>
-              <TabPanel value={value} index={5}>
                 <Sizes />
               </TabPanel>
-              <TabPanel value={value} index={6}>
+              <TabPanel value={value} index={5}>
                 <Banners />
               </TabPanel>
-              <TabPanel value={value} index={7}>
+              <TabPanel value={value} index={6}>
                 <Subscribers />
+              </TabPanel>
+              <TabPanel value={value} index={7}>
+                <Applicants />
               </TabPanel>
             </Box>
           </div>

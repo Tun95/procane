@@ -272,6 +272,28 @@ function User() {
                                     <h4>{user?.country}</h4>
                                   </div>
                                   <div className="user_detail_list">
+                                    {user?.apply[0]?.status && (
+                                      <label>Application Status:</label>
+                                    )}
+                                    {user?.apply[0]?.status === false ? (
+                                      <span className="unverified_account a_flex">
+                                        declined
+                                      </span>
+                                    ) : user?.apply[0]?.status === true &&
+                                      user.isSeller === true ? (
+                                      <span className="verified_account a_flex">
+                                        approved
+                                      </span>
+                                    ) : user?.apply[0]?.status === true &&
+                                      user.isSeller === false ? (
+                                      <span className="pending_account a_flex">
+                                        pending
+                                      </span>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </div>
+                                  <div className="user_detail_list">
                                     <label>Status:</label>
                                     {user.isAccountVerified === false ? (
                                       <span className="unverified_account a_flex">

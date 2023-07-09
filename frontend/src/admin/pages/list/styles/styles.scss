@@ -1,4 +1,3 @@
-
 .datatable {
   padding: 20px;
   // height: 715px;
@@ -31,6 +30,13 @@
     .no {
       color: red;
     }
+    .pending {
+      color: goldenrod;
+      background-color: rgba(189, 189, 3, 0.103);
+      padding: 5px;
+      border-radius: 5px;
+   
+    }
   }
   .cellWithStatus {
     padding: 5px;
@@ -58,6 +64,7 @@
       background-color: rgba(255, 0, 0, 0.2);
     }
   }
+
   .cellWithPrice {
     color: var(--color-primary);
     font-weight: 600;

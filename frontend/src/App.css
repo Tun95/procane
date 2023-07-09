@@ -608,7 +608,8 @@ select.input-error {
   border-radius: 4px;
 }
 .unverified_account,
-.verified_account {
+.verified_account,
+.pending_account {
   color: var(--color-primary);
   padding: 0px 3px;
   font-weight: 600;
@@ -620,6 +621,10 @@ select.input-error {
 .verified_account {
   color: var(--color-light-green);
   border: 1px dotted var(--color-light-green);
+}
+.pending_account {
+  color: var(--color-rating);
+  border: 1px dotted var(--color-rating);
 }
 
 /*----- whatsapp btn -------*/

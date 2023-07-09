@@ -222,6 +222,8 @@ function Vendor() {
       toast.error(getError(err), { position: "bottom-center" });
     }
   };
+
+  console.log(user);
   return (
     <div className="mtb">
       <div className="container ">
@@ -283,7 +285,25 @@ function Vendor() {
                                     <h4>{user?.country}</h4>
                                   </div>
                                   <div className="user_detail_list">
-                                    <label>Status:</label>
+                                    <label>Application Status:</label>
+                                    {user?.apply[0]?.status === false ? (
+                                      <span className="unverified_account a_flex">
+                                        declined
+                                      </span>
+                                    ) : user?.apply[0]?.status === true &&
+                                      user.isSeller === true ? (
+                                      <span className="verified_account a_flex">
+                                        approved
+                                      </span>
+                                    ) : user?.apply[0]?.status === true &&
+                                      user.isSeller === false ? (
+                                      <span>pending</span>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </div>
+                                  <div className="user_detail_list">
+                                    <label>Account Status:</label>
                                     {!user.isAccountVerified ? (
                                       <span className="unverified_account a_flex">
                                         unverified account
@@ -294,6 +314,7 @@ function Vendor() {
                                       </span>
                                     )}
                                   </div>
+
                                   {!user.isAccountVerified ? (
                                     <div className="verify_now">
                                       <span onClick={verificationHandler}>
@@ -342,7 +363,7 @@ function Vendor() {
                                     </div>
                                     <div className="profile-form-group seller_name">
                                       <label htmlFor="sellername">
-                                       Merchant Name:{" "}
+                                        Merchant Name:{" "}
                                       </label>
                                       <input
                                         className="profile-input-box"

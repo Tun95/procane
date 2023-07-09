@@ -90,6 +90,9 @@ const columns = [
           <div className={`cellWithAdminSellerStatus ${params.row.isBlocked}`}>
             {params.row.isSeller === true ? (
               <span className="yes">YES</span>
+            ) : params.row.isSeller === false &&
+              params.row.apply[0]?.status === true ? (
+              <span className="pending">pending</span>
             ) : (
               <span className="no">NO</span>
             )}
@@ -169,7 +172,7 @@ function UserList() {
     }
     fetchData();
   }, [successBlock, successDelete, successUnBlock, userInfo]);
-
+  console.log(users);
   //==============
   //BLOCK HANDLER
   //==============
