@@ -80,6 +80,8 @@ import SellerNewProduct from "./seller/new/product/SellerNewProduct";
 import SellerScreen from "./seller/single/main/SellerScreen";
 import Settings from "./admin/pages/single/settings/Settings";
 import procane from "../src/assets/procanes.png";
+import VendorScreen from "./screens/formscreens/vendorscreen/VendorScreen";
+import Success from "./screens/formscreens/vendorscreen/Succes";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -174,6 +176,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <VerifySuccessScreen />
+              </ProtectedRoute>
+            }
+          ></Route>
+          <Route
+            path="/application"
+            element={
+              <ProtectedRoute>
+                <VendorScreen />
+              </ProtectedRoute>
+            }
+          ></Route>
+          <Route
+            path="/application-success"
+            element={
+              <ProtectedRoute>
+                <Success />
               </ProtectedRoute>
             }
           ></Route>

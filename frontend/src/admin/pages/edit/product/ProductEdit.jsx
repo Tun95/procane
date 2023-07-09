@@ -229,20 +229,20 @@ function ProductEdit() {
     };
     getStats();
   }, [summary.income]);
- const CustomTooltip = ({ active, payload, label }) => {
-   if (active && payload && payload.length) {
-     return (
-       <div className="custom_tooltip" style={{ padding: "10px" }}>
-         <p className="label">{`${label}`}</p>
-         <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
-           Total Sales: {`${convertCurrency(payload[0]?.value)}`}
-         </p>
-       </div>
-     );
-   }
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom_tooltip" style={{ padding: "10px" }}>
+          <p className="label">{`${label}`}</p>
+          <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
+            Total Sales: {`${convertCurrency(payload[0]?.value)}`}
+          </p>
+        </div>
+      );
+    }
 
-   return null;
- };
+    return null;
+  };
 
   //DELETE IMAGES
   const deleteFileHandler = async (fileName) => {
@@ -392,9 +392,6 @@ function ProductEdit() {
                         size="small"
                         id="formControl"
                       >
-                        {/* <InputLabel id="mui-simple-select-label">
-                        Color
-                      </InputLabel> */}
                         <Select
                           labelId="mui-simple-select-label"
                           id="mui_simple_select"

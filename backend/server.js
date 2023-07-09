@@ -22,6 +22,7 @@ import priceRoutes from "./routes/priceRoutes.js";
 import bannerRoutes from "./routes/bannerRoutes.js";
 import colorRoutes from "./routes/colorRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
+import applicationRoutes from "./routes/applicationRoutes.js";
 
 dotenv.config();
 
@@ -93,6 +94,7 @@ app.use("/api/banner", bannerRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/checkout", stripeRouter);
+app.use("/api/apply", applicationRoutes);
 
 const _dirname = path.resolve();
 app.use(express.static(path.join(_dirname, "/frontend/build")));

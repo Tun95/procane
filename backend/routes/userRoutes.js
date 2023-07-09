@@ -60,7 +60,7 @@ userRouter.get(
   "/:id",
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id).populate(
-      "products wish order"
+      "products wish order apply"
     );
 
     if (user) {
@@ -323,7 +323,7 @@ userRouter.get(
   isAuth,
   // isAdmin,
   expressAsyncHandler(async (req, res) => {
-    const users = await User.find({}).sort("-createdAt");
+    const users = await User.find({}).sort("-createdAt").populate("apply");
     res.send(users);
   })
 );
@@ -332,7 +332,7 @@ userRouter.get(
 userRouter.delete(
   "/:id",
   isAuth,
-  // isAdmin,
+   isAdmin,
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
     if (user) {

@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { styled, alpha } from "@mui/material/styles";
 import { Context } from "../../context/Context";
+import { toast } from "react-toastify";
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -56,6 +57,8 @@ const StyledMenu = styled((props) => (
   },
 }));
 function Navbar() {
+  const navigate = useNavigate();
+
   const { state, dispatch: ctxDispatch } = useContext(Context);
   const { userInfo, categories } = state;
 
@@ -66,6 +69,15 @@ function Navbar() {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleOpen = () => {
+    if (!userInfo) {
+      toast.error("You need to login first", { position: "bottom-center" });
+      navigate(`/login?redirect=/application`);
+    } else {
+      navigate(`/application`);
+    }
   };
   return (
     <div>
@@ -121,11 +133,13 @@ function Navbar() {
                   </Link>
                 </li>
               ) : (
-                ""
+                <li>
+                  <span className="pointer" onClick={handleOpen}>
+                    Become a merchant
+                  </span>
+                </li>
               )}
-              {/* <li>
-                <Link to={`/`}>Become a merchant</Link>
-              </li> */}
+
               {userInfo && (
                 <li>
                   <Link to="/track-order">track my order</Link>

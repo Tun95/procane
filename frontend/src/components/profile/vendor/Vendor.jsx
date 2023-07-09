@@ -310,12 +310,12 @@ function Vendor() {
                                 <>
                                   <div className="seller_component">
                                     <h3 className="seller_header">
-                                      Seller Profile Info:
+                                      Profile Info:
                                     </h3>
                                     <div className="prof-seller-logo">
                                       <div className="profile-form-group">
                                         <label htmlFor="sellerlogo">
-                                          Seller Logo:{" "}
+                                          Logo:{" "}
                                         </label>
                                         <input
                                           className="profile-input-box"
@@ -342,7 +342,7 @@ function Vendor() {
                                     </div>
                                     <div className="profile-form-group seller_name">
                                       <label htmlFor="sellername">
-                                        Seller Name:{" "}
+                                       Merchant Name:{" "}
                                       </label>
                                       <input
                                         className="profile-input-box"
@@ -356,7 +356,7 @@ function Vendor() {
                                       />
                                     </div>
                                     <div className="profile-form-group">
-                                      <label htmlFor="sellerdesc">Bio:</label>
+                                      <label htmlFor="sellerdesc">About:</label>
                                       <div className="form_box">
                                         <JoditEditor
                                           className="editor"

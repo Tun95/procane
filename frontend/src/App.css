@@ -135,6 +135,9 @@ a {
 li {
   list-style: none;
 }
+.pointer {
+  cursor: pointer;
+}
 .uppercase {
   text-transform: uppercase;
 }
@@ -528,6 +531,9 @@ textarea::placeholder {
   border-radius: 5px;
 
   cursor: pointer;
+}
+.eye-icon {
+  color: var(--color-gray);
 }
 
 .form_container label {

@@ -169,7 +169,13 @@
   font-size: 15px;
   font-weight: 400;
 }
-.header ul li a:hover {
+.header ul li .pointer {
+  transition: 0.5s;
+  font-size: 15px;
+  font-weight: 400;
+}
+.header ul li a:hover,
+.pointer:hover {
   color: var(--color-hover);
 }
 

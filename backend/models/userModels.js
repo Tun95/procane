@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema(
     country: { type: String },
     image: { type: String },
     isBlocked: { type: Boolean, default: false },
+    application: { type: Boolean, default: false },
     password: { type: String, required: true },
     passwordChangeAt: Date,
     passwordResetToken: String,
@@ -61,6 +62,13 @@ userSchema.virtual("wish", {
 //Virtual method to populate created order
 userSchema.virtual("order", {
   ref: "Order",
+  foreignField: "user",
+  localField: "_id",
+});
+
+//Virtual method to populate created applications
+userSchema.virtual("apply", {
+  ref: "Apply",
   foreignField: "user",
   localField: "_id",
 });

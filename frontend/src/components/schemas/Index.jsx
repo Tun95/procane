@@ -1,5 +1,6 @@
 import * as yup from "yup";
 
+
 const passwordRules = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
 
 export const basicSchema = yup.object().shape({
@@ -59,6 +60,26 @@ export const contactSchema = yup.object().shape({
     .required("Email is required*"),
   subject: yup.string().required("Message title is required*"),
   message: yup.string().required("Message box cannot be empty*"),
+});
+
+export const sellerSchema = yup.object().shape({
+  sellerName: yup.string().required("Store name is required*"),
+  storeAddress: yup.string().required("Store address is required*"),
+  sellerDescription: yup
+    .string()
+    .test(
+      "word-count",
+      "About should have at least 50 words",
+      (value) => {
+        if (value) {
+          const wordCount = value.trim().split(" ").length;
+          return wordCount >= 50;
+        }
+        return false;
+      }
+    )
+    .required("About cannot be left empty*"),
+  status: yup.boolean().oneOf([true], "This box needs to be checked*"),
 });
 
 export const billingSchema = yup.object().shape({
