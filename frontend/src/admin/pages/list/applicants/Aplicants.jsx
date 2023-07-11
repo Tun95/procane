@@ -1,11 +1,4 @@
 import React, { useContext, useEffect, useReducer } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -17,6 +10,8 @@ import { getError } from "../../../../components/utilities/util/Utils";
 import LoadingBox from "../../../../components/utilities/message loading/LoadingBox";
 import MessageBox from "../../../../components/utilities/message loading/MessageBox";
 import "./styles.scss";
+import { DataGrid } from "@mui/x-data-grid";
+import { Helmet } from "react-helmet-async";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -26,6 +21,40 @@ const reducer = (state, action) => {
       return { ...state, loading: false, applications: action.payload };
     case "FETCH_FAIL":
       return { ...state, loading: false, errors: action.payload };
+
+    case "DECLINE_REQUEST":
+      return { ...state, loadingDecline: true, successDecline: false };
+    case "DECLINE_SUCCESS":
+      return { ...state, loadingDecline: false, successDecline: true };
+    case "DECLINE_FAIL":
+      return {
+        ...state,
+        loadingDecline: false,
+        successDecline: false,
+      };
+    case "DECLINE_RESET":
+      return {
+        ...state,
+        loadingDecline: false,
+        successDecline: false,
+      };
+
+    case "ACCEPT_REQUEST":
+      return { ...state, loadingAccept: true, successAccept: false };
+    case "ACCEPT_SUCCESS":
+      return { ...state, loadingAccept: false, successAccept: true };
+    case "ACCEPT_FAIL":
+      return {
+        ...state,
+        loadingAccept: false,
+        successAccept: false,
+      };
+    case "ACCEPT_RESET":
+      return {
+        ...state,
+        loadingAccept: false,
+        successAccept: false,
+      };
 
     case "DELETE_REQUEST":
       return { ...state, loadingDelete: true, successDelete: false };
@@ -48,21 +77,104 @@ const reducer = (state, action) => {
       return state;
   }
 };
-const Button = ({ type }) => {
-  return <button className={"widgetLgButton " + type}>{type}</button>;
-};
+
+const columns = [
+  {
+    field: "lastName",
+    headerName: "Last Name",
+    width: 150,
+    renderCell: (params) => {
+      return (
+        <>
+          <div className="cellWidthImg">{params.row.user?.lastName}</div>
+        </>
+      );
+    },
+  },
+  {
+    field: "firstName",
+    headerName: "Firt Name",
+    width: 150,
+    renderCell: (params) => {
+      return (
+        <>
+          <div className="cellWidthImg">{params.row.user?.firstName}</div>
+        </>
+      );
+    },
+  },
+  {
+    field: "email",
+    headerName: "Email",
+    width: 180,
+    renderCell: (params) => {
+      return (
+        <>
+          <div className="cellWidthImg">{params.row.user?.email}</div>
+        </>
+      );
+    },
+  },
+  { field: "sellerName", headerName: "Store Name", width: 200 },
+  {
+    field: "createdAt",
+    headerName: "Date",
+    width: 200,
+    renderCell: (params) => {
+      return (
+        <>
+          <div className="cellWidthImg">
+            <ReactTimeAgo
+              date={Date.parse(params.row.createdAt)}
+              locale="en-US"
+            />
+          </div>
+        </>
+      );
+    },
+  },
+  {
+    field: "isSeller",
+    headerName: "Status",
+    width: 150,
+    renderCell: (params) => {
+      if (params.row.status === true && params.row.user?.isSeller === true) {
+        return <span className="approved">Approved</span>;
+      } else if (
+        params.row.status === true &&
+        params.row.user?.isSeller === false
+      ) {
+        return <span className="pending">Pending</span>;
+      } else if (params.row.status === false) {
+        return <span className="declined">Declined</span>;
+      } else {
+        return null;
+      }
+    },
+  },
+];
+
 function Applicants() {
   const { state, dispatch: ctxDispatch } = useContext(Context);
   const { userInfo } = state;
 
   const navigate = useNavigate();
 
-  const [{ loading, error, successDelete, applications }, dispatch] =
-    useReducer(reducer, {
-      loading: true,
-      error: "",
-      applications: [],
-    });
+  const [
+    {
+      loading,
+      error,
+      successDelete,
+      successAccept,
+      successDecline,
+      applications,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    loading: true,
+    error: "",
+    applications: [],
+  });
 
   //================
   //FETCH ALL PRICE
@@ -79,104 +191,127 @@ function Applicants() {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
       }
     };
-    if (successDelete) {
+    if (successDecline || successAccept || successDelete) {
+      dispatch({ type: "DECLINE_RESET" });
+      dispatch({ type: "ACCEPT_RESET" });
       dispatch({ type: "DELETE_RESET" });
-    } else {
-      fetchData();
     }
-  }, [successDelete, userInfo]);
+
+    fetchData();
+  }, [successAccept, successDecline, successDelete, userInfo]);
 
   //==============
-  //DELETE HANDLER
+  //DECLINE HANDLER
   //==============
-  const deleteHandler = async (item) => {
+  const declineHandler = async (item) => {
     try {
-      dispatch({ type: "DELETE_REQUEST" });
-      await axios.delete(`${request}/api/price/${item._id}`, {
-        headers: { Authorization: `Bearer ${userInfo.token}` },
-      });
-      toast.success(" Deleted successfully", {
+      dispatch({ type: "DECLINE_REQUEST" });
+      await axios.put(
+        `${request}/api/apply/${item.id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+      toast.success("Declined successfully", {
         position: "bottom-center",
       });
-      dispatch({ type: "DELETE_SUCCESS" });
+      dispatch({ type: "DECLINE_SUCCESS" });
     } catch (err) {
       toast.error(getError(err), { position: "bottom-center" });
-      dispatch({ type: "DELETE_FAIL" });
+      dispatch({ type: "DECLINE_FAIL" });
     }
   };
+
+  //==============
+  //ACCEPT HANDLER
+  //==============
+  const acceptHandler = async (item) => {
+    try {
+      dispatch({ type: "ACCEPT_REQUEST" });
+      await axios.put(
+        `${request}/api/apply/${item.id}/approve`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+      toast.success("Accepted successfully", {
+        position: "bottom-center",
+      });
+      dispatch({ type: "ACCEPT_SUCCESS" });
+    } catch (err) {
+      toast.error(getError(err), { position: "bottom-center" });
+      dispatch({ type: "ACCEPT_FAIL" });
+    }
+  };
+
   console.log(applications);
+
+  const actionColumn = [
+    {
+      field: "action",
+      headerName: "Actions",
+      width: 300,
+      renderCell: (params) => {
+        return (
+          <div className="cellAction c_flex">
+            <Link to={`/admin/application-details/${params.row._id}`}>
+              <div className="viewButton">Details</div>
+            </Link>
+            {params.row.status === true && (
+              <div
+                onClick={() => declineHandler(params.row)}
+                className="decline"
+              >
+                Decline
+              </div>
+            )}
+            {params.row.status === false && (
+              <div
+                onClick={() => acceptHandler(params.row)}
+                className="blockButton"
+              >
+                Accept
+              </div>
+            )}
+          </div>
+        );
+      },
+    },
+  ];
+
+  const customTranslations = {
+    noRowsLabel: "No applicant found", // Customize the "No Rows" message here
+  };
   return (
-    <div>
-      {loading || successDelete ? (
-        <LoadingBox></LoadingBox>
-      ) : error ? (
-        <MessageBox>{error}</MessageBox>
-      ) : (
-        <>
-          <TableContainer
-            style={{ width: "100%" }}
-            component={Paper}
-            className="table applicants"
-          >
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell className="tableCell">ID</TableCell>
-                  <TableCell className="tableCell">User</TableCell>
-                  <TableCell className="tableCell">Store</TableCell>
-                  <TableCell className="tableCell">Date</TableCell>
-                  <TableCell className="tableCell">Status</TableCell>
-                  <TableCell className="tableCell">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {applications?.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="tableCell">{item._id}</TableCell>
-                    <TableCell className="tableCell">
-                      {item?.user?.firstName} &nbsp; {item?.user?.lastName}
-                    </TableCell>
-                    <TableCell className="tableCell">
-                      {item?.sellerName}
-                    </TableCell>
-                    <TableCell className="tableCell">
-                      <ReactTimeAgo
-                        date={Date.parse(item.createdAt)}
-                        locale="en-US"
-                      />
-                    </TableCell>
-                    <TableCell className="tableCell">
-                      {" "}
-                      {item?.status === true &&
-                      item?.user?.isSeller === true ? (
-                        <Button type="Approved" />
-                      ) : item.status === true &&
-                        item?.user?.isSeller === false ? (
-                        <Button type=" Pending" />
-                      ) : (
-                        item.status === false && <Button type="Passive" />
-                      )}
-                    </TableCell>
-                    <TableCell className="tableCell">
-                      <Link to={`/admin/apply-details/${item._id}`}>
-                        <button className="tableBtn">Details</button>
-                      </Link>
-                      <button className="deleteButton declined">Decline</button>
-                      <button
-                        onClick={() => deleteHandler(item)}
-                        className="deleteButton"
-                      >
-                        Delete
-                      </button>{" "}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-      )}
-    </div>
+    <>
+      <Helmet>
+        <title>All Applicants</title>
+      </Helmet>
+      <div className="applicants">
+        <div className="datatable mtb">
+          <span className="c_flex">
+            <h2>All Applicants</h2>
+          </span>
+          {loading ? (
+            <LoadingBox></LoadingBox>
+          ) : error ? (
+            <MessageBox>{error}</MessageBox>
+          ) : (
+            <DataGrid
+              className="datagrid"
+              rows={applications}
+              localeText={customTranslations}
+              getRowId={(row) => row._id}
+              columns={columns.concat(actionColumn)}
+              autoPageSize
+              rowsPerPageOptions={[8]}
+            />
+          )}
+        </div>
+      </div>
+    </>
   );
 }
 

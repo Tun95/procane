@@ -272,9 +272,7 @@ function User() {
                                     <h4>{user?.country}</h4>
                                   </div>
                                   <div className="user_detail_list">
-                                    {user?.apply[0]?.status && (
-                                      <label>Application Status:</label>
-                                    )}
+                                    <label>Application Status:</label>
                                     {user?.apply[0]?.status === false ? (
                                       <span className="unverified_account a_flex">
                                         declined

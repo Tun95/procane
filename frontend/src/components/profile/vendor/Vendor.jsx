@@ -354,7 +354,7 @@ function Vendor() {
                                           />
                                           <label htmlFor="sellerlogo">
                                             <PublishIcon
-                                              className="userUpdateIcon upload-btn"
+                                              className="userUpdateIcon upload_vendor upload-btn"
                                               onChange={uploadSellerFileHandler}
                                             />
                                           </label>

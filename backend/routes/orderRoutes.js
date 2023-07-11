@@ -138,7 +138,6 @@ orderRouter.post(
 //   })
 // );
 
-
 //ADMIN ORDER LIST
 const PAGE_SIZE = 15;
 orderRouter.get(
@@ -369,7 +368,7 @@ orderRouter.get(
 );
 
 //FETCH ALL INDIV. ORDER
-const USER_PAGE_SIZE = 25;
+const USER_PAGE_SIZE = 15;
 orderRouter.get(
   "/mine",
   isAuth,
@@ -381,7 +380,7 @@ orderRouter.get(
       .sort("-createdAt")
       .skip(pageSize * (page - 1))
       .limit(pageSize);
-    const countOrders = await Order.countDocuments({ user: req.user.id });
+    const countOrders = await Order.countDocuments({ user: req.user._id });
     res.send({
       orders,
       countOrders,

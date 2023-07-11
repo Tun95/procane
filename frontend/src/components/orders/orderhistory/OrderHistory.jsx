@@ -54,6 +54,7 @@ function OrderHistory() {
   const [{ loading, error, orders, pages }, dispatch] = useReducer(reducer, {
     loading: true,
     error: "",
+    orders: [],
   });
 
   const { search } = useLocation();
@@ -83,7 +84,7 @@ function OrderHistory() {
     }
     fetchData();
   }, [userInfo, navigate, page]);
-
+  console.log(orders);
   return (
     <div className="order-table">
       <h2>Order History</h2>

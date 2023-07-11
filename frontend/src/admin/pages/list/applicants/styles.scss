@@ -1,7 +1,27 @@
 .applicants {
-  .declined {
+  .decline {
     color: rgb(218, 38, 32);
     background-color: rgba(189, 25, 3, 0.212);
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .approved {
+    color: green;
+    background-color: rgba(0, 128, 0, 0.151);
+    padding: 5px;
+    border-radius: 5px;
+  }
+  .pending {
+    color: goldenrod;
+    background-color: rgba(189, 189, 3, 0.103);
+    padding: 5px;
+    border-radius: 5px;
+  }
+  .declined {
+    color: red;
+    background-color: rgba(255, 0, 0, 0.2);
     padding: 5px;
     border-radius: 5px;
   }
