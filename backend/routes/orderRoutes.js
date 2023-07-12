@@ -1238,8 +1238,8 @@ orderRouter.put(
         <td align="center">${item.quantity}</td>
         <td align="right">${
           order.currencySign === "USD"
-            ? `$${item.price.toFixed(2)}`
-            : convertedCurrencySign + convertedPrice
+            ? `$${order.itemsPrice.toFixed(2)}`
+            : convertedCurrencySign + convertedItemsPrice.toFixed(2)
         }</td>
       </tr>
     `;
