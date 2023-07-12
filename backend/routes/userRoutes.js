@@ -55,7 +55,9 @@ userRouter.get(
   })
 );
 
+//==========================
 // ADMIN USER INFO FETCHING
+//==========================
 userRouter.get(
   "/:id",
   expressAsyncHandler(async (req, res) => {
@@ -102,7 +104,9 @@ userRouter.get(
   })
 );
 
+//====================
 // USER INFO FETCHING
+//====================
 userRouter.get(
   "/info/:id",
   expressAsyncHandler(async (req, res) => {

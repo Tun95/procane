@@ -30,7 +30,6 @@ applicationRoutes.post(
   })
 );
 
-
 //=========
 //FETCH ALL
 //=========
@@ -47,6 +46,15 @@ applicationRoutes.get(
     } catch (error) {
       res.status(500).send({ message: "Fail to fetch all applications" });
     }
+  })
+);
+
+applicationRoutes.get(
+  "/:id",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const {id} = req.params
   })
 );
 
@@ -99,6 +107,5 @@ applicationRoutes.put(
     }
   })
 );
-
 
 export default applicationRoutes;

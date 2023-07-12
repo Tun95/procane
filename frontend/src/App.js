@@ -82,6 +82,7 @@ import Settings from "./admin/pages/single/settings/Settings";
 import procane from "../src/assets/procanes.png";
 import VendorScreen from "./screens/formscreens/vendorscreen/VendorScreen";
 import Success from "./screens/formscreens/vendorscreen/Succes";
+import Application from "./admin/pages/single/application detail/Application";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -187,14 +188,7 @@ function App() {
               </ProtectedRoute>
             }
           ></Route>
-          <Route
-            path="/application-success"
-            element={
-              <ProtectedRoute>
-                <Success />
-              </ProtectedRoute>
-            }
-          ></Route>
+
           {/* VALIDATION */}
 
           {/* CHECKOUT */}
@@ -411,6 +405,14 @@ function App() {
             element={
               <AdminRoute>
                 <Settings />
+              </AdminRoute>
+            }
+          ></Route>
+          <Route
+            path="/admin/application-details/:id"
+            element={
+              <AdminRoute>
+                <Application />
               </AdminRoute>
             }
           ></Route>
