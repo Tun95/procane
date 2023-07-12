@@ -49,12 +49,21 @@ applicationRoutes.get(
   })
 );
 
+//=============
+// FETCH SINGLE
+//=============
 applicationRoutes.get(
   "/:id",
   isAuth,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
-    const {id} = req.params
+    const { id } = req.params;
+    try {
+      const application = await Apply.findById(id).populate("user");
+      res.send(application);
+    } catch (error) {
+      res.status(500).send({ message: "Internal server error" });
+    }
   })
 );
 
