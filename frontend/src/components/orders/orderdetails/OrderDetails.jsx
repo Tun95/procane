@@ -74,7 +74,7 @@ function OrderDetails() {
     if (!userInfo) {
       return navigate("/signin");
     }
-    // if (!order._id || successDeliver || (order._id && order._id !== orderId)) {
+
     if (successDeliver) {
       dispatch({ type: "DELIVER_RESET" });
     }
