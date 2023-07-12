@@ -44,7 +44,7 @@ function OrderDetails() {
   const { state, convertCurrency } = useContext(Context);
   const { userInfo, settings } = state;
 
- const webname = (settings && settings.map((s) => s.webname)) || [];
+  const webname = (settings && settings.map((s) => s.webname)) || [];
 
   const params = useParams();
   const { id: orderId } = params;
@@ -358,10 +358,11 @@ function OrderDetails() {
                                             {item.discount ? (
                                               <div className="cart-price">
                                                 {convertCurrency(
-                                                  item.price -
+                                                  (item.price -
                                                     (item.price *
                                                       item.discount) /
-                                                      100
+                                                      100) *
+                                                    item.quantity
                                                 )}
                                               </div>
                                             ) : (

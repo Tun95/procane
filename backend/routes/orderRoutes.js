@@ -260,7 +260,6 @@ orderRouter.get(
     res.send({ users, orders, income, dailyOrders, salePerformance });
   })
 );
-
 orderRouter.get(
   "/order_summary",
   // isAuth,
@@ -1187,12 +1186,6 @@ orderRouter.put(
             order.currencySign,
             toCurrency
           );
-          const currencySignMapping = {
-            NGN: "₦",
-            EUR: "€",
-            GBP: "£",
-            INR: "₹",
-          };
           const formattedPrice = new Intl.NumberFormat("en", {
             style: "currency",
             currency: toCurrency,
