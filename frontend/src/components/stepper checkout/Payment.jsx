@@ -70,12 +70,13 @@ function Payment(props) {
     settings,
     cart: { cartItems, paymentMethod },
   } = state;
-  const { razorkeyid, paytmid } =
+  const { razorkeyid, paytmid, paystackkey } =
     (settings &&
       settings
         .map((s) => ({
           razorkeyid: s.razorkeyid,
           paytmid: s.paytmid,
+          paystackkey: s.paystackkey,
         }))
         .find(() => true)) ||
     {};
@@ -317,7 +318,7 @@ function Payment(props) {
     email: userInfo.email,
     amount: payStackGrandTotal * 100, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
     currency: toCurrency,
-    publicKey: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,
+    publicKey: paystackkey,
   };
   // you can call this function anything
   const handlePaystackSuccessAction = async (details) => {

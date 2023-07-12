@@ -66,6 +66,7 @@ function Settings() {
   const [razorsecret, setRazorSecret] = useState();
   const [paytmid, setPaytmId] = useState("");
   const [paytmkey, setPaytmKey] = useState("");
+  const [paystackkey, setPayStackKey] = useState("");
   const [exhangerate, setExhangeRate] = useState("");
   const [tax, setTax] = useState("");
   const [express, setExpress] = useState("");
@@ -104,6 +105,7 @@ function Settings() {
         setRazorSecret(data.razorsecret);
         setPaytmId(data.paytmid);
         setPaytmKey(data.paytmkey);
+        setPayStackKey(data.paystackkey);
         setExhangeRate(data.exhangerate);
         setTax(data.tax);
         setExpress(data.express);
@@ -154,6 +156,7 @@ function Settings() {
           razorsecret,
           paytmid,
           paytmkey,
+          paystackkey,
           exhangerate,
           tax,
           express,
@@ -407,12 +410,21 @@ function Settings() {
                             </span>
                           </div>
                           <div className="lower_group">
+                            <small>PayStack API key:</small>
+                            <input
+                              value={paystackkey}
+                              onChange={(e) => setPayStackKey(e.target.value)}
+                              type="text"
+                              placeholder="api key"
+                            />
+                          </div>
+                          <div className="lower_group">
                             <small>Exhange Rate API key:</small>
                             <input
                               value={exhangerate}
                               onChange={(e) => setExhangeRate(e.target.value)}
                               type="text"
-                              placeholder="shipping e.g 20"
+                              placeholder="api key"
                             />
                           </div>
                           <div className="lower_group">

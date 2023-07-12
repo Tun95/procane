@@ -130,6 +130,10 @@ const settingsSchema = new mongoose.Schema(
       default:
         "sk_test_51LddZCG74SnLVBhQgEpJEtwmrZun228Px4rYGTLUZ1xC81NzN2TP2svtDGXT3UPaYcEy8jtfj6X6k5EbzcEROpFu00eKwTYye4",
     },
+    paystackkey: {
+      type: String,
+      default: "pk_test_ef13bcd8c41beba368902728447ba2b4f79a3287",
+    },
 
     user: {
       type: mongoose.Schema.Types.ObjectId,
