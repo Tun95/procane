@@ -80,7 +80,7 @@ function RegisterScreen() {
 
   //==================================
   //REGISTER AND VERIFICATION HANDLER
-  //===================================
+  //==================================
   const handleSubmit = async (values, actions) => {
     try {
       const { data } = await axios.post(`${request}/api/users/signup`, {
