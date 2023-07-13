@@ -18,6 +18,10 @@
 
 // ======
 .cart-items {
+  // .third_qty {
+  //   position: relative;
+  //   left: 40px;
+  // }
   .first-row {
     display: flex;
     align-items: center;
@@ -66,7 +70,9 @@
     font-size: 13px;
     color: var(--color-light-gray);
   }
-
+  .third-row {
+    margin-left: -20px;
+  }
   .third-row button {
     width: 15px;
     font-size: 25px;

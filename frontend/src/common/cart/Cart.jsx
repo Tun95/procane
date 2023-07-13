@@ -88,7 +88,9 @@ function Cart() {
                         Item Discription
                       </TableCell>
                       <TableCell className="tableCell">Size</TableCell>
-                      <TableCell className="tableCell">Quantity</TableCell>
+                      <TableCell className="tableCell third_qty">
+                        Quantity
+                      </TableCell>
                       <TableCell className="tableCell">Price</TableCell>
                     </TableRow>
                   </TableHead>
