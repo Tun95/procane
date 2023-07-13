@@ -288,15 +288,15 @@ function RegisterScreen() {
         <div>
 
           {/* Google sign-up button */}
-          <GoogleLogin
+          {/* <GoogleLogin
             //clientId="408401850346-97mfn7e1q7f698pn7in837hha576nleb.apps.googleusercontent.com"
             onSuccess={handleGoogleSignUp}
             onFailure={(error) => console.log("Google sign-up failed", error)}
             buttonText="Sign up with Google"
-          />
+          /> */}
 
           {/* Facebook sign-up button */}
-          <FacebookLogin
+          {/* <FacebookLogin
             appId="6222862251176447"
             callback={handleFacebookSignUp}
             onFailure={(error) => console.log("Facebook sign-up failed", error)}
@@ -308,7 +308,7 @@ function RegisterScreen() {
                 Sign up with Facebook
               </button>
             )}
-          />
+          /> */}
           <div className="form-lower-text">
             <p>Already a member?</p>
             <span>
