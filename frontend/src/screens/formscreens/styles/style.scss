@@ -96,14 +96,27 @@
         border-radius: 10px;
         cursor: pointer;
       }
-      .form-lower-text {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 20px;
+    }
+    .or {
+      color: var(--color-gray);
+    }
+    .or::after,
+    .or::before {
+      content: "";
+      height: 1px;
+      width: 50px;
+      background-color: var(--color-light-gray);
+      color: var(--color-gray);
+      margin: 0px 8px;
+    }
 
-        a {
-          color: var(--color-primary);
-        }
+    .form-lower-text {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+
+      a {
+        color: var(--color-primary);
       }
     }
   }

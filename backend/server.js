@@ -23,6 +23,7 @@ import bannerRoutes from "./routes/bannerRoutes.js";
 import colorRoutes from "./routes/colorRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
+import passport from "passport";
 
 dotenv.config();
 
@@ -37,6 +38,9 @@ mongoose
   });
 
 const app = express();
+
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));

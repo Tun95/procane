@@ -12,6 +12,8 @@ import axios from "axios";
 import { getError } from "../../../components/utilities/util/Utils";
 import { toast } from "react-toastify";
 import { request } from "../../../base url/BaseUrl";
+import { GoogleLogin } from "@react-oauth/google";
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -76,56 +78,6 @@ function RegisterScreen() {
     }
   };
 
-  // //==========
-  // //REGISTER
-  // //==========
-  // const handleSubmit = async (values, actions) => {
-  //   try {
-  //     const { data } = await axios.post(`${request}/api/users/signup`, {
-  //       firstName: values.firstName,
-  //       lastName: values.lastName,
-  //       email: values.email,
-  //       password: values.password,
-  //     });
-  //     console.log(data);
-  //     ctxDispatch({ type: "USER_SIGNIN", payload: data });
-  //     localStorage.setItem("userInfo", JSON.stringify(data));
-  //     navigate(redirect || "/");
-  //     toast.success("Sign up successfully", { position: "bottom-center" });
-  //   } catch (err) {
-  //     toast.error(getError(err), {
-  //       position: "bottom-center",
-  //       limit: 1,
-  //     });
-  //   }
-  //   setTimeout(() => {
-  //     actions.resetForm();
-  //   }, 1000);
-  // };
-
-  // //=================
-  // //VERIFICATION HANDLER
-  // //=================
-  // const verificationHandler = async () => {
-  //   // dispatch({ type: "CREATE_REQUEST" });
-  //   try {
-  //     const { data } = await axios.post(
-  //       `${request}/api/users/verification-token`,
-  //       {},
-  //       {
-  //         headers: { authorization: `Bearer ${userInfo.token}` },
-  //       }
-  //     );
-  //     dispatch({ type: "CREATE_SUCCESS" });
-  //     toast.success("Verification email sent successfully ", {
-  //       position: "bottom-center",
-  //     });
-  //   } catch (err) {
-  //     dispatch({ type: "CREATE_FAIL" });
-  //     toast.error(getError(err), { position: "bottom-center" });
-  //   }
-  // };
-
   //==================================
   //REGISTER AND VERIFICATION HANDLER
   //===================================
@@ -157,6 +109,34 @@ function RegisterScreen() {
     setTimeout(() => {
       actions.resetForm();
     }, 1000);
+  };
+
+  //====================
+  // REGISTER WITH GOOGLE
+  //====================
+  const handleGoogleSignUp = async () => {
+    try {
+      const { data } = await axios.get(`${request}/api/users/auth/google`);
+      // Redirect the user to the provided URL for Google sign-up
+      window.location.href = data.redirectUrl;
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+  };
+
+  //======================
+  // REGISTER WITH FACEBOOK
+  //======================
+  const handleFacebookSignUp = async () => {
+    try {
+      const { data } = await axios.get(`${request}/api/users/auth/facebook`);
+      // Redirect the user to the provided URL for Facebook sign-up
+      window.location.href = data.redirectUrl;
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -300,16 +280,42 @@ function RegisterScreen() {
                     Register
                   </button>
                 </div>
-                <div className="form-lower-text">
-                  <p>Already a member?</p>
-                  <span>
-                    <Link to="/login">Login</Link>
-                  </span>
-                </div>
               </div>
             </Form>
           )}
         </Formik>
+        <span className="l_flex or">OR</span>
+        <div>
+
+          {/* Google sign-up button */}
+          <GoogleLogin
+            //clientId="408401850346-97mfn7e1q7f698pn7in837hha576nleb.apps.googleusercontent.com"
+            onSuccess={handleGoogleSignUp}
+            onFailure={(error) => console.log("Google sign-up failed", error)}
+            buttonText="Sign up with Google"
+          />
+
+          {/* Facebook sign-up button */}
+          <FacebookLogin
+            appId="6222862251176447"
+            callback={handleFacebookSignUp}
+            onFailure={(error) => console.log("Facebook sign-up failed", error)}
+            render={(renderProps) => (
+              <button
+                onClick={renderProps.onClick}
+                className="facebook-login-button mt"
+              >
+                Sign up with Facebook
+              </button>
+            )}
+          />
+          <div className="form-lower-text">
+            <p>Already a member?</p>
+            <span>
+              <Link to="/login">Login</Link>
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );

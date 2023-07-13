@@ -9,38 +9,97 @@ import mongoose from "mongoose";
 import Order from "../models/orderModels.js";
 import moment from "moment";
 
+import passport from "./passport.js";
+
 const userRouter = express.Router();
+userRouter.use(passport.initialize());
 
-// userRouter.get(
-//   "/:userId/orders/summary",
-//   // isAuth middleware to ensure user is authenticated
-//   // isSellerOrAdmin middleware to check if the user is a seller or admin
-//   expressAsyncHandler(async (req, res) => {
-//     const { userId } = req.params;
+//USER SIGNIN
+userRouter.post(
+  "/signin",
+  expressAsyncHandler(async (req, res) => {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      res.status(401).send({ message: "Invalid email or password" });
+      return;
+    }
+    if (user.isBlocked === true) {
+      throw new Error("😲It appears this account has been blocked by Admin");
+    }
+    if (bcrypt.compareSync(req.body.password, user.password)) {
+      res.send({
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        image: user.image,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        isSeller: user.isSeller,
+        isBlocked: user.isBlocked,
+        isAccountVerified: user.isAccountVerified,
+        token: generateToken(user),
+      });
+      return;
+    }
+    res.status(401).send({ message: "Invalid email or password" });
+  })
+);
 
-//     const dailyOrders = await User.aggregate([
-//       // Match the user based on the provided userId
-//       { $match: { _id: mongoose.Types.ObjectId(userId) } },
-//       // Unwind the order array to flatten it
-//       { $unwind: "$order" },
-//       // Group by the order's createdAt date and calculate the total grandTotal for each day
-//       {
-//         $group: {
-//           _id: {
-//             $dateToString: { format: "%Y-%m-%d", date: "$order.createdAt" },
-//           },
-//           totalGrandTotal: { $sum: "$order.grandTotal" },
-//         },
-//       },
-//       // Sort the results by date in descending order
-//       { $sort: { _id: -1 } },
-//       // Limit the results to the last 10 days
-//       { $limit: 10 },
-//     ]);
+//===========
+//USER SIGNUP
+//===========
+userRouter.post(
+  "/signup",
+  expressAsyncHandler(async (req, res) => {
+    const userExists = await User.findOne({ email: req.body?.email });
+    if (userExists) {
+      throw new Error("User already exist");
+    }
+    const newUser = new User({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password),
+    });
+    const user = await newUser.save();
+    res.send({
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      image: user.image,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      isSeller: user.isSeller,
+      isBlocked: user.isBlocked,
+      isAccountVerified: user.isAccountVerified,
+      token: generateToken(user),
+    });
+  })
+);
+userRouter.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
-//     res.send({ dailyOrders });
-//   })
-// );
+userRouter.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    // Redirect or handle successful authentication
+    res.redirect("/"); // Example: Redirect to the homepage
+  }
+);
+
+userRouter.get("/auth/facebook", passport.authenticate("facebook"));
+
+userRouter.get(
+  "/auth/facebook/callback",
+  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  (req, res) => {
+    // Redirect or handle successful authentication
+    res.redirect("/"); // Example: Redirect to the homepage
+  }
+);
 
 //TOP SELLERS
 userRouter.get(
@@ -219,66 +278,6 @@ userRouter.get(
     } else {
       res.status(404).json({ message: "User not found" });
     }
-  })
-);
-
-//USER SIGNIN
-userRouter.post(
-  "/signin",
-  expressAsyncHandler(async (req, res) => {
-    const user = await User.findOne({ email: req.body.email });
-    // if (user.isBlocked === true) {
-    //   throw new Error("😲It appears this account have been blocked by Admin");
-    // }
-    if (user) {
-      if (bcrypt.compareSync(req.body.password, user.password)) {
-        res.send({
-          _id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          image: user.image,
-          email: user.email,
-          isAdmin: user.isAdmin,
-          isSeller: user.isSeller,
-          isBlocked: user.isBlocked,
-          isAccountVerified: user.isAccountVerified,
-          token: generateToken(user),
-        });
-
-        return;
-      }
-    }
-    res.status(401).send({ message: "Invalid email or password" });
-  })
-);
-
-//USER SIGNUP
-userRouter.post(
-  "/signup",
-  expressAsyncHandler(async (req, res) => {
-    const userExists = await User.findOne({ email: req.body?.email });
-    if (userExists) {
-      throw new Error("User already exist");
-    }
-    const newUser = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password),
-    });
-    const user = await newUser.save();
-    res.send({
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      image: user.image,
-      email: user.email,
-      isAdmin: user.isAdmin,
-      isSeller: user.isSeller,
-      isBlocked: user.isBlocked,
-      isAccountVerified: user.isAccountVerified,
-      token: generateToken(user),
-    });
   })
 );
 
