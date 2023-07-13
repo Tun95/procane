@@ -12,20 +12,35 @@
   }
   .container {
     width: 50%;
+    .content {
+      width: 100%;
+      margin-right: 20px;
+    }
+    .error {
+      color: var(--color-primary);
+      font-size: 12px;
+    }
 
     .search-box {
       width: 100%;
-      margin-right: 10px;
+      margin-right: 0px;
       position: relative;
       right: 0px;
       .email_box {
-        margin-left: 5px;
-        color: var(--color-gray);
-      }
-      .search_filter {
-        background: transparent;
         margin-left: 8px;
       }
+      input {
+        background: transparent;
+        width: 90%;
+        
+      }
+    }
+    .search-box.input-error {
+      border-color: var(--color-primary);
+      width: 100%;
+    }
+    .email_box.input-error {
+      color: var(--color-primary);
     }
     .btn {
       button {

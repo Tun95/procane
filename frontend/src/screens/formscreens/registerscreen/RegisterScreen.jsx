@@ -284,9 +284,8 @@ function RegisterScreen() {
             </Form>
           )}
         </Formik>
-        <span className="l_flex or">OR</span>
+        {/* <span className="l_flex or">OR</span> */}
         <div>
-
           {/* Google sign-up button */}
           {/* <GoogleLogin
             //clientId="408401850346-97mfn7e1q7f698pn7in837hha576nleb.apps.googleusercontent.com"

@@ -82,7 +82,7 @@ userRouter.get(
 );
 
 userRouter.get(
-  "/auth/google/callback",
+  "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
     // Redirect or handle successful authentication

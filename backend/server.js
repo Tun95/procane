@@ -24,6 +24,7 @@ import colorRoutes from "./routes/colorRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
 import passport from "passport";
+import session from "express-session";
 
 dotenv.config();
 
@@ -39,12 +40,22 @@ mongoose
 
 const app = express();
 
-// app.use(passport.initialize());
-// app.use(passport.session());
-
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
+
+//Cookies section
+app.use(
+  session({
+    secret: "somethingsecretgoeshere",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // Set secure to false for local development
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(
   cors({
