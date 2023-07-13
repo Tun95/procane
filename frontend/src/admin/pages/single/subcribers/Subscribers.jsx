@@ -213,7 +213,7 @@ function Subscribers() {
             </div>
           </div>
           <div className="product">
-            <div className="subscribe_box">
+            <div className="">
               <h2>Send New Letter</h2>
               <form action="" className="settingsForm" onSubmit={submitHandler}>
                 <div className="settingsItem">
@@ -240,11 +240,16 @@ function Subscribers() {
                     <button className="sendButton setting-create">Send</button>
                   </div>
                 </div>
+                
               </form>
+              
             </div>
+            
           </div>
+          
         </>
       )}
+      
     </div>
   );
 }
