@@ -5,6 +5,7 @@ import {
   RegionDropdown,
   CountryRegionData,
 } from "react-country-region-selector";
+import countryLookup from "country-code-lookup";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import { useNavigate } from "react-router-dom";
@@ -34,12 +35,24 @@ function ShippingAddress() {
   const [country, setCountry] = useState(shippingAddress.country || "");
   const [zipCode, setZipCode] = useState(shippingAddress.zipCode || "");
   const [shipping, setShipping] = useState("");
+  const [countryCode, setCountryCode] = useState(
+    shippingAddress.countryCode || ""
+  );
 
   useEffect(() => {
     if (!userInfo || cartItems.length === 0) {
       navigate("/login?redirect=/store");
     }
   }, [navigate, userInfo, cartItems]);
+
+  const handleCountryChange = (val) => {
+    setCountry(val);
+    const countryData = countryLookup.byCountry(val);
+    if (countryData) {
+      setCountryCode(countryData.iso2);
+    }
+  };
+  console.log(countryCode);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -68,6 +81,7 @@ function ShippingAddress() {
           country,
           zipCode,
           shipping,
+          countryCode,
         },
       });
       localStorage.setItem(
@@ -82,6 +96,7 @@ function ShippingAddress() {
           country,
           zipCode,
           shipping,
+          countryCode,
         })
       );
       navigate("/confirmation?redirect");
@@ -233,9 +248,14 @@ function ShippingAddress() {
               </div>
               <div className="form-group">
                 <label htmlFor="country">Country:</label>
-                <CountryDropdown
+                {/* <CountryDropdown
                   value={country}
                   onChange={(val) => setCountry(val)}
+                  className="select_styles"
+                /> */}
+                <CountryDropdown
+                  value={country}
+                  onChange={handleCountryChange}
                   className="select_styles"
                 />
               </div>

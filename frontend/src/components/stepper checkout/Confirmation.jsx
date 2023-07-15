@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -41,14 +41,73 @@ function Confirmation(props) {
     cart: { cartItems, shippingAddress },
   } = state;
 
-  const { express, expressCharges, standardCharges, tax } =
+  console.log(shippingAddress);
+
+  const [tax, setTax] = useState(0);
+  useEffect(() => {
+    const fetchTaxRate = async () => {
+      try {
+        const { data } = await axios.get(
+          `https://api.apilayer.com/tax_data/tax_rates?country=${shippingAddress.countryCode}&zip=${shippingAddress.zipCode}`,
+          {
+            headers: {
+              apikey: "mR5BEoNR5z6Mj7vLzCW1UN7rtIeSYGY1", // Replace with your actual API key
+            },
+          }
+        );
+        console.log("Response Data:", data);
+        const taxRate = data.standard_rate.rate;
+        setTax(taxRate);
+        console.log("Tax Rate:", taxRate);
+      } catch (error) {
+        console.log("Error fetching tax rate data:", error);
+      }
+    };
+    fetchTaxRate();
+  }, [shippingAddress.countryCode, shippingAddress.zipCode]);
+  console.log(tax);
+  // const [tax, setTax] = useState(0);
+  // useEffect(() => {
+  //   const fetchTaxRate = async () => {
+  //     try {
+  //       const taxamoOptions = {
+  //         method: "POST",
+  //         headers: {
+  //           accept: "application/json",
+  //           "content-type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           country_code: shippingAddress.countryCode,
+  //           zip: shippingAddress.zipCode,
+  //         }),
+  //       };
+
+  //       const taxamoResponse = await fetch(
+  //         "https://services.taxamo.com/api/v2/tax/calculate",
+  //         taxamoOptions
+  //       );
+  //       const taxamoData = await taxamoResponse.json();
+
+  //       console.log("Response Data:", taxamoData);
+  //       const taxRate = taxamoData.total_rate;
+  //       setTax(taxRate);
+  //       console.log("Tax Rate:", taxRate);
+  //     } catch (error) {
+  //       console.log("Error fetching tax rate data:", error);
+  //     }
+  //   };
+
+  //   fetchTaxRate();
+  // }, [shippingAddress.countryCode, shippingAddress.zipCode]);
+  // console.log(tax);
+
+  const { express, expressCharges, standardCharges } =
     (settings &&
       settings
         .map((s) => ({
           express: s.express,
           expressCharges: s.expressCharges,
           standardCharges: s.standardCharges,
-          tax: s.tax,
         }))
         .find((props) => !isNaN(props.expressCharges))) ||
     {};
@@ -65,7 +124,6 @@ function Confirmation(props) {
     Number(taxPrice) +
     Number(shippingPrice)
   ).toFixed(0);
-  console.log(grandTotal);
 
   useEffect(() => {
     if (!shippingAddress.address || cartItems.length === 0) {
@@ -81,6 +139,7 @@ function Confirmation(props) {
     order: {},
     error: "",
   });
+
   const placeOrderHandler = async () => {
     dispatch({ type: "CREATE_REQUEST" });
     if (!userInfo.isAccountVerified) {
@@ -94,7 +153,6 @@ function Confirmation(props) {
           {
             orderItems: cartItems,
             shippingAddress,
-            //paymentMethod,
             itemsPrice,
             shippingPrice: shippingPrice,
             taxPrice,

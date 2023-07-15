@@ -1,12 +1,5 @@
 import mongoose from "mongoose";
 
-const wishlistSchema = new mongoose.Schema({
-  checked: { type: Boolean, default: false },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-});
 const reviewSchema = new mongoose.Schema(
   {
     firstName: { type: String, required: true },
@@ -39,11 +32,10 @@ const productSchema = new mongoose.Schema(
     flashdeal: { type: Boolean, default: false },
     images: [String],
     desc: { type: String },
+    weight: { type: Number, default: 0 },
     rating: { type: Number, default: 0 },
     numReviews: { type: Number, default: 0 },
     reviews: [reviewSchema],
-
-    wish: [wishlistSchema],
     numWish: { type: Number, default: 0 },
     user: {
       type: mongoose.Schema.Types.ObjectId,
