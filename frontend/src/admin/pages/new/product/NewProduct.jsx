@@ -47,7 +47,7 @@ function NewProduct() {
   const [price, setPrice] = useState("");
   const [discount, setDiscount] = useState("");
   const [desc, setDesc] = useState("");
-
+  const [weight, setWeight] = useState("");
   const [category, setCategory] = useState([]);
   const [color, setColor] = useState([]);
   const [size, setSize] = useState([]);
@@ -91,6 +91,7 @@ function NewProduct() {
           price,
           discount,
           desc,
+          weight,
           category,
           color,
           size,
@@ -215,6 +216,14 @@ function NewProduct() {
                           value={countInStock}
                           onChange={(e) => setCountInStock(e.target.value)}
                           placeholder="123"
+                        />
+                        <label htmlFor="weight">Weight</label>
+                        <input
+                          type="text"
+                          id="weight"
+                          value={weight}
+                          onChange={(e) => setWeight(e.target.value)}
+                          placeholder="225 in kg"
                         />
                       </div>
                       <div className="productFormLeft productFormLeft-Two">

@@ -247,6 +247,7 @@
         width: 80%;
       }
       /* PAYPAL-DETAILS */
+
       /* PAYSTACK */
       .paypal-stripe .paystack_btn {
         position: relative;
@@ -266,6 +267,12 @@
       }
       /* PAYSTACK */
       .cash_btn_style {
+        .stripe_btn {
+          width: 100%;
+          .cash_btn {
+            width: 200px;
+          }
+        }
         .cash_btn {
           width: 45%;
           height: 45px;

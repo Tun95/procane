@@ -121,20 +121,32 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: "frogiro89f409r099rofhepko",
     },
+    payUPub: {
+      type: String,
+      default: "6cd530c6-f2d3-41ab-b1f2-8d56418ac919",
+    },
+    payUPriv: {
+      type: String,
+      default: "584af1fe-ad9c-4ae3-b18f-da86b3933c7d",
+    },
     exhangerate: {
       type: String,
       default: "10270e08382c90d68a845cdd",
     },
-    stripe: {
+    stripeApiKey: {
       type: String,
       default:
         "sk_test_51LddZCG74SnLVBhQgEpJEtwmrZun228Px4rYGTLUZ1xC81NzN2TP2svtDGXT3UPaYcEy8jtfj6X6k5EbzcEROpFu00eKwTYye4",
+    },
+    stripePubKey: {
+      type: String,
+      default:
+        "pk_test_51LddZCG74SnLVBhQAzsedUUcKxd33HOpAIThNyxKl2l4mxvCj8uywmQFZHNq5EmiIn6jNrAVGrBqT1tWHprcD3XF00xOSuchsE",
     },
     paystackkey: {
       type: String,
       default: "pk_test_ef13bcd8c41beba368902728447ba2b4f79a3287",
     },
-
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

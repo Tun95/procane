@@ -33,6 +33,7 @@
     "passport-google-oauth": "^2.0.0",
     "passport-google-oauth20": "^2.0.0",
     "razorpay": "^2.9.0",
+    "shippo": "^1.7.1",
     "socket.io": "^4.5.2",
     "streamifier": "^0.1.1",
     "stripe": "^10.17.0"

@@ -70,13 +70,15 @@ function Payment(props) {
     settings,
     cart: { cartItems, paymentMethod },
   } = state;
-  const { razorkeyid, paytmid, paystackkey } =
+  const { razorkeyid, paytmid, stripePubKey, paystackkey, webname } =
     (settings &&
       settings
         .map((s) => ({
           razorkeyid: s.razorkeyid,
           paytmid: s.paytmid,
+          stripePubKey: s.stripePubKey,
           paystackkey: s.paystackkey,
+          webname: s.webname,
         }))
         .find(() => true)) ||
     {};
@@ -357,6 +359,7 @@ function Payment(props) {
     onSuccess: (reference) => handlePaystackSuccessAction(reference),
     onClose: handlePaystackCloseAction,
   };
+
   //============
   // CASH METHOD
   //============
@@ -563,71 +566,37 @@ function Payment(props) {
   //=============
   //STRIPE METHOD
   //=============
-  // const [amount, setAmount] = useState("");
-  //  const [currency, setCurrency] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvc, setCvc] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  // const handleStripePayment = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await axios.post(
-  //       `${request}/api/orders/payment`,
-  //       {
-  //         amount: order.grandTotal,
-  //         currency: currency,
-  //         token: {
-  //           id: "pk_test_51LddZCG74SnLVBhQAzsedUUcKxd33HOpAIThNyxKl2l4mxvCj8uywmQFZHNq5EmiIn6jNrAVGrBqT1tWHprcD3XF00xOSuchsE",
-  //           card: {
-  //             number: cardNumber,
-  //             exp_month: expiry.split("/")[0],
-  //             exp_year: expiry.split("/")[1],
-  //             cvc: cvc,
-  //           },
-  //         },
-  //         orderId: orderId, // Pass the actual order ID here
-  //       },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer sk_test_51LddZCG74SnLVBhQgEpJEtwmrZun228Px4rYGTLUZ1xC81NzN2TP2svtDGXT3UPaYcEy8jtfj6X6k5EbzcEROpFu00eKwTYye4`,
-  //         },
-  //       }
-  //     );
-  //     console.log(response.data);
-  //     setIsLoading(false);
-  //     setErrorMessage("");
-  //   } catch (error) {
-  //     console.error(error);
-  //     setIsLoading(false);
-  //     setErrorMessage("An error occurred while processing the payment");
-  //   }
-  // };
-  const handleToken = async (token) => {
+  const stripePublishableKey = stripePubKey;
+  console.log(stripePubKey);
+  const stripeGrandTotal = Number(convertToNumeric(order.grandTotal));
+  const handleStripeToken = async (token) => {
     try {
-      const response = await axios.post(
-        `${request}/api/orders/payment`,
+      dispatch({ type: "PAY_REQUEST" });
+      const response = await fetch(
+        `${request}/api/orders/${order._id}/stripe`,
         {
-          amount: order.grandTotal * 100, // Amount in cents
-          currency: toCurrency,
-          token: token,
-          orderId: orderId, // Pass the actual order ID here
-        },
-        {
+          method: "POST",
           headers: {
-            Authorization: `Bearer sk_test_51LddZCG74SnLVBhQgEpJEtwmrZun228Px4rYGTLUZ1xC81NzN2TP2svtDGXT3UPaYcEy8jtfj6X6k5EbzcEROpFu00eKwTYye4`,
+            Authorization: `Bearer ${userInfo.token}`,
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            amount: stripeGrandTotal * 100,
+            currency: toCurrency,
+            tokenId: token.id, // Update the token property to tokenId
+            currencySign: toCurrency,
+            paymentMethod: paymentMethodName,
+          }),
         }
       );
-
-      console.log(response.data);
-      // Handle the response or update your UI accordingly
+      dispatch({ type: "PAY_SUCCESS", payload: response });
+      toast.success("Order is paid", { position: "bottom-center" });
+      if (!order.isPaid) {
+        navigate("/finish");
+      }
     } catch (error) {
-      console.error(error);
-      // Handle the error or display an error message
+      dispatch({ type: "PAY_FAIL", payload: getError(error) });
+      toast.error(getError(error), { position: "bottom-center" });
     }
   };
 
@@ -661,6 +630,79 @@ function Payment(props) {
               <div className="choose_method p_flex">
                 <span className="choose_method_box">
                   <div className=" d_grid mtb">
+                    <label
+                      className={
+                        openStripeModal
+                          ? "active payment_label"
+                          : "payment_label"
+                      }
+                      htmlFor="stripe"
+                      onClick={() => {
+                        StripeModal();
+                        selectPaymentMethod(Stripe);
+                      }}
+                    >
+                      <div className="label-svg">
+                        <div className="svg">
+                          <img src={stripe} alt="" />
+                        </div>
+                        <span className="a_flex input_text">
+                          <input
+                            type="radio"
+                            required
+                            name="payment"
+                            id="stripe"
+                            value={Stripe}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                          />
+                          <span>
+                            <strong>
+                              Pay{" "}
+                              {convertCurrency(order.grandTotal?.toFixed(2))}
+                              &#160; with credit card
+                            </strong>
+                          </span>
+                        </span>
+                      </div>
+                    </label>
+                    <label
+                      className={
+                        openPaypalModal
+                          ? "active payment_label "
+                          : "payment_label "
+                      }
+                      htmlFor="paypal"
+                      onClick={() => {
+                        PaypalOrderModal();
+                        selectPaymentMethod(PayPal);
+                      }}
+                    >
+                      <div className="label-svg">
+                        <div className="svg">
+                          <img src={paypal} alt="" />
+                        </div>
+
+                        <span className="a_flex input_text">
+                          <input
+                            type="radio"
+                            required
+                            name="payment"
+                            id="paypal"
+                            checked={openPaypalModal === true}
+                            value={PayPal}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                          />
+                          <span>
+                            <strong>
+                              Pay{" "}
+                              {convertCurrency(order.grandTotal?.toFixed(2)) ||
+                                0}{" "}
+                              with PayPal
+                            </strong>
+                          </span>
+                        </span>
+                      </div>
+                    </label>
                     <label
                       className={
                         openRazorPayModal
@@ -737,86 +779,14 @@ function Payment(props) {
                         </span>
                       </div>
                     </label>
-                    {/* <label
-                      className={
-                        openStripeModal
-                          ? "active payment_label"
-                          : "payment_label"
-                      }
-                      htmlFor="stripe"
-                      onClick={() => {
-                        StripeModal();
-                        selectPaymentMethod(Stripe);
-                      }}
-                    >
-                      <div className="label-svg">
-                        <div className="svg">
-                          <img src={stripe} alt="" />
-                        </div>
-                        <span className="a_flex input_text">
-                          <input
-                            type="radio"
-                            required
-                            name="payment"
-                            id="stripe"
-                            value={Stripe}
-                            onChange={(e) => setPaymentMethod(e.target.value)}
-                          />
-                          <span>
-                            <strong>
-                              Pay{" "}
-                              {convertCurrency(order.grandTotal?.toFixed(2))}
-                              &#160; with credit card
-                            </strong>
-                          </span>
-                        </span>
-                      </div>
-                    </label> */}
-                    <label
-                      className={
-                        openPaypalModal
-                          ? "active payment_label "
-                          : "payment_label "
-                      }
-                      htmlFor="paypal"
-                      onClick={() => {
-                        PaypalOrderModal();
-                        selectPaymentMethod(PayPal);
-                      }}
-                    >
-                      <div className="label-svg">
-                        <div className="svg">
-                          <img src={paypal} alt="" />
-                        </div>
 
-                        <span className="a_flex input_text">
-                          <input
-                            type="radio"
-                            required
-                            name="payment"
-                            id="paypal"
-                            checked={openPaypalModal === true}
-                            value={PayPal}
-                            onChange={(e) => setPaymentMethod(e.target.value)}
-                          />
-                          <span>
-                            <strong>
-                              Pay{" "}
-                              {convertCurrency(order.grandTotal?.toFixed(2)) ||
-                                0}{" "}
-                              with PayPal
-                            </strong>
-                          </span>
-                        </span>
-                      </div>
-                    </label>
                     <label
                       className={
                         openPayStackModal
                           ? "active payment_label"
                           : "payment_label"
                       }
-                      htmlFor="stripe"
+                      htmlFor="paystack"
                       onClick={() => {
                         PayStackOrderModal();
                         selectPaymentMethod(PayStack);
@@ -835,7 +805,7 @@ function Payment(props) {
                             type="radio"
                             required
                             name="payment"
-                            id="stripe"
+                            id="paystack"
                             value={PayStack}
                             onChange={(e) => setPaymentMethod(e.target.value)}
                           />
@@ -892,102 +862,37 @@ function Payment(props) {
                     {!order.isPaid ? (
                       <div>
                         {openStripeModal && (
-                          <div className="stripe-details">
-                            {/* <div className="p-inner-form">
-                              <div className="form-group">
-                                <label htmlFor="card-holder">
-                                  Cardholder's Name
-                                </label>
-                                <div className="payment-input-box">
-                                  <input
-                                    type="text"
-                                    id="name"
-                                    disabled
-                                    placeholder="Name"
-                                  />
-                                  <i className="fa fa-user"></i>
-                                </div>
-                              </div>
-                              <div className="form-group">
-                                <label htmlFor="card-number">Card Number</label>
-                                <div className="payment-input-box">
-                                  <input
-                                    type="tel"
-                                    id="card-number"
-                                    name="card-number"
-                                    disabled
-                                    value={cardNumber}
-                                    onChange={(e) =>
-                                      setCardNumber(e.target.value)
-                                    }
-                                    inputMode="numeric"
-                                    pattern="[\d ]{10,30}"
-                                    // maxLength="16"
-                                    placeholder="**** **** **** ****"
-                                  />
-                                  <i className="fa fa-credit-card"></i>
-                                </div>
-                              </div>
-                              <div className="form-date">
-                                <div className="form-group-d">
-                                  <label htmlFor="card-date">Valid thru.</label>
-                                  <div className="cvc-fa-icon">
-                                    <input
-                                      type="text"
-                                      value={expiry}
-                                      disabled
-                                      onChange={(e) =>
-                                        setExpiry(e.target.value)
-                                      }
-                                      placeholder="MM/YY"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="form-group-d">
-                                  <label htmlFor="card-cvv">CVV / CVC*</label>
-                                  <div className="cvc-fa-icon">
-                                    <input
-                                      type="tel"
-                                      id="cvv"
-                                      disabled
-                                      value={cvc}
-                                      onChange={(e) => setCvc(e.target.value)}
-                                      maxLength="3"
-                                      pattern="[0-9]{3}"
-                                      placeholder="cvv"
-                                    />
-                                    <i className="fa fa-lock" id="passcvv"></i>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="form-group">
-                                <span>
-                                  * CVV or CVC is the card security code, unique
-                                  three digits number on the back of your card
-                                  separate from its number
-                                </span>
-                              </div>
-                              {errorMessage && <p>{errorMessage}</p>}
-                              <div className="stripe_btn">
+                          <>
+                            <StripeCheckout
+                              token={handleStripeToken}
+                              stripeKey={stripePublishableKey}
+                              amount={stripeGrandTotal * 100}
+                              currency={toCurrency}
+                              billingAddress
+                              shippingAddress
+                              name={webname}
+                              description="Order Payment"
+                              panelLabel="Pay Now"
+                              className="stripe_btn"
+                            >
+                              <div className="paypal-details paystack_btn cash_btn_style">
                                 <button
-                                  onClick={handleStripePayment}
-                                  disabled={isLoading}
+                                  className="cash_btn l_flex"
+                                  disabled={loadingPay}
                                 >
-                                  {isLoading ? "Processing..." : "Pay"}
+                                  {loadingPay ? (
+                                    <React.Fragment>
+                                      <LoadingBox></LoadingBox>
+                                    </React.Fragment>
+                                  ) : (
+                                    <React.Fragment>
+                                      <img src={stripe} alt="" />
+                                    </React.Fragment>
+                                  )}
                                 </button>
                               </div>
-                            </div> */}
-                            {/* <StripeCheckout
-                              token={handleToken}
-                              stripeKey="pk_test_51LddZCG74SnLVBhQAzsedUUcKxd33HOpAIThNyxKl2l4mxvCj8uywmQFZHNq5EmiIn6jNrAVGrBqT1tWHprcD3XF00xOSuchsE"
-                              amount={order?.grandTotal * 100} // Amount in cents
-                              currency={currency}
-                              name="My Store"
-                              description="Example Purchase"
-                            >
-                              <button>Pay with Stripe</button>
-                            </StripeCheckout> */}
-                          </div>
+                            </StripeCheckout>
+                          </>
                         )}
                         {openPaypalModal && (
                           <div className="paypal-details">

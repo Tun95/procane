@@ -67,6 +67,10 @@ function Settings() {
   const [paytmid, setPaytmId] = useState("");
   const [paytmkey, setPaytmKey] = useState("");
   const [paystackkey, setPayStackKey] = useState("");
+  const [payUPub, setPayUPub] = useState("");
+  const [payUPriv, setPayUPriv] = useState("");
+  const [stripeApiKey, setstripeApiKey] = useState("");
+  const [stripePubKey, setstripePubKey] = useState("");
   const [exhangerate, setExhangeRate] = useState("");
   const [tax, setTax] = useState("");
   const [express, setExpress] = useState("");
@@ -105,7 +109,11 @@ function Settings() {
         setRazorSecret(data.razorsecret);
         setPaytmId(data.paytmid);
         setPaytmKey(data.paytmkey);
+        setPayUPriv(data.payUPriv);
+        setPayUPub(data.payUPub);
         setPayStackKey(data.paystackkey);
+        setstripeApiKey(data.stripeApiKey);
+        setstripePubKey(data.stripePubKey);
         setExhangeRate(data.exhangerate);
         setTax(data.tax);
         setExpress(data.express);
@@ -156,7 +164,11 @@ function Settings() {
           razorsecret,
           paytmid,
           paytmkey,
+          payUPriv,
+          payUPub,
           paystackkey,
+          stripeApiKey,
+          stripePubKey,
           exhangerate,
           tax,
           express,
@@ -372,41 +384,107 @@ function Settings() {
                         <div>
                           <h4>KEYS:</h4>
                           <div className="lower_group">
-                            <small>RazorPay API ID &amp; Key:</small>
                             <span className="d_flex">
-                              <input
-                                className="sub_input"
-                                value={razorkeyid}
-                                onChange={(e) => setRazorKeyId(e.target.value)}
-                                type="text"
-                                placeholder="RazorPay Id"
-                              />
-                              <input
-                                className="sub_input"
-                                value={razorsecret}
-                                onChange={(e) => setRazorSecret(e.target.value)}
-                                type="text"
-                                placeholder="RazorPay secret key"
-                              />
+                              <span className="flex_row">
+                                <small>RazorPay API Id:</small>
+                                <input
+                                  className="sub_input"
+                                  value={razorkeyid}
+                                  onChange={(e) =>
+                                    setRazorKeyId(e.target.value)
+                                  }
+                                  type="text"
+                                  placeholder="RazorPay Id"
+                                />
+                              </span>
+                              <span className="flex_row">
+                                <small>RazorPay API key:</small>
+                                <input
+                                  className="sub_input"
+                                  value={razorsecret}
+                                  onChange={(e) =>
+                                    setRazorSecret(e.target.value)
+                                  }
+                                  type="text"
+                                  placeholder="RazorPay secret key"
+                                />
+                              </span>
                             </span>
                           </div>
                           <div className="lower_group">
-                            <small>PayTm API Id &amp; Key:</small>
                             <span className="d_flex">
-                              <input
-                                className="sub_input"
-                                value={paytmid}
-                                onChange={(e) => setPaytmId(e.target.value)}
-                                type="text"
-                                placeholder="paytm id"
-                              />
-                              <input
-                                className="sub_input"
-                                value={paytmkey}
-                                onChange={(e) => setPaytmKey(e.target.value)}
-                                type="text"
-                                placeholder="paytm key"
-                              />
+                              <span className="flex_row">
+                                <small>PayTm API Id:</small>
+                                <input
+                                  className="sub_input"
+                                  value={paytmid}
+                                  onChange={(e) => setPaytmId(e.target.value)}
+                                  type="text"
+                                  placeholder="paytm id"
+                                />
+                              </span>
+                              <span className="flex_row">
+                                <small>PayTm API Key:</small>
+                                <input
+                                  className="sub_input"
+                                  value={paytmkey}
+                                  onChange={(e) => setPaytmKey(e.target.value)}
+                                  type="text"
+                                  placeholder="paytm key"
+                                />
+                              </span>
+                            </span>
+                          </div>
+                          <div className="lower_group">
+                            <span className="d_flex">
+                              <span className="flex_row">
+                                <small>PayU Public key:</small>
+                                <input
+                                  className="sub_input"
+                                  value={payUPub}
+                                  onChange={(e) => setPayUPub(e.target.value)}
+                                  type="text"
+                                  placeholder="payU key"
+                                />
+                              </span>
+                              <span className="flex_row">
+                                <small>PayU Privite Key:</small>
+                                <input
+                                  className="sub_input"
+                                  value={payUPriv}
+                                  onChange={(e) => setPayUPriv(e.target.value)}
+                                  type="text"
+                                  placeholder="payU key"
+                                />
+                              </span>
+                            </span>
+                          </div>
+                          <div className="lower_group">
+                            <span className="d_flex">
+                              <span className="flex_row">
+                                <small>Stripe Secret key:</small>
+                                <input
+                                  className="sub_input"
+                                  value={stripeApiKey}
+                                  onChange={(e) =>
+                                    setstripeApiKey(e.target.value)
+                                  }
+                                  type="text"
+                                  placeholder="stripe secret"
+                                />
+                              </span>
+                              <span className="flex_row">
+                                <small>Stripe Public key:</small>
+                                <input
+                                  className="sub_input"
+                                  value={stripePubKey}
+                                  onChange={(e) =>
+                                    setstripePubKey(e.target.value)
+                                  }
+                                  type="text"
+                                  placeholder="stripe pub. key"
+                                />
+                              </span>
                             </span>
                           </div>
                           <div className="lower_group">
@@ -512,7 +590,7 @@ function Settings() {
                         </div>
                         <div>
                           <div className="lower_group">
-                            <small>Your Messanger nick name link here:</small>
+                            <small>Your Messanger nick name here:</small>
                             <input
                               value={messenger}
                               onChange={(e) => setMessenger(e.target.value)}

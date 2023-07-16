@@ -84,6 +84,7 @@ function ProductEdit() {
   const [price, setPrice] = useState("");
   const [discount, setDiscount] = useState("");
   const [desc, setDesc] = useState("");
+  const [weight, setWeight] = useState("");
   const [category, setCategory] = useState([]);
   const [color, setColor] = useState([]);
   const [size, setSize] = useState([]);
@@ -109,6 +110,7 @@ function ProductEdit() {
         setPrice(data.price);
         setDiscount(data.discount);
         setDesc(data.desc);
+        setWeight(data.weight);
         setCategory(data.category);
         setColor(data.color);
         setSize(data.size);
@@ -142,6 +144,7 @@ function ProductEdit() {
           price,
           discount,
           desc,
+          weight,
           category,
           color,
           size,
@@ -354,6 +357,14 @@ function ProductEdit() {
                         value={countInStock}
                         onChange={(e) => setCountInStock(e.target.value)}
                         placeholder="123"
+                      />
+                      <label htmlFor="weight">Weight</label>
+                      <input
+                        type="text"
+                        id="weight"
+                        value={weight}
+                        onChange={(e) => setWeight(e.target.value)}
+                        placeholder="225 in kg"
                       />
                     </div>
                     <div className="productFormLeft productFormLeft-Two">

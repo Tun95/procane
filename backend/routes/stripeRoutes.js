@@ -6,15 +6,12 @@ import { isAuth } from "../utils.js";
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const stripeRouter = express.Router();
+
 stripeRouter.post("/payment", isAuth, (req, res) => {
   stripe.charges.create(
     {
       source: req.body.tokenId,
       amount: req.body.amount,
-      // name: req.body.name,
-      // card: req.body.card,
-      // cvv: req.body.cvv,
-      // date: req.body.date,
       currency: "usd",
     },
     (stripeErr, stripeRes) => {
