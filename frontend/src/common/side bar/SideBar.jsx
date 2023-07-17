@@ -84,8 +84,10 @@ function SideBar() {
       text: "Cart",
       icon: (
         <span>
-          <ShoppingCartIcon style={{ fill: "black" }} />
-          <span className="cart_badge">{cart.cartItems?.length}</span>
+          <ShoppingCartIcon style={{ fill: "black" }} className="cart_badge_icon"/>
+          <span className="cart_badge_side l_flex">
+            <span className="cart_badge">{cart.cartItems?.length}</span>
+          </span>
         </span>
       ),
       to: "/cart",

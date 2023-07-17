@@ -4,15 +4,23 @@
     color: var(--color-primary);
   }
 }
-.cart_badge {
-  color: var(--color-white);
-  background-color: var(--color-primary);
-  padding: 0px 5px;
-  font-size: 12px;
-  border-radius: 50%;
+.cart_badge_icon {
   position: relative;
-  bottom: 15px;
-  right: 12px;
+  top: 8px;
+}
+.cart_badge_side {
+  width: 15px;
+  background-color: var(--color-primary);
+  height: 15px;
+  position: relative;
+  left: 14px;
+  bottom: 28px;
+  border-radius: 50%;
+  .cart_badge {
+    color: var(--color-white);
+    font-size: 12px;
+    // border-radius: 50%;
+  }
 }
 .side_bar_drawer {
   ::-webkit-scrollbar {
