@@ -407,16 +407,19 @@ textarea::placeholder {
 }
 .product-like {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 15px;
+  right: 3px;
   margin: 10px;
   width: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  opacity: 0;
+  /* opacity: 0; */
   transition: 0.5s;
+}
+.fa-bolt {
+  color: #ffbd15;
 }
 .product-like label {
   background-color: var(--color-text);
