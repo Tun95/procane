@@ -25,11 +25,7 @@ const reducer = (state, action) => {
   }
 };
 function DCard() {
-  const {
-    state,
-    dispatch: ctxDispatch,
-    convertCurrency,
-  } = useContext(Context);
+  const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
   const { settings } = state;
   const [{ loading, error, products }, dispatch] = useReducer(reducer, {
     products: [],
@@ -84,6 +80,14 @@ function DCard() {
     slidesToShow: slidesToShow,
     slidesToScroll: 1,
     autoplay: true,
+    responsive: [
+      {
+        breakpoint: 555,
+        settings: {
+          dots: false,
+        },
+      },
+    ],
   };
   return (
     <>

@@ -70,6 +70,14 @@ function RelatedCard({ products }) {
     slidesToScroll: 1,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
+    responsive: [
+      {
+        breakpoint: 650,
+        settings: {
+          arrows: false,
+        },
+      },
+    ],
   };
 
   //ADD TO CART

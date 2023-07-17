@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { request } from "../../base url/BaseUrl";
 import { getError } from "../utilities/util/Utils";
+import useFetch from "react-fetch-hook";
 
 const steps = ["Billing Address", "Confirmation", "Payment Method", "Finish"];
 
@@ -48,7 +49,7 @@ function Confirmation(props) {
     const fetchTaxRate = async () => {
       try {
         const { data } = await axios.get(
-          `https://api.apilayer.com/tax_data/tax_rates?country=${shippingAddress.countryCode}&zip=${shippingAddress.zipCode}`,
+          `https://api.apilayer.com/tax_data/tax_rates?country=${shippingAddress.countryCode}`,
           {
             headers: {
               apikey: "mR5BEoNR5z6Mj7vLzCW1UN7rtIeSYGY1", // Replace with your actual API key
@@ -65,7 +66,7 @@ function Confirmation(props) {
     };
     fetchTaxRate();
   }, [shippingAddress.countryCode, shippingAddress.zipCode]);
-  console.log(tax);
+
   // const [tax, setTax] = useState(0);
   // useEffect(() => {
   //   const fetchTaxRate = async () => {

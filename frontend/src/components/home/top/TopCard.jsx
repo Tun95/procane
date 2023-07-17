@@ -79,6 +79,14 @@ function TopCard() {
     slidesToShow: slidesToShow,
     slidesToScroll: 1,
     autoplay: true,
+    responsive: [
+      {
+        breakpoint: 555,
+        settings: {
+          dots: false,
+        },
+      },
+    ],
   };
   return (
     <>

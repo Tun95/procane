@@ -111,6 +111,41 @@ function reducer(state, action) {
 
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
       return { ...state, cart: { ...state.cart, cartItems } };
+    
+    // case "CART_ADD_ITEM":
+    //   const newItem = action.payload;
+
+    //   const existItemIndex = state.cart.cartItems.findIndex(
+    //     (item) =>
+    //       item._id === newItem._id &&
+    //       item.size === newItem.size &&
+    //       item.color === newItem.color
+    //   );
+
+    //   if (existItemIndex !== -1) {
+    //     // Update the quantity of the existing item
+    //     const updatedCartItems = state.cart.cartItems.map((item, index) => {
+    //       if (index === existItemIndex) {
+    //         return {
+    //           ...item,
+    //           quantity: item.quantity + newItem.quantity,
+    //         };
+    //       }
+    //       return item;
+    //     });
+
+    //     localStorage.setItem("cartItems", JSON.stringify(updatedCartItems));
+    //     return {
+    //       ...state,
+    //       cart: { ...state.cart, cartItems: updatedCartItems },
+    //     };
+    //   } else {
+    //     // Add the new item to the cart
+    //     const cartItems = [...state.cart.cartItems, newItem];
+
+    //     localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    //     return { ...state, cart: { ...state.cart, cartItems } };
+    //   }
 
     //REMOVE FROM CART
     case "CART_REMOVE_ITEM": {
@@ -121,6 +156,16 @@ function reducer(state, action) {
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
       return { ...state, error: "", cart: { ...state.cart, cartItems } };
     }
+    // case "CART_REMOVE_ITEM": {
+    //   const { _id, size, color } = action.payload;
+
+    //   const cartItems = state.cart.cartItems.filter(
+    //     (item) => item._id !== _id || item.size !== size || item.color !== color
+    //   );
+
+    //   localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    //   return { ...state, error: "", cart: { ...state.cart, cartItems } };
+    // }
 
     //CART CLEAR
     case "CART_CLEAR":

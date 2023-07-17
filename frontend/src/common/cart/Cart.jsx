@@ -26,24 +26,35 @@ function Cart() {
   //============
   //CART QUANTITY
   //============
-  const updateCartHandler = async (item, quantity) => {
-    const { data } = await axios.get(`${request}/api/products/${item._id}`);
-    if (data.counInStock < quantity) {
-      window.alert("Sorry, Product is out of stock");
-      return;
-    }
-    ctxDispatch({ type: "CART_ADD_ITEM", payload: { ...item, quantity } });
-  };
+ const updateCartHandler = async (item, quantity) => {
+   const { data } = await axios.get(`${request}/api/products/${item._id}`);
+   if (data.countInStock < quantity) {
+     window.alert("Sorry, Product is out of stock");
+     return;
+   }
+   ctxDispatch({ type: "CART_ADD_ITEM", payload: { ...item, quantity } });
+ };
+
 
   //============
   //REMOVE ITEMS
   //============
   const removeItemHandler = (item) => {
-    ctxDispatch({ type: "CART_REMOVE_ITEM", payload: item });
+    ctxDispatch({
+      type: "CART_REMOVE_ITEM",
+      payload: { _id: item._id, size: item.size, color: item.color },
+    });
     toast.error(`${item.name} is successfully removed from cart`, {
       position: "bottom-center",
     });
   };
+
+  // const removeItemHandler = (item) => {
+  //   ctxDispatch({ type: "CART_REMOVE_ITEM", payload: item });
+  //   toast.error(`${item.name} is successfully removed from cart`, {
+  //     position: "bottom-center",
+  //   });
+  // };
 
   //========
   //CHECKOUT
@@ -60,10 +71,6 @@ function Cart() {
     }
   };
 
-  //BACK TO STORE
-  const returnHandler = () => {
-    navigate("/store");
-  };
 
   console.log(cartItems);
 

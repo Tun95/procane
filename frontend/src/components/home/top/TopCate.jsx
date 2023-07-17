@@ -10,7 +10,7 @@ function TopCate() {
           <div className="heading d_flex">
             <div className="heading-left row f_flex">
               <i className="fa fa-border-all"></i>
-              <h2>Top Sales</h2>
+              <h2>Best Selling</h2>
             </div>
             <div className="heading-right row">
               <Link to="/store?order=numsales">View all</Link>

@@ -273,6 +273,11 @@
             width: 200px;
           }
         }
+        .cursor {
+          .cash_btn {
+            cursor: not-allowed;
+          }
+        }
         .cash_btn {
           width: 45%;
           height: 45px;

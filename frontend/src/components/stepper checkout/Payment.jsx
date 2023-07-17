@@ -567,7 +567,6 @@ function Payment(props) {
   //STRIPE METHOD
   //=============
   const stripePublishableKey = stripePubKey;
-  console.log(stripePubKey);
   const stripeGrandTotal = Number(convertToNumeric(order.grandTotal));
   const handleStripeToken = async (token) => {
     try {
@@ -583,7 +582,8 @@ function Payment(props) {
           body: JSON.stringify({
             amount: stripeGrandTotal * 100,
             currency: toCurrency,
-            tokenId: token.id, // Update the token property to tokenId
+            tokenId: token.id,
+            description: `Order payment by ${userInfo.email}`, // Update the token property to tokenId
             currencySign: toCurrency,
             paymentMethod: paymentMethodName,
           }),
@@ -863,35 +863,42 @@ function Payment(props) {
                       <div>
                         {openStripeModal && (
                           <>
-                            <StripeCheckout
-                              token={handleStripeToken}
-                              stripeKey={stripePublishableKey}
-                              amount={stripeGrandTotal * 100}
-                              currency={toCurrency}
-                              billingAddress
-                              shippingAddress
-                              name={webname}
-                              description="Order Payment"
-                              panelLabel="Pay Now"
-                              className="stripe_btn"
-                            >
-                              <div className="paypal-details paystack_btn cash_btn_style">
+                            {loadingPay ? (
+                              <div className="paypal-details cursor paystack_btn cash_btn_style">
                                 <button
-                                  className="cash_btn l_flex"
+                                  className="cash_btn l_flex "
                                   disabled={loadingPay}
                                 >
-                                  {loadingPay ? (
-                                    <React.Fragment>
-                                      <LoadingBox></LoadingBox>
-                                    </React.Fragment>
-                                  ) : (
+                                  <React.Fragment>
+                                    <LoadingBox></LoadingBox>
+                                  </React.Fragment>
+                                </button>
+                              </div>
+                            ) : (
+                              <StripeCheckout
+                                token={handleStripeToken}
+                                stripeKey={stripePublishableKey}
+                                amount={stripeGrandTotal * 100}
+                                currency={toCurrency}
+                                billingAddress
+                                shippingAddress
+                                name={webname}
+                                description="Order Payment"
+                                panelLabel="Pay Now"
+                                className="stripe_btn"
+                              >
+                                <div className="paypal-details paystack_btn cash_btn_style">
+                                  <button
+                                    className="cash_btn l_flex"
+                                    disabled={loadingPay}
+                                  >
                                     <React.Fragment>
                                       <img src={stripe} alt="" />
                                     </React.Fragment>
-                                  )}
-                                </button>
-                              </div>
-                            </StripeCheckout>
+                                  </button>
+                                </div>
+                              </StripeCheckout>
+                            )}
                           </>
                         )}
                         {openPaypalModal && (

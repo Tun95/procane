@@ -11,7 +11,7 @@ import Razorpay from "razorpay";
 import axios from "axios";
 import fetch from "node-fetch";
 import crypto from "crypto";
-import shippo from "shippo";
+import Shippo from "shippo";
 
 const orderRouter = express.Router();
 
@@ -458,13 +458,13 @@ orderRouter.post(
     const stripe = Stripe(stripeApiKey);
     console.log(stripeApiKey);
     try {
-       const { amount, currency, tokenId } = req.body;
-       const charge = await stripe.charges.create({
-         source: tokenId,
-         amount,
-         currency,
-         description: "Order payment",
-       });
+      const { amount, currency, tokenId, description } = req.body;
+      const charge = await stripe.charges.create({
+        source: tokenId,
+        amount,
+        currency,
+        description,
+      });
 
       const order = await Order.findById(req.params.id)
         .populate("user", "email name")
@@ -701,7 +701,6 @@ orderRouter.post(
     }
   })
 );
-
 
 //=============
 //RAZORPAY
@@ -1567,85 +1566,46 @@ orderRouter.delete(
   })
 );
 
-//===============
-//TRACKING ORDERS
-//===============
-const DHL_API_KEY = "YOUR_DHL_API_KEY";
-// Shipping API
-orderRouter.post("/api/shipping", async (req, res) => {
+//================
+//SHIPMENT HANDLER
+//================
+// Define the route for creating shipments
+orderRouter.post("/shipments", async (req, res) => {
   try {
-    // Extract shipping details from request body
-    const { origin, destination, weight } = req.body;
+    // Extract the necessary data from the request body
+    const { addressFrom, addressTo, parcel, serviceLevel } = req.body;
 
-    // Make API request to DHL Shipping API
+    // Construct the shipment data
+    const shipment = {
+      address_from: addressFrom,
+      address_to: addressTo,
+      parcels: [parcel],
+    };
+
+    // Make a request to the DHL API to create the shipment
     const response = await axios.post(
       "https://api.dhl.com/shipments",
-      {
-        origin,
-        destination,
-        weight,
-      },
+      shipment,
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${DHL_API_KEY}`,
+          Authorization: `Bearer ${process.env.DHL_API_KEY}`, // Replace with your actual DHL API key
+        },
+        params: {
+          servicelevel_token: serviceLevel, // Use the selected service level token
         },
       }
     );
 
-    // Handle successful response
-    res.json(response.data);
+    // Process the response and extract the label URL and tracking number
+    const { label_url, tracking_number } = response.data;
+
+    // Return the label URL and tracking number in the response
+    res.status(200).json({ label_url, tracking_number });
   } catch (error) {
-    // Handle error
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Tracking API
-orderRouter.get("/api/tracking/:trackingNumber", async (req, res) => {
-  try {
-    const { trackingNumber } = req.params;
-
-    // Make API request to DHL Tracking API
-    const response = await axios.get(
-      `https://api.dhl.com/tracking/${trackingNumber}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${DHL_API_KEY}`,
-        },
-      }
-    );
-
-    // Handle successful response
-    res.json(response.data);
-  } catch (error) {
-    // Handle error
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Location API
-orderRouter.get("/api/location/:address", async (req, res) => {
-  try {
-    const { address } = req.params;
-
-    // Make API request to DHL Location API
-    const response = await axios.get(
-      `https://api.dhl.com/locations?q=${encodeURIComponent(address)}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${DHL_API_KEY}`,
-        },
-      }
-    );
-
-    // Handle successful response
-    res.json(response.data);
-  } catch (error) {
-    // Handle error
-    res.status(500).json({ error: error.message });
+    // Handle any errors that occur during the request
+    console.error("Error creating shipment:", error);
+    res.status(500).json({ error: "Failed to create shipment" });
   }
 });
 
