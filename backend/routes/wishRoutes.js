@@ -20,6 +20,7 @@ wishRouter.post(
       rating,
       discount,
       checked,
+      flashdeal,
       user,
       product,
     } = req.body;
@@ -44,6 +45,7 @@ wishRouter.post(
         rating,
         price,
         discount,
+        flashdeal,
         checked,
         user: req.user._id,
         product,

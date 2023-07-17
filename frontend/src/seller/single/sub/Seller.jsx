@@ -224,6 +224,13 @@ function Seller() {
                             <Link to={`/product/${product.slug}`}>
                               <img src={product.image} alt="" />
                             </Link>
+                            <div className="product-like">
+                              {product.flashdeal ? (
+                                <i className="fa fa-bolt"></i>
+                              ) : (
+                                ""
+                              )}
+                            </div>
                           </div>
                           <div className="product-details">
                             <Link to={`/product/${product.slug}`}>

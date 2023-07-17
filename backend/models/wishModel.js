@@ -8,6 +8,7 @@ const wishSchema = new mongoose.Schema(
     rating: { type: Number },
     price: { type: Number },
     discount: { type: Number },
+    flashdeal: { type: Boolean, default: false },
     checked: { type: Boolean, default: false },
     user: {
       type: mongoose.Schema.Types.ObjectId,

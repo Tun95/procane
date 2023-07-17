@@ -128,6 +128,9 @@ function Wish() {
                     <Link to={`/product/${product.slug}`}>
                       <img src={product.image} alt="" />
                     </Link>
+                    <div className="product-like">
+                      {product.flashdeal ? <i className="fa fa-bolt"></i> : ""}
+                    </div>
                     {/* <div className="product-like">
                       <label>{count}</label> <br />
                       <i

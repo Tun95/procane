@@ -122,34 +122,6 @@ function Details({ product }) {
     });
     localStorage.setItem("cartItems", JSON.stringify(state.cart.cartItems));
   };
-  // const addToCartHandler = async (product) => {
-  //   const { data } = await axios.get(`${request}/api/products/${product._id}`);
-
-  //   if (data.countInStock < count) {
-  //     toast.error("Sorry, product stock limit reached or out of stock", {
-  //       position: "bottom-center",
-  //     });
-  //     return;
-  //   } else {
-  //     toast.success(`${product.name} is successfully added to cart`, {
-  //       position: "bottom-center",
-  //     });
-  //   }
-
-  //   ctxDispatch({
-  //     type: "CART_ADD_ITEM",
-  //     payload: {
-  //       ...product,
-  //       discount: data.discount,
-  //       seller: data.seller,
-  //       sellerName: product?.seller?.seller?.name,
-  //       category: product?.category,
-  //       quantity: count,
-  //       size,
-  //       color,
-  //     },
-  //   });
-  // };
 
   console.log(product);
 
@@ -170,6 +142,7 @@ function Details({ product }) {
             image: product.image,
             price: product.price,
             rating: product.rating,
+            flashdeal: product.flashdeal,
             discount: product.discount,
             product: product._id,
             checked: !checked, // Toggle the checked state
