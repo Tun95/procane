@@ -83,6 +83,7 @@ import procane from "../src/assets/procanes.png";
 import VendorScreen from "./screens/formscreens/vendorscreen/VendorScreen";
 import Success from "./screens/formscreens/vendorscreen/Succes";
 import Application from "./admin/pages/single/application detail/Application";
+import TrackScreen from "./screens/orderscreen/trackscreen/TrackScreen";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -154,6 +155,7 @@ function App() {
             }
           ></Route>
           <Route path="/track-order" element={<OrderHistoryScreen />}></Route>
+          <Route path="/track-shipment" element={<TrackScreen />}></Route>
           {/* USER */}
 
           {/* VALIDATION */}

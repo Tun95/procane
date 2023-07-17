@@ -11,7 +11,7 @@ import Razorpay from "razorpay";
 import axios from "axios";
 import fetch from "node-fetch";
 import crypto from "crypto";
-import Shippo from "shippo";
+import shippo from "shippo";
 
 const orderRouter = express.Router();
 
@@ -1567,45 +1567,53 @@ orderRouter.delete(
 );
 
 //================
-//SHIPMENT HANDLER
+// CREATE SHIPMENT
 //================
-// Define the route for creating shipments
+const shippoClient = shippo(process.env.SHIPPO_TOKEN);
 orderRouter.post("/shipments", async (req, res) => {
   try {
-    // Extract the necessary data from the request body
-    const { addressFrom, addressTo, parcel, serviceLevel } = req.body;
+    const { address_from, address_to, parcels } = req.body;
 
-    // Construct the shipment data
-    const shipment = {
-      address_from: addressFrom,
-      address_to: addressTo,
-      parcels: [parcel],
-    };
+    const shipment = await shippoClient.shipment.create({
+      address_from,
+      address_to,
+      parcels,
+    });
 
-    // Make a request to the DHL API to create the shipment
-    const response = await axios.post(
-      "https://api.dhl.com/shipments",
-      shipment,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.DHL_API_KEY}`, // Replace with your actual DHL API key
-        },
-        params: {
-          servicelevel_token: serviceLevel, // Use the selected service level token
-        },
-      }
-    );
-
-    // Process the response and extract the label URL and tracking number
-    const { label_url, tracking_number } = response.data;
-
-    // Return the label URL and tracking number in the response
-    res.status(200).json({ label_url, tracking_number });
+    res
+      .status(200)
+      .json({ message: "Shipment created successfully", shipment });
   } catch (error) {
-    // Handle any errors that occur during the request
-    console.error("Error creating shipment:", error);
-    res.status(500).json({ error: "Failed to create shipment" });
+    console.error(error);
+    res.status(500).json({ message: "Failed to create shipment" });
+  }
+});
+
+//================
+// TRACK SHIPMENT
+//================
+orderRouter.get("/shipments/:shipmentId", async (req, res) => {
+  try {
+    const { shipmentId } = req.params;
+
+    const shipment = await shippoClient.shipment.retrieve(shipmentId);
+
+    if (shipment) {
+      res.status(200).send({
+        message: "Shipment retrieved successfully",
+        shipment,
+      });
+    } else {
+      res.status(404).send({
+        message: "Shipment not found",
+        error: "Item not found",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      message: "Invalid Tracking ID or Failed to retrieve shipment",
+    });
   }
 });
 

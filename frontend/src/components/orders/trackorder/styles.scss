@@ -1,0 +1,47 @@
+.track_shipment {
+  h2,
+  h3 {
+    color: var(--color-gray);
+  }
+  .shipment {
+    padding: 20px 10px;
+
+    .form-box-content {
+      .light_shadow {
+        padding: 20px;
+        width: 500px;
+        .table_body {
+          .table_grid {
+            margin: 8px 0px;
+            input {
+              border: 1px solid var(--color-light-gray);
+              padding: 6px;
+              border-radius: 5px;
+              width: 78%;
+            }
+            input.input-error {
+              border-color: var(--color-primary);
+            }
+            .error {
+              color: var(--color-primary);
+              font-size: 14px;
+            }
+            button {
+              margin-left: 10px;
+              background-color: var(--color-primary);
+              color: var(--color-white);
+              border-radius: 5px;
+              padding: 8px;
+              width: 100px;
+              cursor: pointer;
+            }
+          }
+          strong {
+            color: var(--color-light-gray);
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+}

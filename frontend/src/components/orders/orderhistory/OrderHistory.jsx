@@ -158,6 +158,14 @@ function OrderHistory() {
                       >
                         Details
                       </button>
+                      <button
+                        className="deleteButton"
+                        onClick={() => {
+                          navigate(`/track-shipment/`);
+                        }}
+                      >
+                        Track Now
+                      </button>
                     </TableCell>
                   </TableRow>
                 ))}

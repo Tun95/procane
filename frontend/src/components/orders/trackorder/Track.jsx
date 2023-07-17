@@ -1,87 +1,169 @@
-import axios from 'axios';
-import React, { useState } from 'react'
+import React from "react";
+import { request } from "../../../base url/BaseUrl";
+import "./styles.scss";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { toast } from "react-toastify";
 
 function Track() {
-	  const [trackingNumber, setTrackingNumber] = useState("");
-    const [address, setAddress] = useState("");
-    const [shippingResponse, setShippingResponse] = useState(null);
-    const [trackingResponse, setTrackingResponse] = useState(null);
-    const [locationResponse, setLocationResponse] = useState(null);
-
-  const handleShippingSubmit = async (e) => {
-    e.preventDefault();
-
+  //================
+  // CREATE SHIPMENT
+  //================
+  async function createShipment(addressFrom, addressTo, parcels) {
     try {
-      // Make API request to the server-side endpoint
-      const response = await axios.post("/api/shipping", {
-        origin: "...",
-        destination: "...",
-        weight: "...",
+      const response = await fetch(`${request}/api/orders/shipments"`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          address_from: addressFrom,
+          address_to: addressTo,
+          parcels: parcels,
+        }),
       });
 
-      // Handle successful response
-      setShippingResponse(response.data);
+      if (response.ok) {
+        const result = await response.json();
+        return result.shipment;
+      } else {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
     } catch (error) {
-      // Handle error
       console.error(error);
+      throw new Error("Failed to create shipment");
     }
-  };
+  }
 
-  const handleTrackingSubmit = async (e) => {
-    e.preventDefault();
-
+  //================
+  // TRACK SHIPMENT
+  //================
+  const trackShipment = async (shipmentId) => {
     try {
-      // Make API request to the server-side endpoint
-      const response = await axios.get(`/api/tracking/${trackingNumber}`);
+      const response = await fetch(
+        `${request}/api/orders/shipments/${shipmentId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      // Handle successful response
-      setTrackingResponse(response.data);
+      if (response.ok) {
+        const result = await response.json();
+        const shipmentData = JSON.stringify(result.shipment.object_id); // Convert shipment object to a string
+        toast.success(`${shipmentData} Shipment retrieved successfully`, {
+          position: "bottom-center",
+        });
+        return result.shipment;
+      } else {
+        const error = await response.json();
+        toast.error(error.message, {
+          position: "bottom-center",
+        });
+      }
     } catch (error) {
-      // Handle error
       console.error(error);
+      toast.error(error, {
+        position: "bottom-center",
+      });
     }
   };
 
-  const handleLocationSubmit = async (e) => {
-    e.preventDefault();
+  // Validation schema using Yup
+  const validationSchema = Yup.object().shape({
+    trackingNumber: Yup.string().required("Tracking number is required"),
+  });
 
-    try {
-      // Make API request to the server-side endpoint
-      const response = await axios.get(`/api/location/${address}`);
-
-      // Handle successful response
-      setLocationResponse(response.data);
-    } catch (error) {
-      // Handle error
-      console.error(error);
-    }
+  const initialValues = {
+    trackingNumber: "",
   };
-	return (
-    <div>
-      <h2>Shipping API</h2>
-      <form onSubmit={handleShippingSubmit}>
-        {/* Shipping form fields */}
-        <button type="submit">Submit</button>
-      </form>
+  //=======================
+  // Handle form submission
+  //=======================
+  const handleSubmit = (values, { setSubmitting }) => {
+    const { trackingNumber } = values;
+    setSubmitting(true); // Set isSubmitting to true
 
-      <h2>Tracking API</h2>
-      <form onSubmit={handleTrackingSubmit}>
-        {/* Tracking form fields */}
-        <button type="submit">Submit</button>
-      </form>
+    trackShipment(trackingNumber)
+      .then((shipment) => {
+        // Handle tracked shipment
+        console.log("Tracked Shipment:", shipment);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setSubmitting(false); // Set isSubmitting back to false after the request completes
+      });
+  };
 
-      <h2>Location API</h2>
-      <form onSubmit={handleLocationSubmit}>
-        <input
-          type="text"
-          placeholder="Enter address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-        />
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+  return (
+    <>
+      <div className="shipment light_shadow">
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({
+            errors,
+            touched,
+            handleSubmit,
+            handleChange,
+            handleBlur,
+            values,
+          }) => (
+            <Form
+              action=""
+              onSubmit={handleSubmit}
+              className="form-box-content p_flex"
+            >
+              <span className="table light_shadow">
+                <span className="table_header">
+                  <h3>Enter the Consignment No.</h3>
+                </span>
+                <div className="table_body">
+                  <div className="table_rows table_grid">
+                    <div className="table_data a_flex">
+                      <Field
+                        type="text"
+                        name="trackingNumber"
+                        value={values.trackingNumber}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder="Enter Tracking Number"
+                        className={
+                          errors.trackingNumber && touched.trackingNumber
+                            ? "input-error"
+                            : ""
+                        }
+                      />
+                      <div className="table_data table_btn">
+                        <button type="submit">Track Result</button>
+                      </div>{" "}
+                    </div>
+                    <ErrorMessage
+                      name="trackingNumber"
+                      component="div"
+                      className="error"
+                    />
+                  </div>
+                  <div className="table_rows ">
+                    <div className="table_data">
+                      <strong>Ex: 1199419b02054b17a7afe342295c890d</strong>
+                    </div>
+                  </div>
+                </div>
+              </span>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </>
   );
 }
 
-export default Track
+export default Track;

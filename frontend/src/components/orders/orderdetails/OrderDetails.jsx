@@ -111,62 +111,7 @@ function OrderDetails() {
   };
   console.log(order);
 
-  //===========
-  // SHIPMENT
-  //===========
-
-  const { firstName, lastName } = order.user || {};
-  const fullName = firstName && lastName ? `${firstName} ${lastName}` : "";
-
-  const [labelUrl, setLabelUrl] = useState("");
-  const [trackingNumber, setTrackingNumber] = useState("");
-
-  const handleShipment = async () => {
-    try {
-      // Prepare the shipment data based on your form inputs or state
-      const shipmentData = {
-        addressFrom: {
-          // Populate with address from your form or state
-          name: "ProCanes",
-          street1: "Baby area",
-          city: "ilorin",
-          state: "kwara",
-          zip: "210141",
-          country: "Nigeria",
-        },
-        addressTo: {
-          // Populate with address from your form or state
-          name: fullName,
-          street1: order.shippingAddress.address,
-          city: order.shippingAddress.city,
-          state: order.shippingAddress.cState,
-          zip: order.shippingAddress.zipCode,
-          country: order.shippingAddress.country,
-        },
-        parcel: {
-          // Populate with parcel details from your form or state
-        },
-        serviceLevel: "express", // Replace with the selected service level
-      };
-
-      // Make a POST request to the server-side API endpoint
-      const response = await axios.post(`${request}/api/orders/shipments`, shipmentData);
-
-      // Extract the label URL and tracking number from the response
-      const { label_url, tracking_number } = response.data;
-
-      // Update the state with the label URL and tracking number
-      setLabelUrl(label_url);
-      setTrackingNumber(tracking_number);
-    } catch (error) {
-      // Handle any errors that occur during the request
-      toast.error(getError(error), { position: "bottom-center" });
-      console.error("Error creating shipment:", error);
-
-      // Display an error message to the user
-      // You can use a toast library or set an error state to show the message
-    }
-  };
+ 
 
   return (
     <div className="mtb">
