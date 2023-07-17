@@ -31,11 +31,12 @@ import LoginIcon from "@mui/icons-material/Login";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
+import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 
 function SideBar() {
   const { state: states, dispatch: ctxDispatch } = useContext(Context);
   const { cart, userInfo } = states;
-  const { darkMode, toggle } = useContext(Context);
+  const { darkMode, toggle, toCurrency, setToCurrency } = useContext(Context);
 
   const [state, setState] = React.useState({
     right: false,
@@ -84,7 +85,10 @@ function SideBar() {
       text: "Cart",
       icon: (
         <span>
-          <ShoppingCartIcon style={{ fill: "black" }} className="cart_badge_icon"/>
+          <ShoppingCartIcon
+            style={{ fill: "black" }}
+            className="cart_badge_icon"
+          />
           <span className="cart_badge_side l_flex">
             <span className="cart_badge">{cart.cartItems?.length}</span>
           </span>
@@ -320,6 +324,22 @@ function SideBar() {
                 </Button>
               )}
             </span>
+            <Divider />
+            <Divider />
+            <div className="currency_state toogle_width a_flex">
+              {/* <label className="to">To:</label> */}
+              <CurrencyExchangeIcon className="currencyExchangeIcon" />
+              <select
+                value={toCurrency}
+                onChange={(e) => setToCurrency(e.target.value)}
+              >
+                <option value="USD">$ USD</option>
+                <option value="INR">₹ INR</option>
+                <option value="NGN">₦ NGN</option>
+                <option value="GBP">£ GBP</option>
+                <option value="EUR">€ EUR</option>
+              </select>
+            </div>
           </Drawer>
         </React.Fragment>
       ))}

@@ -26,6 +26,17 @@
   ::-webkit-scrollbar {
     display: none;
   }
+  .currency_state {
+    .currencyExchangeIcon {
+      position: relative;
+      right: 19px;
+      font-size: 23px;
+    }
+    select {
+      width: 60%;
+      height: 30px;
+    }
+  }
   .toogle_width {
     width: 100%;
     display: flex;
