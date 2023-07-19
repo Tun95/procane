@@ -8,6 +8,7 @@ import axios from "axios";
 import { request } from "../../base url/BaseUrl";
 import { getError } from "../utilities/util/Utils";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import LoadingOverlay from "react-loading-overlay";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -105,9 +106,15 @@ function Store() {
                 <h2>Store Items</h2>
               </div>
             </div>
-            <div className="product-content">
-              <StoreItems products={products} loading={loading} error={error} />
-            </div>
+            <LoadingOverlay active={loading} spinner text="Loading...">
+              <div className="product-content">
+                <StoreItems
+                  products={products}
+                  loading={loading}
+                  error={error}
+                />
+              </div>
+            </LoadingOverlay>
             {countProducts > 6 ? (
               <div className="pagination">
                 <Pagination
