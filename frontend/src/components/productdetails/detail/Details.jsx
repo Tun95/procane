@@ -15,6 +15,18 @@ import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
 import { red } from "@mui/material/colors";
 import { getError } from "../../utilities/util/Utils";
+import {
+  EmailShareButton,
+  FacebookShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+} from "react-share";
+import {
+  EmailIcon,
+  FacebookIcon,
+  TwitterIcon,
+  WhatsappIcon,
+} from "react-share";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -36,9 +48,6 @@ function Details({ product }) {
 
   //Size state
   const [size, setSize] = useState("");
-
-  //Product Quantity
-  const [quantity, setQuantity] = useState(1);
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -181,6 +190,12 @@ function Details({ product }) {
     checkProductInWishList();
   }, [userInfo, product]);
 
+  //=====
+  //SHARE
+  //=====
+
+  const shareUrl = "https://www.google.com/";
+  const title = `Check out this amazing product! ${product.name}`;
   return (
     <>
       <section className="  details ">
@@ -365,6 +380,46 @@ function Details({ product }) {
                     checked={checked}
                     onChange={handleCheckboxSubmit}
                   />
+                </div>
+              </div>
+              <div className="share_btn">
+                <div className="facebook_btn">
+                  <FacebookShareButton
+                    url={window.location.href}
+                    quote={`${title}`}
+                  >
+                    <FacebookIcon
+                      size={32}
+                      round={true}
+                      className="share_icons"
+                    />
+                  </FacebookShareButton>{" "}
+                  <TwitterShareButton
+                    url={window.location.href}
+                    quote={`${title}`}
+                  >
+                    <TwitterIcon
+                      size={32}
+                      round={true}
+                      className="share_icons"
+                    />
+                  </TwitterShareButton>{" "}
+                  <WhatsappShareButton
+                    url={window.location.href}
+                    quote={`${title}`}
+                  >
+                    <WhatsappIcon
+                      size={32}
+                      round={true}
+                      className="share_icons"
+                    />
+                  </WhatsappShareButton>{" "}
+                  <EmailShareButton
+                    url={window.location.href}
+                    quote={`${title}`}
+                  >
+                    <EmailIcon size={32} round={true} className="share_icons" />
+                  </EmailShareButton>
                 </div>
               </div>
             </div>

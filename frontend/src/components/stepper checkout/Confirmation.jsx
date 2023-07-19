@@ -17,7 +17,6 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { request } from "../../base url/BaseUrl";
 import { getError } from "../utilities/util/Utils";
-import useFetch from "react-fetch-hook";
 
 const steps = ["Billing Address", "Confirmation", "Payment Method", "Finish"];
 
