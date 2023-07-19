@@ -193,8 +193,6 @@ function Details({ product }) {
   //=====
   //SHARE
   //=====
-
-  const shareUrl = "https://www.google.com/";
   const title = `Check out this amazing product! ${product.name}`;
   return (
     <>

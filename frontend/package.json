@@ -40,6 +40,7 @@
     "react-hook-form": "^7.44.3",
     "react-i18next": "^13.0.1",
     "react-icons-kit": "^2.0.0",
+    "react-loading-overlay": "^1.0.1",
     "react-messenger-chat-plugin": "^3.0.5",
     "react-paystack": "^4.0.3",
     "react-phone-number-input": "^3.2.23",
