@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../assets/procane.png";
+import logoImg from "../../assets/procane.png";
 
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -65,8 +65,16 @@ function Search() {
   // });
 
   const { state, dispatch: ctxDispatch } = useContext(Context);
-  const { cart, userInfo } = state;
+  const { cart, userInfo, settings } = state;
 
+  const { logo } =
+    (settings &&
+      settings
+        .map((s) => ({
+          logo: s.logo,
+        }))
+        .find(() => true)) ||
+    {};
   //=========
   //SEARCH BOX
   //=========
@@ -104,7 +112,7 @@ function Search() {
         <div className="container c_flex search_bar">
           <div className="logo width">
             <Link to="/">
-              <img src={logo} alt="" />
+              <img src={logo} alt="" className="logo_img"/>
             </Link>
           </div>
           <form

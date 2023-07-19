@@ -126,7 +126,7 @@ function Brands() {
               <TableHead>
                 <TableRow>
                   <TableCell className="tableCell">ID</TableCell>
-                  <TableCell className="tableCell">Manufacturer</TableCell>
+                  <TableCell className="tableCell">Brands</TableCell>
                   <TableCell className="tableCell">User</TableCell>
                   <TableCell className="tableCell">Date</TableCell>
                   <TableCell className="tableCell">Actions</TableCell>

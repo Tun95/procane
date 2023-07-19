@@ -100,7 +100,7 @@ function RegisterScreen() {
           headers: { authorization: `Bearer ${data.token}` },
         }
       );
-      toast.success("A Verification email has bent sent to your email inbox", {
+      toast.success("A Verification email has been sent to your email inbox", {
         position: "bottom-center",
       });
     } catch (err) {

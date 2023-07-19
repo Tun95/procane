@@ -50,9 +50,13 @@
   height: 100%;
   background-color: var(--color-text);
 }
+.search .logo {
+  width: 30%;
+}
 .search .logo img {
-  width: 80%;
-  height: auto;
+  width: 60%;
+  height: 50px;
+  object-fit: contain;
 }
 
 .search-box {

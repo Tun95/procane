@@ -6,40 +6,56 @@ import { Context } from "../../context/Context";
 function Footer() {
   const { state, dispatch: ctxDispatch } = useContext(Context);
   const { settings } = state;
+  const {
+    storeAddress,
+    webname,
+    shortDesc,
+    playstore,
+    appstore,
+    email,
+    whatsapp,
+  } =
+    (settings &&
+      settings
+        .map((s) => ({
+          webname: s.webname,
+          shortDesc: s.shortDesc,
+          playstore: s.playstore,
+          appstore: s.appstore,
+          storeAddress: s.storeAddress,
+          whatsapp: s.whatsapp,
+          email: s.email,
+        }))
+        .find(() => true)) ||
+    {};
   return (
     <>
       <footer>
         <div className="container grid2 footer-wrap">
           <div className="box">
-            <h1>ProCanes</h1>
-            <p>
-              To synthesize world-class quality furniturethat fits amidst
-              everydesigner setting andsymbolizes serenity inevery home. Welcome
-              to the worldof outdoors and indoors
-            </p>
+            <h1>{webname}</h1>
+            <p>{shortDesc}</p>
             <div className="">
-              {settings?.map((s, index) => (
-                <span className="icon d_flex" key={index}>
-                  <a
-                    href={`${s.playstore}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="img a_flex"
-                  >
-                    <i className="fa-brands fa-google-play"></i>
-                    <span>Google Play</span>
-                  </a>
-                  <a
-                    href={`${s.appstore}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="img a_flex app-store"
-                  >
-                    <i className="fa-brands fa-app-store-ios"></i>
-                    <span>App Store</span>
-                  </a>
-                </span>
-              ))}
+              <span className="icon d_flex">
+                <a
+                  href={`${playstore}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="img a_flex"
+                >
+                  <i className="fa-brands fa-google-play"></i>
+                  <span>Google Play</span>
+                </a>
+                <a
+                  href={`${appstore}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="img a_flex app-store"
+                >
+                  <i className="fa-brands fa-app-store-ios"></i>
+                  <span>App Store</span>
+                </a>
+              </span>
             </div>
           </div>
 
@@ -86,17 +102,15 @@ function Footer() {
           <div className="box">
             <h2>Contact Us</h2>
             <ul>
-              <li>G-138, Sector 63, Noida-201301</li>
-              {settings?.map((s, index) => (
-                <div key={index}>
-                  <li>
-                    Email: <a href={`mailto:${s.email}`}>{s.email}</a>
-                  </li>
-                  <li>
-                    Phone: <a href={`tel:${s.whatsapp}`}>{s.whatsapp}</a>
-                  </li>
-                </div>
-              ))}
+              <li>{storeAddress}</li>
+              <div>
+                <li>
+                  Email: <a href={`mailto:${email}`}>{email}</a>
+                </li>
+                <li>
+                  Phone: <a href={`tel:${whatsapp}`}>{whatsapp}</a>
+                </li>
+              </div>
             </ul>
           </div>
         </div>

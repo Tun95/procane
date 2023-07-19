@@ -1,6 +1,6 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import "./theme style/dark.scss";
 import { FloatingWhatsApp } from "react-floating-whatsapp";
 import { MessengerChat } from "react-messenger-chat-plugin";
@@ -84,6 +84,7 @@ import VendorScreen from "./screens/formscreens/vendorscreen/VendorScreen";
 import Success from "./screens/formscreens/vendorscreen/Succes";
 import Application from "./admin/pages/single/application detail/Application";
 import TrackScreen from "./screens/orderscreen/trackscreen/TrackScreen";
+import ReactGA from "react-ga4";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -100,6 +101,18 @@ function App() {
         }))
         .find(() => true)) ||
     {};
+
+  ReactGA.initialize(process.env.REACT_APP_GOOGLE_TRACKING, {
+    debug: true,
+    titleCase: false,
+    gaOptions: {
+      userId: 123,
+    },
+  });
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+  }, []);
 
   return (
     <div className={darkMode ? "app dark" : "app"}>

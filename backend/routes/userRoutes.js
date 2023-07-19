@@ -19,13 +19,14 @@ userRouter.post(
   "/signin",
   expressAsyncHandler(async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      res.status(401).send({ message: "Invalid email or password" });
-      return;
-    }
-    if (user.isBlocked === true) {
-      throw new Error("😲It appears this account has been blocked by Admin");
-    }
+     if (!user) {
+       return res.status(401).send({ message: "Invalid email or password" });
+     }
+     if (user.isBlocked === true) {
+       return res.status(403).send({
+         message: "😲 It appears this account has been blocked by Admin",
+       });
+     }
     if (bcrypt.compareSync(req.body.password, user.password)) {
       res.send({
         _id: user._id,

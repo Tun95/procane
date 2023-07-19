@@ -62,30 +62,35 @@ function Head() {
     },
   }));
 
-  // const conversionRate = settings
-  //   ?.map((s) => Number(s.rate))
-  //   ?.find((rate) => !isNaN(rate));
+  const { email, whatsapp } =
+    (settings &&
+      settings
+        .map((s) => ({
+          whatsapp: s.whatsapp,
+          email: s.email,
+        }))
+        .find(() => true)) ||
+    {};
+
   return (
     <div>
       <section className="head">
         <div className="container a_flex head-position">
           <div className="left row ">
-            {settings?.map((s, index) => (
-              <span key={index}>
-                <i className="fa fa-phone"></i>
-                <label htmlFor="">
-                  <a href={`tel:${s.whatsapp}`}>{s.whatsapp}</a>
-                </label>
-                <i className="fa fa-envelope"></i>
-                <label htmlFor="">
-                  <a href={`mailto:${s.email}`}>{s.email}</a>
-                </label>
-              </span>
-            ))}
+            <span>
+              <i className="fa fa-phone"></i>
+              <label htmlFor="">
+                <a href={`tel:${whatsapp}`}>{whatsapp}</a>
+              </label>
+              <i className="fa fa-envelope"></i>
+              <label htmlFor="">
+                <a href={`mailto:${email}`}>{email}</a>
+              </label>
+            </span>
           </div>
           <div className="right row RText topbar">
             <label htmlFor="" className="none_screen">
-              <Link to="">Theme FAQ's</Link>
+              <Link to="/theme-faq">Theme FAQ's</Link>
             </label>
             <label htmlFor="" className="none_screen">
               <Link to="/contact">Need Helps</Link>

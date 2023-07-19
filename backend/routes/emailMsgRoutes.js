@@ -120,7 +120,7 @@ sendEmailRouter.post(
       const mailOptions = {
         to: [],
         bcc: mailList,
-        from: `Shopmate ${process.env.EMAIL_ADDRESS}`,
+        from: `${process.env.SHOP_NAME} ${process.env.EMAIL_ADDRESS}`,
         subject,
         html: message,
       };

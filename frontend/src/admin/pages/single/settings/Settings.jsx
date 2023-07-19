@@ -16,6 +16,7 @@ import { Helmet } from "react-helmet-async";
 import JoditEditor from "jodit-react";
 import "./styles.scss";
 import { Context } from "../../../../context/Context";
+import PublishIcon from "@mui/icons-material/Publish";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -62,6 +63,7 @@ function Settings() {
   const [terms, setTerms] = useState("");
   const [returns, setReturns] = useState("");
   const [privacy, setPrivacy] = useState("");
+  const [currency, setCurrency] = useState("");
   const [razorkeyid, setRazorKeyId] = useState("");
   const [razorsecret, setRazorSecret] = useState();
   const [paytmid, setPaytmId] = useState("");
@@ -83,13 +85,16 @@ function Settings() {
   const [whatsapp, setWhatsapp] = useState("");
   const [appstore, setAppStore] = useState("");
   const [webname, setWebname] = useState("");
-  const [bannerBackground, setBannerBackground] = useState("");
+  const [storeAddress, setStoreAddress] = useState("");
+  const [logo, setLogo] = useState("");
+  const [shortDesc, setShortDesc] = useState("");
   const [buyInfo, setBuyInfo] = useState("");
   const [bulk, setBulk] = useState("");
   const [careers, setCareers] = useState("");
   const [ourstores, setOurStores] = useState("");
   const [ourcares, setOurCares] = useState("");
-  const [reviewGuide, setReviewGuide] = useState("");
+  const [themeFaq, setThemeFaq] = useState("");
+  const [googleAnalytics, setGoogleAnalytics] = useState("");
 
   //===============
   //FETCH SETTINGS
@@ -105,6 +110,8 @@ function Settings() {
         setTerms(data.terms);
         setReturns(data.returns);
         setPrivacy(data.privacy);
+        setShortDesc(data.shortDesc);
+        setCurrency(data.currency);
         setRazorKeyId(data.razorkeyid);
         setRazorSecret(data.razorsecret);
         setPaytmId(data.paytmid);
@@ -126,13 +133,15 @@ function Settings() {
         setWhatsapp(data.whatsapp);
         setAppStore(data.appstore);
         setWebname(data.webname);
-        setBannerBackground(data.bannerBackground);
+        setStoreAddress(data.storeAddress);
+        setLogo(data.logo);
         setBuyInfo(data.buyInfo);
         setBulk(data.bulk);
         setCareers(data.careers);
         setOurStores(data.ourstores);
         setOurCares(data.ourcares);
-        setReviewGuide(data.reviewGuide);
+        setThemeFaq(data.themeFaq);
+        setGoogleAnalytics(data.googleAnalytics);
         dispatch({ type: "FETCH_SUCCESS", payload: data });
         window.scrollTo(0, 0);
       } catch (error) {
@@ -160,6 +169,8 @@ function Settings() {
           terms,
           returns,
           privacy,
+
+          currency,
           razorkeyid,
           razorsecret,
           paytmid,
@@ -181,13 +192,16 @@ function Settings() {
           whatsapp,
           appstore,
           webname,
-          bannerBackground,
+          storeAddress,
+          shortDesc,
+          logo,
           buyInfo,
           bulk,
           careers,
           ourstores,
           ourcares,
-          reviewGuide,
+          themeFaq,
+          googleAnalytics,
         },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -220,7 +234,7 @@ function Settings() {
       toast.success("Image uploaded successfully", {
         position: "bottom-center",
       });
-      setBannerBackground(data.secure_url);
+      setLogo(data.secure_url);
     } catch (err) {
       toast.error(getError(err), { position: "bottom-center" });
       dispatch({ type: "UPLOAD_FAIL" });
@@ -320,10 +334,10 @@ function Settings() {
                             className="editor"
                             id="desc"
                             ref={editor}
-                            value={reviewGuide}
+                            value={themeFaq}
                             // config={config}
                             tabIndex={1} // tabIndex of textarea
-                            onBlur={(newContent) => setReviewGuide(newContent)} // preferred to use only this option to update the content for performance reasons
+                            onBlur={(newContent) => setThemeFaq(newContent)} // preferred to use only this option to update the content for performance reasons
                             onChange={(newContent) => {}}
                           />
                         </div>{" "}
@@ -506,6 +520,17 @@ function Settings() {
                             />
                           </div>
                           <div className="lower_group">
+                            <small>Your google analytics Id:</small>
+                            <input
+                              value={googleAnalytics}
+                              onChange={(e) =>
+                                setGoogleAnalytics(e.target.value)
+                              }
+                              type="text"
+                              placeholder="google analytics Id"
+                            />
+                          </div>
+                          <div className="lower_group">
                             <small>Set your tax percentage:</small>
                             <input
                               value={tax}
@@ -514,79 +539,68 @@ function Settings() {
                               placeholder="tax e.g 14"
                             />
                           </div>
+                          <div className="lower_group">
+                            <small>Set your default currency:</small>
+                            <input
+                              value={currency}
+                              onChange={(e) => setCurrency(e.target.value)}
+                              type="text"
+                              placeholder="tax e.g 14"
+                            />
+                          </div>
 
                           <div className="lower_group">
-                            <small>Shipping Method &amp; Price:</small>
                             <span className="d_flex">
-                              <input
-                                className="sub_input"
-                                value={express}
-                                onChange={(e) => setExpress(e.target.value)}
-                                type="text"
-                                placeholder="express shipping"
-                              />
-                              <input
-                                className="sub_input"
-                                value={expressCharges}
-                                onChange={(e) =>
-                                  setExpressCharges(e.target.value)
-                                }
-                                type="text"
-                                placeholder="price e.g 20"
-                              />
+                              <span className="flex_row">
+                                <small>Shipping Method</small>
+                                <input
+                                  className="sub_input"
+                                  value={express}
+                                  onChange={(e) => setExpress(e.target.value)}
+                                  type="text"
+                                  placeholder="express shipping"
+                                />
+                              </span>
+                              <span className="flex_row">
+                                <small>Charges</small>
+                                <input
+                                  className="sub_input"
+                                  value={expressCharges}
+                                  onChange={(e) =>
+                                    setExpressCharges(e.target.value)
+                                  }
+                                  type="text"
+                                  placeholder="price e.g 20"
+                                />
+                              </span>
                             </span>
                           </div>
                           <div className="lower_group">
-                            <small>Shipping Method &amp; Price:</small>
                             <span className="d_flex">
-                              <input
-                                className="sub_input"
-                                value={standard}
-                                onChange={(e) => setStandard(e.target.value)}
-                                type="text"
-                                placeholder="standard shipping"
-                              />
-                              <input
-                                className="sub_input"
-                                value={standardCharges}
-                                onChange={(e) =>
-                                  setStandardCharges(e.target.value)
-                                }
-                                type="text"
-                                placeholder="price e.g 20"
-                              />
+                              <span className="flex_row">
+                                <small>Shipping Method</small>
+                                <input
+                                  className="sub_input"
+                                  value={standard}
+                                  onChange={(e) => setStandard(e.target.value)}
+                                  type="text"
+                                  placeholder="standard shipping"
+                                />
+                              </span>
+                              <span className="flex_row">
+                                <small>Charges</small>
+                                <input
+                                  className="sub_input"
+                                  value={standardCharges}
+                                  onChange={(e) =>
+                                    setStandardCharges(e.target.value)
+                                  }
+                                  type="text"
+                                  placeholder="price e.g 20"
+                                />
+                              </span>
                             </span>
                           </div>
-                          {/* <div className="background_image">
-                        <small>
-                          Banner background image here{" "}
-                          <small>
-                            <strong>(940 x 336)px</strong>
-                          </small>
-                          :
-                        </small>
-                        <input
-                          type="text"
-                          placeholder="banner background"
-                          value={bannerBackground}
-                          onChange={(e) => setBannerBackground(e.target.value)}
-                        />
-
-                        <span>
-                          <label htmlFor="file">
-                            <i
-                              onChange={uploadFileHandler}
-                              className="fa-solid fa-arrow-up-from-bracket"
-                            ></i>
-                          </label>
-                          <input
-                            onChange={uploadFileHandler}
-                            type="file"
-                            id="file"
-                            style={{ display: "none" }}
-                          />
-                        </span>
-                      </div> */}
                         </div>
                         <div>
                           <div className="lower_group">
@@ -635,13 +649,69 @@ function Settings() {
                             />
                           </div>
                           <div className="lower_group">
-                            <h3>Your Website name here:</h3>
+                            <h3>Your Store Info here:</h3>
+                            <small>Your Store name here:</small>
                             <input
                               value={webname}
                               onChange={(e) => setWebname(e.target.value)}
                               type="text"
-                              placeholder="SHOPMATE"
+                              placeholder="ProCanes"
                             />
+                          </div>
+                          <div className="lower_group">
+                            <small>Your Store address here:</small>
+                            <input
+                              value={storeAddress}
+                              onChange={(e) => setStoreAddress(e.target.value)}
+                              type="text"
+                              placeholder="Tanke, oke-odo Nigeria"
+                            />
+                          </div>
+                          <div className="lower_group">
+                            <small>Your store short description here:</small>
+                            <textarea
+                              name="about_store"
+                              id="about_store"
+                              cols="30"
+                              rows="10"
+                              className="about_store"
+                              value={shortDesc}
+                              onChange={(e) => setShortDesc(e.target.value)}
+                              maxLength={30}
+                              placeholder="short store description..."
+                            ></textarea>
+                          </div>
+                          <div className="logo_image">
+                            <div className="a_flex">
+                              <img
+                                src={logo}
+                                alt="store logo"
+                                className="logo"
+                              />
+                              <span>
+                                <label htmlFor="file">
+                                  <PublishIcon
+                                    className="userUpdateIcon upload-btn"
+                                    onChange={uploadFileHandler}
+                                  />
+                                </label>
+                                <input
+                                  onChange={uploadFileHandler}
+                                  type="file"
+                                  id="file"
+                                  style={{ display: "none" }}
+                                />
+                              </span>
+                            </div>
+                            <div>
+                              <input
+                                type="text"
+                                placeholder="store logo url"
+                                value={logo}
+                                className="logo_url"
+                                onChange={(e) => setLogo(e.target.value)}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>

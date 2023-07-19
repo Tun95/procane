@@ -1617,4 +1617,90 @@ orderRouter.get("/shipments/:shipmentId", async (req, res) => {
   }
 });
 
+//=====
+// DHL
+//=====
+// DHL API configuration
+const apiKey = "Or6EfpGnVxOqLb1Abl8HaOmwGLPmTPBT";
+const apiSecret = "CL21O1YAUjvd3QWy";
+
+// Booking API
+orderRouter.post("/dhl/booking", async (req, res) => {
+  try {
+    const { addressFrom, addressTo, parcels } = req.body;
+
+    // Perform booking request to DHL API
+    const response = await axios.post(
+      "https://api-eu.dhl.com/booking/shipments",
+      {
+        addressFrom,
+        addressTo,
+        parcels,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "DHL-API-Key": apiKey,
+          "DHL-API-Secret": apiSecret,
+        },
+      }
+    );
+
+    // Return booking result
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to book shipment" });
+  }
+});
+
+// Tracking API
+orderRouter.get("/dhl/tracking/:trackingNumber", async (req, res) => {
+  try {
+    const { trackingNumber } = req.params;
+
+    // Perform tracking request to DHL API
+    const response = await axios.get(
+      `https://api.dhl.com/v2/tracking/shipments?trackingNumber=${trackingNumber}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "DHL-API-Key": apiKey,
+          "DHL-API-Secret": apiSecret,
+        },
+      }
+    );
+
+    // Return tracking result
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to track shipment" });
+  }
+});
+
+
+orderRouter.get("/dhl/:trackingNumber", async (req, res) => {
+  const { trackingNumber } = req.params;
+
+  const response = await fetch(
+    `https://api-test.dhl.com/track/shipments?trackingNumber=${trackingNumber}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${apiKey}:${apiSecret}`).toString(
+          "base64"
+        )}`,
+      },
+    }
+  );
+
+  if (response.ok) {
+    const data = await response.json();
+    res.send(data);
+  } else {
+    res.sendStatus(response.status);
+  }
+});
+
 export default orderRouter;

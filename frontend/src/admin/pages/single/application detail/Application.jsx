@@ -6,6 +6,7 @@ import { Context } from "../../../../context/Context";
 import { getError } from "../../../../components/utilities/util/Utils";
 import photo from "../../../assets/photo.jpg";
 import "./styles.scss";
+import { Helmet } from "react-helmet-async";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -57,6 +58,9 @@ function Application() {
   console.log(application);
   return (
     <div className="mtb">
+      <Helmet>
+        <title>Application Details</title>
+      </Helmet>
       <div className="container apply_content">
         <div className="box_shadow">
           <div className="light_shadow">

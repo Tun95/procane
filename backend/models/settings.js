@@ -18,10 +18,14 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: "Your privacy here",
     },
-
+    shortDesc: {
+      type: String,
+      default:
+        "To synthesize world-class quality furniturethat fits amidst everydesigner setting andsymbolizes serenity inevery home. Welcome to the worldof outdoors and indoors",
+    },
     currency: {
       type: String,
-      default: "GBP",
+      default: "USD",
     },
     rate: {
       type: Number,
@@ -75,7 +79,11 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: "SHOPMATE",
     },
-    bannerBackground: {
+    storeAddress: {
+      type: String,
+      default: "Tanke, oke-odo Nigeria",
+    },
+    logo: {
       type: String,
       default:
         "https://res.cloudinary.com/dstj5eqcd/image/upload/v1673724164/banner2_l71yuh.png",
@@ -88,7 +96,7 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: "Corporate & Bulk Purchasing",
     },
-    reviewGuide: {
+    themeFaq: {
       type: String,
       default: "review guidelines",
     },
@@ -146,6 +154,10 @@ const settingsSchema = new mongoose.Schema(
     paystackkey: {
       type: String,
       default: "pk_test_ef13bcd8c41beba368902728447ba2b4f79a3287",
+    },
+    googleAnalytics: {
+      type: String,
+      default: "G-MNF3WLVGEC",
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,

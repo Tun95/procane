@@ -16,6 +16,7 @@ import Settings from "../../single/settings/Settings";
 import SettingsScreen from "../settings/SettingsScreen";
 import Subscribers from "../../single/subcribers/Subscribers";
 import Applicants from "../../list/applicants/Aplicants";
+import { Helmet } from "react-helmet-async";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -59,6 +60,9 @@ function OtherScreen() {
 
   return (
     <div className="mtb">
+      <Helmet>
+        <title>All Settings</title>
+      </Helmet>
       <div className="container">
         <div className="settings box_shadow">
           <div className="tab">
@@ -93,7 +97,7 @@ function OtherScreen() {
                   />
                   <Tab
                     className={value === 2 ? "activeTab" : "tab_sub"}
-                    label="Manufacturer Filter"
+                    label="Brand Filter"
                     {...a11yProps(2)}
                   />
                   <Tab

@@ -53,8 +53,10 @@ function Track() {
 
       if (response.ok) {
         const result = await response.json();
-        const shipmentData = JSON.stringify(result.shipment.object_id); // Convert shipment object to a string
-        toast.success(`${shipmentData} Shipment retrieved successfully`, {
+        const shipmentId = JSON.stringify(result.shipment.object_id);
+        const shipmentData = JSON.stringify(result.shipment); // Convert shipment object to a string
+        localStorage.setItem("shipmentData", shipmentData);
+        toast.success(`${shipmentId} Shipment retrieved successfully`, {
           position: "bottom-center",
         });
         return result.shipment;

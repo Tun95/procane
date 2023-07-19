@@ -75,7 +75,7 @@ function List({ currencySign }) {
               <MessageBox>No Orders This Month </MessageBox>
             </span>
           )}
-          {orders?.slice(0, 20).map((order, index) => (
+          {orders?.slice(0, 10).map((order, index) => (
             <TableRow key={index}>
               <TableCell className="tableCell">{order._id}</TableCell>
               <TableCell className="tableCell">

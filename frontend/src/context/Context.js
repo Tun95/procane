@@ -111,7 +111,7 @@ function reducer(state, action) {
 
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
       return { ...state, cart: { ...state.cart, cartItems } };
-    
+
     // case "CART_ADD_ITEM":
     //   const newItem = action.payload;
 
@@ -206,7 +206,7 @@ function reducer(state, action) {
 
 export function ContextProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
-
+  const { settings } = state;
   //==============
   //FETCH SETTINGS HANDLER
   //==============
@@ -411,14 +411,21 @@ export function ContextProvider(props) {
       return Math.round(numericPrice); // Round to the nearest whole number
     }
   };
-
+  const { currency } =
+    (settings &&
+      settings
+        .map((s) => ({
+          currency: s.currency,
+        }))
+        .find(() => true)) ||
+    {};
   useEffect(() => {
     localStorage.setItem("toCurrency", toCurrency);
 
     const fetchConversionRates = async () => {
       try {
         const response = await fetch(
-          "https://api.exchangerate-api.com/v4/latest/USD"
+          `https://api.exchangerate-api.com/v4/latest/${currency}`
         );
         const data = await response.json();
         setConversionRates(data.rates);
@@ -429,7 +436,7 @@ export function ContextProvider(props) {
     };
 
     fetchConversionRates();
-  }, [toCurrency]);
+  }, [currency, toCurrency]);
 
   const value = {
     state,
