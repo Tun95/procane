@@ -383,44 +383,27 @@ function Details({ product }) {
                 </div>
               </div>
               <div className="share_btn">
-                <div className="facebook_btn">
-                  <FacebookShareButton
-                    url={window.location.href}
-                    quote={`${title}`}
-                  >
-                    <FacebookIcon
-                      size={32}
-                      round={true}
-                      className="share_icons"
-                    />
-                  </FacebookShareButton>{" "}
-                  <TwitterShareButton
-                    url={window.location.href}
-                    quote={`${title}`}
-                  >
-                    <TwitterIcon
-                      size={32}
-                      round={true}
-                      className="share_icons"
-                    />
-                  </TwitterShareButton>{" "}
-                  <WhatsappShareButton
-                    url={window.location.href}
-                    quote={`${title}`}
-                  >
-                    <WhatsappIcon
-                      size={32}
-                      round={true}
-                      className="share_icons"
-                    />
-                  </WhatsappShareButton>{" "}
-                  <EmailShareButton
-                    url={window.location.href}
-                    quote={`${title}`}
-                  >
-                    <EmailIcon size={32} round={true} className="share_icons" />
-                  </EmailShareButton>
-                </div>
+                <FacebookShareButton
+                  url={window.location.href}
+                  quote={`${title}`}
+                >
+                  <FacebookIcon size={32} round={true} />
+                </FacebookShareButton>{" "}
+                <TwitterShareButton
+                  url={window.location.href}
+                  quote={`${title}`}
+                >
+                  <TwitterIcon size={32} round={true} />
+                </TwitterShareButton>{" "}
+                <WhatsappShareButton
+                  url={window.location.href}
+                  quote={`${title}`}
+                >
+                  <WhatsappIcon size={32} round={true} />
+                </WhatsappShareButton>{" "}
+                <EmailShareButton url={window.location.href} quote={`${title}`}>
+                  <EmailIcon size={32} round={true} />
+                </EmailShareButton>
               </div>
             </div>
           </div>
