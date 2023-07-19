@@ -23,3 +23,14 @@
 
   margin-top: 5px;
 }
+.page_not_found {
+  width: 100%;
+  min-height: 600px;
+}
+.page_not_found .found_text {
+  text-align: center;
+  margin-left: 10px;
+}
+.page_not_found .head_size {
+  font-size: 130px;
+}

@@ -86,6 +86,7 @@ import Application from "./admin/pages/single/application detail/Application";
 import TrackScreen from "./screens/orderscreen/trackscreen/TrackScreen";
 import ReactGA from "react-ga4";
 import LoadingOverlayComponent from "./components/utilities/message loading/OverlayLoading";
+import NotFoundScreen from "./components/utilities/404 error/PageNotFound";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -123,6 +124,7 @@ function App() {
         <Header />
         <LoadingOverlayComponent>
           <Routes>
+            <Route path="*" element={<NotFoundScreen />} />
             <Route path="/" exact element={<HomeScreen />}></Route>
             <Route path="/cart" element={<Cart />}></Route>
             <Route path="/store" element={<StoreScreen />}></Route>
