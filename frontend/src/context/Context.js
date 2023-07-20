@@ -2,6 +2,7 @@ import axios from "axios";
 import { createContext, useEffect, useReducer, useState } from "react";
 import { getError } from "../components/utilities/util/Utils";
 import { request } from "../base url/BaseUrl";
+import currencyToSymbolMap from "currency-symbol-map/map";
 
 export const Context = createContext();
 
@@ -438,6 +439,22 @@ export function ContextProvider(props) {
     fetchConversionRates();
   }, [currency, toCurrency]);
 
+  const [currencies, setCurrencies] = useState([]);
+  useEffect(() => {
+    const fetchCurrencies = () => {
+      const currencyCodes = Object.keys(currencyToSymbolMap);
+
+      const currenciesWithSymbols = currencyCodes.map((code) => ({
+        code,
+        symbol: currencyToSymbolMap[code],
+      }));
+
+      setCurrencies(currenciesWithSymbols);
+    };
+
+    fetchCurrencies();
+  }, []);
+  
   const value = {
     state,
     dispatch,
@@ -447,6 +464,7 @@ export function ContextProvider(props) {
     convertToNumeric,
     formatPrice,
     darkMode,
+    currencies,
     toggle,
   };
 

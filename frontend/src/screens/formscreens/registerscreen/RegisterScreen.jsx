@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { request } from "../../../base url/BaseUrl";
 import { GoogleLogin } from "@react-oauth/google";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
+import { Helmet } from "react-helmet-async";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -147,6 +148,9 @@ function RegisterScreen() {
 
   return (
     <div className="form-box">
+      <Helmet>
+        <title>Register</title>
+      </Helmet>
       <div className="form-box-content">
         <Formik
           initialValues={initialValues}

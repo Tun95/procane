@@ -10,7 +10,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -36,7 +35,8 @@ import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 function SideBar() {
   const { state: states, dispatch: ctxDispatch } = useContext(Context);
   const { cart, userInfo } = states;
-  const { darkMode, toggle, toCurrency, setToCurrency } = useContext(Context);
+  const { darkMode, toggle, currencies, toCurrency, setToCurrency } =
+    useContext(Context);
 
   const [state, setState] = React.useState({
     right: false,
@@ -333,11 +333,11 @@ function SideBar() {
                 value={toCurrency}
                 onChange={(e) => setToCurrency(e.target.value)}
               >
-                <option value="USD">$ USD</option>
-                <option value="INR">₹ INR</option>
-                <option value="NGN">₦ NGN</option>
-                <option value="GBP">£ GBP</option>
-                <option value="EUR">€ EUR</option>
+                {currencies.map((currency) => (
+                  <option key={currency.code} value={currency.code}>
+                    {currency.symbol} &#160;&#160; {currency.code}
+                  </option>
+                ))}
               </select>
             </div>
           </Drawer>

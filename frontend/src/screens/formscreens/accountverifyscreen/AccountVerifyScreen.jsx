@@ -3,6 +3,7 @@ import React from "react";
 import { otpSchema } from "../../../components/schemas/Index";
 
 import "../styles/style.scss";
+import { Helmet } from "react-helmet-async";
 
 function AccountVerifyScreen() {
   const initialValues = {
@@ -17,6 +18,9 @@ function AccountVerifyScreen() {
 
   return (
     <div className="form-box">
+      <Helmet>
+        <title>Account Verification</title>
+      </Helmet>
       <div className="form-box-content">
         <Formik
           initialValues={initialValues}

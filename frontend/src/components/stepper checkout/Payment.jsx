@@ -70,10 +70,11 @@ function Payment(props) {
     settings,
     cart: { cartItems, paymentMethod },
   } = state;
-  const { razorkeyid, paytmid, stripePubKey, paystackkey, webname } =
+  const { razorkeyid, paytmid, logo, stripePubKey, paystackkey, webname } =
     (settings &&
       settings
         .map((s) => ({
+          logo: s.logo,
           razorkeyid: s.razorkeyid,
           paytmid: s.paytmid,
           stripePubKey: s.stripePubKey,
@@ -427,9 +428,9 @@ function Payment(props) {
         key: razorkeyid,
         amount: razorGrandTotal * 100,
         currency: toCurrency,
-        name: "ProCanes",
-        description: "payment",
-        image: "https://your-store-logo.png", // URL of your store's logo
+        name: webname,
+        description: `Oder payment by ${userInfo.email}`,
+        image: logo, // URL of your store's logo
         order_id: razororder.id,
         handler: function (response) {
           if (response.razorpay_payment_id) {

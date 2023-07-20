@@ -426,16 +426,17 @@ orderRouter.put(
 //====================
 async function convertCurrency(amount, toCurrency) {
   const settings = await Settings.find({});
-  const { exhangerate } =
+  const { exhangerate, currency } =
     (settings &&
       settings
         .map((s) => ({
           exhangerate: s.exhangerate,
+          currency: s.currency,
         }))
         .find(() => true)) ||
     {};
   const apiKey = exhangerate;
-  const apiUrl = `https://v6.exchangerate-api.com/v6/${apiKey}/pair/USD/${toCurrency}/${amount}`;
+  const apiUrl = `https://v6.exchangerate-api.com/v6/${apiKey}/pair/${currency}/${toCurrency}/${amount}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -454,6 +455,8 @@ orderRouter.post(
   "/:id/stripe",
   isAuth,
   expressAsyncHandler(async (req, res) => {
+    const settings = await Settings.find({});
+
     const { stripeApiKey } = (await Settings.findOne({})) ?? {};
     const stripe = Stripe(stripeApiKey);
     console.log(stripeApiKey);
@@ -509,14 +512,22 @@ orderRouter.post(
         let convertedShippingPrice = order.shippingPrice;
         let convertedGrandTotal = order.grandTotal;
 
-        if (order.currencySign !== "USD") {
+        const { currency: currencyStripe } =
+          (settings &&
+            settings
+              .map((s) => ({
+                currency: s.currency,
+              }))
+              .find(() => true)) ||
+          {};
+
+        const formatter = new Intl.NumberFormat("en-US", {
+          style: "decimal",
+          minimumFractionDigits: 2,
+        });
+
+        if (order.currencySign !== currency) {
           try {
-            const currencySignMapping = {
-              NGN: "₦",
-              EUR: "€",
-              GBP: "£",
-              INR: "₹",
-            };
             convertedItemsPrice = await convertCurrency(
               order.itemsPrice,
               order.currencySign
@@ -533,30 +544,19 @@ orderRouter.post(
               order.grandTotal,
               order.currencySign
             );
-            convertedCurrencySign = currencySignMapping[order.currencySign];
+            convertedCurrencySign = order.currencySign;
+
+            // Format converted values
+            convertedItemsPrice = formatter.format(convertedItemsPrice);
+            convertedTaxPrice = formatter.format(convertedTaxPrice);
+            convertedShippingPrice = formatter.format(convertedShippingPrice);
+            convertedGrandTotal = formatter.format(convertedGrandTotal);
           } catch (error) {
             console.log(error);
             throw new Error("Failed to convert currency");
           }
         }
 
-        const convertPrice = async (price, toCurrency) => {
-          try {
-            const convertedPrice = await convertCurrency(
-              price,
-              order.currencySign,
-              toCurrency
-            );
-            const formattedPrice = new Intl.NumberFormat("en", {
-              style: "currency",
-              currency: toCurrency,
-            }).format(convertedPrice);
-            return `${formattedPrice}`;
-          } catch (error) {
-            console.log(error);
-            throw new Error("Failed to convert price");
-          }
-        };
         const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
         <p>
         Hi ${order.user.lastName} ${order.user.firstName},</p>
@@ -578,16 +578,6 @@ orderRouter.post(
         <tbody>
      ${await Promise.all(
        order.orderItems.map(async (item) => {
-         let convertedPrice = "";
-         if (order.currencySign === "INR") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "INR");
-         } else if (order.currencySign === "NGN") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "NGN");
-         } else if (order.currencySign === "EUR") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "EUR");
-         } else if (order.currencySign === "GBP") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "GBP");
-         }
          return `
       <tr>
         <td>${item.name}</td>
@@ -600,7 +590,7 @@ orderRouter.post(
         <td align="right">${
           order.currencySign === "USD"
             ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedItemsPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedItemsPrice
         }</td>
       </tr>
     `;
@@ -613,7 +603,7 @@ orderRouter.post(
         <td align="right"> ${
           order.currencySign === "USD"
             ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedItemsPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedItemsPrice
         }</td>
         </tr>
         <tr>
@@ -621,7 +611,7 @@ orderRouter.post(
         <td align="right">${
           order.currencySign === "USD"
             ? `$${order.taxPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedTaxPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedTaxPrice
         }</td>
         </tr>
         <tr>
@@ -629,7 +619,7 @@ orderRouter.post(
         <td align="right">${
           order.currencySign === "USD"
             ? `$${order.shippingPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedShippingPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedShippingPrice
         }</td>
         </tr>
         <tr>
@@ -637,7 +627,7 @@ orderRouter.post(
         <td align="right"><strong>${
           order.currencySign === "USD"
             ? `$${order.grandTotal.toFixed(2)}`
-            : convertedCurrencySign + convertedGrandTotal.toFixed(2)
+            : convertedCurrencySign + " " + convertedGrandTotal
         }</strong></td>
         </tr>
         <tr>
@@ -660,6 +650,7 @@ orderRouter.post(
         <p>
         Thanks for shopping with us.
         </p>
+        <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
         </body></html>`;
         const client = Sib.ApiClient.instance;
         const apiKey = client.authentications["api-key"];
@@ -775,7 +766,15 @@ orderRouter.post(
   expressAsyncHandler(async (req, res) => {
     const orderId = req.params.id;
     const paymentResponse = req.body;
-
+    const settings = await Settings.find({});
+    const { currency } =
+      (settings &&
+        settings
+          .map((s) => ({
+            currency: s.currency,
+          }))
+          .find(() => true)) ||
+      {};
     const order = await Order.findById(orderId).populate("user");
 
     if (!order) {
@@ -817,15 +816,13 @@ orderRouter.post(
       let convertedShippingPrice = order.shippingPrice;
       let convertedGrandTotal = order.grandTotal;
 
-      if (order.currencySign !== "USD") {
-        try {
-          const currencySignMapping = {
-            NGN: "₦",
-            EUR: "€",
-            GBP: "£",
-            INR: "₹",
-          };
+      const formatter = new Intl.NumberFormat("en-US", {
+        style: "decimal",
+        minimumFractionDigits: 2,
+      });
 
+      if (order.currencySign !== currency) {
+        try {
           convertedItemsPrice = await convertCurrency(
             order.itemsPrice,
             order.currencySign
@@ -842,36 +839,19 @@ orderRouter.post(
             order.grandTotal,
             order.currencySign
           );
-          convertedCurrencySign = currencySignMapping[order.currencySign];
+          convertedCurrencySign = order.currencySign;
+
+          // Format converted values
+          convertedItemsPrice = formatter.format(convertedItemsPrice);
+          convertedTaxPrice = formatter.format(convertedTaxPrice);
+          convertedShippingPrice = formatter.format(convertedShippingPrice);
+          convertedGrandTotal = formatter.format(convertedGrandTotal);
         } catch (error) {
           console.log(error);
           throw new Error("Failed to convert currency");
         }
       }
 
-      const convertPrice = async (price, toCurrency) => {
-        try {
-          const convertedPrice = await convertCurrency(
-            price,
-            order.currencySign,
-            toCurrency
-          );
-          const currencySignMapping = {
-            NGN: "₦",
-            EUR: "€",
-            GBP: "£",
-            INR: "₹",
-          };
-          const formattedPrice = new Intl.NumberFormat("en", {
-            style: "currency",
-            currency: toCurrency,
-          }).format(convertedPrice);
-          return `${formattedPrice}`;
-        } catch (error) {
-          console.log(error);
-          throw new Error("Failed to convert price");
-        }
-      };
       const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
         <p>
         Hi ${order.user.lastName} ${order.user.firstName},</p>
@@ -893,16 +873,6 @@ orderRouter.post(
         <tbody>
      ${await Promise.all(
        order.orderItems.map(async (item) => {
-         let convertedPrice = "";
-         if (order.currencySign === "INR") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "INR");
-         } else if (order.currencySign === "NGN") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "NGN");
-         } else if (order.currencySign === "EUR") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "EUR");
-         } else if (order.currencySign === "GBP") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "GBP");
-         }
          return `
       <tr>
         <td>${item.name}</td>
@@ -914,8 +884,8 @@ orderRouter.post(
         <td align="center">${item.quantity}</td>
         <td align="right">${
           order.currencySign === "USD"
-            ? `$${item.price.toFixed(2)}`
-            : convertedCurrencySign + convertedPrice
+            ? `$${order.itemsPrice.toFixed(2)}`
+            : convertedCurrencySign + " " + convertedItemsPrice
         }</td>
       </tr>
     `;
@@ -928,7 +898,7 @@ orderRouter.post(
         <td align="right"> ${
           order.currencySign === "USD"
             ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedItemsPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedItemsPrice
         }</td>
         </tr>
         <tr>
@@ -936,7 +906,7 @@ orderRouter.post(
         <td align="right">${
           order.currencySign === "USD"
             ? `$${order.taxPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedTaxPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedTaxPrice
         }</td>
         </tr>
         <tr>
@@ -944,7 +914,7 @@ orderRouter.post(
         <td align="right">${
           order.currencySign === "USD"
             ? `$${order.shippingPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedShippingPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedShippingPrice
         }</td>
         </tr>
         <tr>
@@ -952,7 +922,7 @@ orderRouter.post(
         <td align="right"><strong>${
           order.currencySign === "USD"
             ? `$${order.grandTotal.toFixed(2)}`
-            : convertedCurrencySign + convertedGrandTotal.toFixed(2)
+            : convertedCurrencySign + " " + convertedGrandTotal
         }</strong></td>
         </tr>
         <tr>
@@ -975,6 +945,7 @@ orderRouter.post(
         <p>
         Thanks for shopping with us.
         </p>
+        <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
         </body></html>`;
       const client = Sib.ApiClient.instance;
       const apiKey = client.authentications["api-key"];
@@ -1077,7 +1048,15 @@ orderRouter.post(
   expressAsyncHandler(async (req, res) => {
     const orderId = req.params.id;
     const paymentResponse = req.body;
-
+    const settings = await Settings.find({});
+    const { currency } =
+      (settings &&
+        settings
+          .map((s) => ({
+            currency: s.currency,
+          }))
+          .find(() => true)) ||
+      {};
     const order = await Order.findById(orderId).populate("user");
 
     if (!order) {
@@ -1131,15 +1110,13 @@ orderRouter.post(
       let convertedShippingPrice = order.shippingPrice;
       let convertedGrandTotal = order.grandTotal;
 
-      if (order.currencySign !== "USD") {
-        try {
-          const currencySignMapping = {
-            NGN: "₦",
-            EUR: "€",
-            GBP: "£",
-            INR: "₹",
-          };
+      const formatter = new Intl.NumberFormat("en-US", {
+        style: "decimal",
+        minimumFractionDigits: 2,
+      });
 
+      if (order.currencySign !== currency) {
+        try {
           convertedItemsPrice = await convertCurrency(
             order.itemsPrice,
             order.currencySign
@@ -1156,30 +1133,19 @@ orderRouter.post(
             order.grandTotal,
             order.currencySign
           );
-          convertedCurrencySign = currencySignMapping[order.currencySign];
+          convertedCurrencySign = order.currencySign;
+
+          // Format converted values
+          convertedItemsPrice = formatter.format(convertedItemsPrice);
+          convertedTaxPrice = formatter.format(convertedTaxPrice);
+          convertedShippingPrice = formatter.format(convertedShippingPrice);
+          convertedGrandTotal = formatter.format(convertedGrandTotal);
         } catch (error) {
           console.log(error);
           throw new Error("Failed to convert currency");
         }
       }
 
-      const convertPrice = async (price, toCurrency) => {
-        try {
-          const convertedPrice = await convertCurrency(
-            price,
-            order.currencySign,
-            toCurrency
-          );
-          const formattedPrice = new Intl.NumberFormat("en", {
-            style: "currency",
-            currency: toCurrency,
-          }).format(convertedPrice);
-          return `${formattedPrice}`;
-        } catch (error) {
-          console.log(error);
-          throw new Error("Failed to convert price");
-        }
-      };
       const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
         <p>
         Hi ${order.user.lastName} ${order.user.firstName},</p>
@@ -1201,16 +1167,6 @@ orderRouter.post(
         <tbody>
      ${await Promise.all(
        order.orderItems.map(async (item) => {
-         let convertedPrice = "";
-         if (order.currencySign === "INR") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "INR");
-         } else if (order.currencySign === "NGN") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "NGN");
-         } else if (order.currencySign === "EUR") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "EUR");
-         } else if (order.currencySign === "GBP") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "GBP");
-         }
          return `
       <tr>
         <td>${item.name}</td>
@@ -1222,8 +1178,8 @@ orderRouter.post(
         <td align="center">${item.quantity}</td>
         <td align="right">${
           order.currencySign === "USD"
-            ? `$${item.price.toFixed(2)}`
-            : convertedCurrencySign + convertedPrice
+            ? `$${order.itemsPrice.toFixed(2)}`
+            : convertedCurrencySign + " " + convertedItemsPrice
         }</td>
       </tr>
     `;
@@ -1236,7 +1192,7 @@ orderRouter.post(
         <td align="right"> ${
           order.currencySign === "USD"
             ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedItemsPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedItemsPrice
         }</td>
         </tr>
         <tr>
@@ -1244,7 +1200,7 @@ orderRouter.post(
         <td align="right">${
           order.currencySign === "USD"
             ? `$${order.taxPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedTaxPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedTaxPrice
         }</td>
         </tr>
         <tr>
@@ -1252,7 +1208,7 @@ orderRouter.post(
         <td align="right">${
           order.currencySign === "USD"
             ? `$${order.shippingPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedShippingPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedShippingPrice
         }</td>
         </tr>
         <tr>
@@ -1260,7 +1216,7 @@ orderRouter.post(
         <td align="right"><strong>${
           order.currencySign === "USD"
             ? `$${order.grandTotal.toFixed(2)}`
-            : convertedCurrencySign + convertedGrandTotal.toFixed(2)
+            : convertedCurrencySign + " " + convertedGrandTotal
         }</strong></td>
         </tr>
         <tr>
@@ -1283,6 +1239,7 @@ orderRouter.post(
         <p>
         Thanks for shopping with us.
         </p>
+        <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
         </body></html>`;
       const client = Sib.ApiClient.instance;
       const apiKey = client.authentications["api-key"];
@@ -1327,6 +1284,15 @@ orderRouter.put(
   "/:id/pay",
   isAuth,
   expressAsyncHandler(async (req, res) => {
+    const settings = await Settings.find({});
+    const { currency } =
+      (settings &&
+        settings
+          .map((s) => ({
+            currency: s.currency,
+          }))
+          .find(() => true)) ||
+      {};
     const order = await Order.findById(req.params.id).populate("user");
     if (order) {
       order.isPaid = true;
@@ -1361,15 +1327,13 @@ orderRouter.put(
       let convertedShippingPrice = order.shippingPrice;
       let convertedGrandTotal = order.grandTotal;
 
-      if (order.currencySign !== "USD") {
-        try {
-          const currencySignMapping = {
-            NGN: "₦",
-            EUR: "€",
-            GBP: "£",
-            INR: "₹",
-          };
+      const formatter = new Intl.NumberFormat("en-US", {
+        style: "decimal",
+        minimumFractionDigits: 2,
+      });
 
+      if (order.currencySign !== currency) {
+        try {
           convertedItemsPrice = await convertCurrency(
             order.itemsPrice,
             order.currencySign
@@ -1386,30 +1350,19 @@ orderRouter.put(
             order.grandTotal,
             order.currencySign
           );
-          convertedCurrencySign = currencySignMapping[order.currencySign];
+          convertedCurrencySign = order.currencySign;
+
+          // Format converted values
+          convertedItemsPrice = formatter.format(convertedItemsPrice);
+          convertedTaxPrice = formatter.format(convertedTaxPrice);
+          convertedShippingPrice = formatter.format(convertedShippingPrice);
+          convertedGrandTotal = formatter.format(convertedGrandTotal);
         } catch (error) {
           console.log(error);
           throw new Error("Failed to convert currency");
         }
       }
 
-      const convertPrice = async (price, toCurrency) => {
-        try {
-          const convertedPrice = await convertCurrency(
-            price,
-            order.currencySign,
-            toCurrency
-          );
-          const formattedPrice = new Intl.NumberFormat("en", {
-            style: "currency",
-            currency: toCurrency,
-          }).format(convertedPrice);
-          return `${formattedPrice}`;
-        } catch (error) {
-          console.log(error);
-          throw new Error("Failed to convert price");
-        }
-      };
       const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
         <p>
         Hi ${order.user.lastName} ${order.user.firstName},</p>
@@ -1431,16 +1384,6 @@ orderRouter.put(
         <tbody>
      ${await Promise.all(
        order.orderItems.map(async (item) => {
-         let convertedPrice = "";
-         if (order.currencySign === "INR") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "INR");
-         } else if (order.currencySign === "NGN") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "NGN");
-         } else if (order.currencySign === "EUR") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "EUR");
-         } else if (order.currencySign === "GBP") {
-           convertedPrice = await convertPrice(item.price.toFixed(2), "GBP");
-         }
          return `
       <tr>
         <td>${item.name}</td>
@@ -1453,7 +1396,7 @@ orderRouter.put(
         <td align="right">${
           order.currencySign === "USD"
             ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedItemsPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedItemsPrice
         }</td>
       </tr>
     `;
@@ -1466,7 +1409,7 @@ orderRouter.put(
         <td align="right"> ${
           order.currencySign === "USD"
             ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedItemsPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedItemsPrice
         }</td>
         </tr>
         <tr>
@@ -1474,7 +1417,7 @@ orderRouter.put(
         <td align="right">${
           order.currencySign === "USD"
             ? `$${order.taxPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedTaxPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedTaxPrice
         }</td>
         </tr>
         <tr>
@@ -1482,7 +1425,7 @@ orderRouter.put(
         <td align="right">${
           order.currencySign === "USD"
             ? `$${order.shippingPrice.toFixed(2)}`
-            : convertedCurrencySign + convertedShippingPrice.toFixed(2)
+            : convertedCurrencySign + " " + convertedShippingPrice
         }</td>
         </tr>
         <tr>
@@ -1490,7 +1433,7 @@ orderRouter.put(
         <td align="right"><strong>${
           order.currencySign === "USD"
             ? `$${order.grandTotal.toFixed(2)}`
-            : convertedCurrencySign + convertedGrandTotal.toFixed(2)
+            : convertedCurrencySign + " " + convertedGrandTotal
         }</strong></td>
         </tr>
         <tr>
@@ -1513,6 +1456,7 @@ orderRouter.put(
         <p>
         Thanks for shopping with us.
         </p>
+        <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
         </body></html>`;
       const client = Sib.ApiClient.instance;
       const apiKey = client.authentications["api-key"];
@@ -1678,7 +1622,6 @@ orderRouter.get("/dhl/tracking/:trackingNumber", async (req, res) => {
     res.status(500).json({ error: "Failed to track shipment" });
   }
 });
-
 
 orderRouter.get("/dhl/:trackingNumber", async (req, res) => {
   const { trackingNumber } = req.params;

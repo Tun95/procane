@@ -12,6 +12,7 @@ import { loginSchema } from "../../../components/schemas/Index";
 import { Context } from "../../../context/Context";
 import { getError } from "../../../components/utilities/util/Utils";
 import { request } from "../../../base url/BaseUrl";
+import { Helmet } from "react-helmet-async";
 
 function LoginScreen() {
   const { state, dispatch: ctxDispatch } = useContext(Context);
@@ -72,6 +73,9 @@ function LoginScreen() {
   }, [navigate, redirect, userInfo]);
   return (
     <div className="form-box">
+      <Helmet>
+        <title>Login</title>
+      </Helmet>
       <div className="form-box-content">
         <Formik
           initialValues={initialValues}
