@@ -5,6 +5,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../../context/Context.js";
+import { Fade } from "react-awesome-reveal";
 
 function SliderCard() {
   const settings = {
@@ -37,16 +38,18 @@ function SliderCard() {
         {banners?.map((item, index) => (
           <div key={index} className="box d_flex top">
             <div className="left">
-              <h1>{item.title}</h1>
-              <p>{item.descriptions}</p>
-              <a href="#store">
-                <button
-                  onClick={() => navigate(`/store?category=${item.category}`)}
-                  className="btn-primary"
-                >
-                  Visit Collections
-                </button>
-              </a>
+              <Fade cascade direction="down" triggerOnce damping={0.3}>
+                <h1>{item.title}</h1>
+                <p>{item.descriptions}</p>
+                <a href="#store">
+                  <button
+                    onClick={() => navigate(`/store?category=${item.category}`)}
+                    className="btn-primary"
+                  >
+                    Visit Collections
+                  </button>
+                </a>
+              </Fade>
             </div>
             <div className="right">
               <img src={item.background} alt="" />

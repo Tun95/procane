@@ -74,7 +74,7 @@ function Dashboard() {
     if (active && payload && payload.length) {
       return (
         <div className="custom_tooltip" style={{ padding: "10px" }}>
-          <p className="label">{`${label}`}</p>
+          <p className="label">{label ? `${label}` : ""}</p>
           <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
             Total Sales: {`${convertCurrency(payload[0]?.value)}`}
           </p>
