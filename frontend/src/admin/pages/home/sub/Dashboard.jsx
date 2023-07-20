@@ -71,32 +71,19 @@ function Dashboard() {
   }, [summary.dailyOrders]);
 
   const CustomTooltip = ({ active, payload, label }) => {
-    let TotalSales = new Intl.NumberFormat("en-GB", {
-      style: "currency",
-      currency: toCurrency,
-    }).format(payload[0]?.value);
-
-    //let TotalSales = numeral(payload[0]?.value).format("0,0a");
-
     if (active && payload && payload.length) {
       return (
         <div className="custom_tooltip" style={{ padding: "10px" }}>
-          {label ? (
-            <p className="label">{`${label}`}</p>
-          ) : payload[0]?.name ? (
-            <p className="">{`Date: ${payload[0]?.name}`}</p>
-          ) : (
-            ""
-          )}
+          <p className="label">{`${label}`}</p>
           <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
-            Total Sales: {`${convertCurrency(TotalSales)}`}
+            Total Sales: {`${convertCurrency(payload[0]?.value)}`}
           </p>
         </div>
       );
     }
-
     return null;
   };
+
   console.log(salesStats);
 
   // const salesPerc = (
@@ -129,6 +116,7 @@ function Dashboard() {
 
   // console.log(summary);
   console.log(summary);
+
   return (
     <>
       <Helmet>
