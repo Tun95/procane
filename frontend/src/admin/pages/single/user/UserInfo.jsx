@@ -9,6 +9,7 @@ import { Context } from "../../../../context/Context";
 import { getError } from "../../../../components/utilities/util/Utils";
 import { request } from "../../../../base url/BaseUrl";
 import UserOrderList from "./table/Table";
+import { Helmet } from "react-helmet-async";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -104,6 +105,9 @@ function UserInfo() {
   };
   return (
     <div className="container">
+      <Helmet>
+        <title>User Info</title>
+      </Helmet>
       <div className="utop ">
         <div className="left">
           <div className="editButton">

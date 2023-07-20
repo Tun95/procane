@@ -30,6 +30,22 @@
   justify-content: flex-end;
   flex-wrap: wrap;
 }
+.head .currency_symbol {
+  width: 80px;
+}
+.head .float_left {
+  display: flex;
+  float: left;
+}
+.currency_symbol_option {
+  display: flex;
+  justify-content: space-between;
+}
+.head .float_right {
+  display: flex;
+  float: right;
+}
+
 /*------head-----------*/
 
 /*------search-----------*/

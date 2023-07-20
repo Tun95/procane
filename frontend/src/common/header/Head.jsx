@@ -1,9 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Context } from "../../context/Context";
 import { Link } from "react-router-dom";
+import currencyToSymbolMap from "currency-symbol-map/map";
 
 function Head() {
   const { darkMode, state, toggle, toCurrency, setToCurrency } =
@@ -72,6 +73,40 @@ function Head() {
         .find(() => true)) ||
     {};
 
+  const [currencies, setCurrencies] = useState([]);
+  // useEffect(() => {
+  //   const fetchCurrencies = () => {
+  //     const currencyCodes = Object.keys(currencyToSymbolMap);
+
+  //     const currenciesWithSymbols = currencyCodes.map((code) => ({
+  //       code,
+  //       symbol: currencyToSymbolMap[code],
+  //     }));
+
+  //     return currenciesWithSymbols;
+  //   };
+
+  //   // Usage
+  //   const allCurrencies = fetchCurrencies();
+  //   console.log(allCurrencies);
+
+  //   fetchCurrencies();
+  // }, []);
+  useEffect(() => {
+    const fetchCurrencies = () => {
+      const currencyCodes = Object.keys(currencyToSymbolMap);
+
+      const currenciesWithSymbols = currencyCodes.map((code) => ({
+        code,
+        symbol: currencyToSymbolMap[code],
+      }));
+
+      setCurrencies(currenciesWithSymbols);
+    };
+
+    fetchCurrencies();
+  }, []);
+
   return (
     <div>
       <section className="head">
@@ -100,7 +135,7 @@ function Head() {
               EN
             </label>
             <span id="display-none">🏳️‍⚧️</span>
-            <div className="currency_state">
+            {/* <div className="currency_state">
               <label className="to">To:</label>
               <select
                 value={toCurrency}
@@ -111,6 +146,37 @@ function Head() {
                 <option value="NGN">₦ NGN</option>
                 <option value="GBP">£ GBP</option>
                 <option value="EUR">€ EUR</option>
+              </select>
+            </div> */}
+            {/* <div className="currency_state">
+              <label className="to">To:</label>
+              <select
+                value={toCurrency}
+                onChange={(e) => setToCurrency(e.target.value)}
+              >
+                {currencies.map((currency) => (
+                  <option key={currency.code} value={currency.code}>
+                    {currency.symbol} {currency.code}
+                  </option>
+                ))}
+              </select>
+            </div> */}
+            <div className="currency_state">
+              <label className="to">To:</label>
+              <select
+                className="currency_symbol"
+                value={toCurrency}
+                onChange={(e) => setToCurrency(e.target.value)}
+              >
+                {currencies.map((currency) => (
+                  <option
+                    className="currency_symbol_option"
+                    key={currency.code}
+                    value={currency.code}
+                  >
+                    {currency.symbol} &#160;&#160; {currency.code}
+                  </option>
+                ))}
               </select>
             </div>
             <FormControlLabel
