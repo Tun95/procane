@@ -89,7 +89,6 @@ function UserInfo() {
   }, [user.dailyOrders]);
 
   const CustomTooltip = ({ active, payload, label }) => {
- 
     if (active && payload && payload.length) {
       return (
         <div className="custom_tooltip" style={{ padding: "10px" }}>
