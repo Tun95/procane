@@ -20,8 +20,8 @@ function OrderInfo({ orderInfo }) {
 
   return (
     <div className="order_info">
-      <div className="light_shadow">
-        {orderInfo ? (
+      {orderInfo ? (
+        <div className="light_shadow">
           <>
             <>
               <div className="order-screen">
@@ -39,23 +39,44 @@ function OrderInfo({ orderInfo }) {
                             <h2>Shipping</h2>
                             <div className="order-a-ship">
                               <div className="order-top">
-                                <label htmlFor="">
-                                  <strong>Name: </strong>
-                                </label>
-                                {orderInfo.shippingAddress?.firstName}{" "}
-                                {orderInfo.shippingAddress?.lastName} <br />
-                                <label htmlFor="">
-                                  <strong>Address: </strong>
-                                </label>
-                                {orderInfo.shippingAddress?.address},{" "}
-                                {orderInfo.shippingAddress?.city},{" "}
-                                {orderInfo.shippingAddress?.cState},{" "}
-                                {orderInfo.shippingAddress?.zipCode},{" "}
-                                {orderInfo.shippingAddress?.country} <br />
-                                <label htmlFor="">
-                                  <strong>Shipping Method: </strong>
-                                </label>
-                                {orderInfo.shippingAddress?.shipping}
+                                <div>
+                                  <label htmlFor="">
+                                    <strong>Name: </strong>
+                                  </label>
+                                  <span>
+                                    {orderInfo.shippingAddress?.firstName}{" "}
+                                    {orderInfo.shippingAddress?.lastName}{" "}
+                                  </span>
+                                </div>
+                                <div>
+                                  <label htmlFor="">
+                                    <strong>Address: </strong>
+                                  </label>
+                                  <span>
+                                    {orderInfo.shippingAddress?.address},{" "}
+                                    {orderInfo.shippingAddress?.city},{" "}
+                                    {orderInfo.shippingAddress?.cState},{" "}
+                                    {orderInfo.shippingAddress?.zipCode},{" "}
+                                    {orderInfo.shippingAddress?.country}{" "}
+                                  </span>
+                                </div>
+                                <div>
+                                  <label htmlFor="">
+                                    <strong>Phone: </strong>
+                                  </label>
+                                  <span>
+                                    {orderInfo.shippingAddress?.phone}
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <label htmlFor="">
+                                    <strong>Shipping Method: </strong>
+                                  </label>
+                                  <span>
+                                    {orderInfo.shippingAddress?.shipping}
+                                  </span>
+                                </div>
                               </div>
                               <div className="place-deliver">
                                 <div className="ind-deliver">
@@ -280,10 +301,10 @@ function OrderInfo({ orderInfo }) {
               </div>
             </>
           </>
-        ) : (
-          ""
-        )}
-      </div>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }
