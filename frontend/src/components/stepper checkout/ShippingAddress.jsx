@@ -14,6 +14,7 @@ import StepLabel from "@mui/material/StepLabel";
 import "./style.scss";
 import { toast } from "react-toastify";
 import { Context } from "../../context/Context";
+import PhoneInput from "react-phone-number-input";
 
 const steps = ["Billing Address", "Confirmation", "Payment Method", "Finish"];
 
@@ -197,12 +198,12 @@ function ShippingAddress() {
               </div>
               <div className="form-group">
                 <label htmlFor="phone">Phone:</label>
-                <input
-                  type="text"
-                  id="phone"
+                <PhoneInput
+                  international
+                  countryCallingCodeEditable={true}
+                  placeholder="Enter phone number"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Enter Your Phone Number"
+                  onChange={setPhone}
                 />
               </div>
               <div className="form-group">

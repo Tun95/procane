@@ -358,8 +358,7 @@ function User() {
                                   <label htmlFor="phone">Phone </label>
                                   <PhoneInput
                                     international
-                                    countryCallingCodeEditable={false}
-                                    defaultCountry="GB"
+                                    countryCallingCodeEditable={true}
                                     placeholder="Enter phone number"
                                     value={phone}
                                     onChange={setPhone}
