@@ -408,15 +408,26 @@ textarea::placeholder {
 .product-like {
   position: absolute;
   top: 15px;
-  right: 3px;
+  right: 10px;
   margin: 10px;
   width: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* opacity: 0; */
+  opacity: 0;
   transition: 0.5s;
+}
+.related_icon {
+  background-color: var(--color-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: 5px;
+}
+.related_icon .related_icons {
+  padding: 4px;
+  color: var(--color-white);
+  font-size: 28px;
 }
 .fa-bolt {
   color: #ffbd15;
@@ -435,7 +446,8 @@ textarea::placeholder {
   font-size: 20px;
   cursor: pointer;
 }
-.product:hover .product-like {
+.product:hover .product-like,
+.related_icon {
   opacity: 1;
 }
 .discount {

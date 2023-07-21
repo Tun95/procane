@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Rating from "../utilities/rating/Ratings";
@@ -9,6 +9,8 @@ import axios from "axios";
 import { request } from "../../base url/BaseUrl";
 import { Context } from "../../context/Context";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
+import { RWebShare } from "react-web-share";
+import ShareIcon from "@mui/icons-material/Share";
 
 function StoreItems({ products, loading, error }) {
   const [count, setCount] = useState(0);
@@ -67,6 +69,8 @@ function StoreItems({ products, loading, error }) {
     });
   };
 
+  //PAGE URL
+  const pageURL = process.env.REACT_APP_FRONTEND_URL;
   return (
     <>
       {loading ? (
@@ -94,6 +98,18 @@ function StoreItems({ products, loading, error }) {
                   </Link>
                   <div className="product-like">
                     {product.flashdeal ? <i className="fa fa-bolt"></i> : ""}
+                    <span className="related_icon l_flex">
+                      <RWebShare
+                        data={{
+                          text: `Check out this cool ${product.name}`,
+                          url: `${pageURL}/product/${product.slug}`,
+                          title: product.name,
+                        }}
+                        onClick={() => console.log("shared successfully!")}
+                      >
+                        <ShareIcon className="related_icons" />
+                      </RWebShare>
+                    </span>
                   </div>
                   {/* <div className="product-like">
                     <label>{count}</label> <br />

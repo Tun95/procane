@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useReducer, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Context } from "../../../context/Context";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ import { request } from "../../../base url/BaseUrl";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import { RWebShare } from "react-web-share";
 import ShareIcon from "@mui/icons-material/Share";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -27,8 +28,17 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
 function ShopCard() {
-  const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
+  const {
+    state,
+    dispatch: ctxDispatch,
+    handleCheckboxSubmit,
+    checked,
+    convertCurrency,
+  } = useContext(Context);
   const { settings } = state;
 
   const [count, setCount] = useState(0);
@@ -112,6 +122,10 @@ function ShopCard() {
   };
 
   console.log(products);
+
+  //PAGE URL
+  const pageURL = process.env.REACT_APP_FRONTEND_URL;
+
   return (
     <>
       {products?.slice(0, 8)?.map((product, index) => (
@@ -126,6 +140,34 @@ function ShopCard() {
               </Link>
               <div className="product-like">
                 {product.flashdeal ? <i className="fa fa-bolt"></i> : ""}
+                <span className="related_icon l_flex">
+                  <RWebShare
+                    data={{
+                      text: `Check out this cool ${product.name}`,
+                      url: `${pageURL}/product/${product.slug}`,
+                      title: product.name,
+                    }}
+                    onClick={() => console.log("shared successfully!")}
+                  >
+                    <ShareIcon className="related_icons" />
+                  </RWebShare>
+                </span>
+                {/* <span className="">
+                  {" "}
+                  <Checkbox
+                    {...label}
+                    icon={<FavoriteBorder />}
+                    checkedIcon={<Favorite />}
+                    sx={{
+                      color: red[800],
+                      "&.Mui-checked": {
+                        color: red[600],
+                      },
+                    }}
+                    checked={checked}
+                    onChange={() => handleCheckboxSubmit(product)}
+                  />
+                </span> */}
               </div>
             </div>
             <div className="product-details">

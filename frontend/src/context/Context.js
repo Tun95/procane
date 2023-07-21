@@ -3,6 +3,7 @@ import { createContext, useEffect, useReducer, useState } from "react";
 import { getError } from "../components/utilities/util/Utils";
 import { request } from "../base url/BaseUrl";
 import currencyToSymbolMap from "currency-symbol-map/map";
+import { toast } from "react-toastify";
 
 export const Context = createContext();
 
@@ -207,7 +208,7 @@ function reducer(state, action) {
 
 export function ContextProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { settings } = state;
+  const { settings, userInfo } = state;
   //==============
   //FETCH SETTINGS HANDLER
   //==============
@@ -439,6 +440,9 @@ export function ContextProvider(props) {
     fetchConversionRates();
   }, [currency, toCurrency]);
 
+  //==========
+  //CURRENCIES
+  //==========
   const [currencies, setCurrencies] = useState([]);
   useEffect(() => {
     const fetchCurrencies = () => {
@@ -454,7 +458,63 @@ export function ContextProvider(props) {
 
     fetchCurrencies();
   }, []);
-  
+
+  //==============
+  //ADD TO WISH LIST
+  //================
+  const [checked, setChecked] = useState(false);
+  const handleCheckboxSubmit = async (product) => {
+    if (!userInfo) {
+      toast.error("Please log in first", { position: "bottom-center" });
+    } else {
+      try {
+        const response = await axios.post(
+          `${request}/api/wishes/post`,
+          {
+            product: product._id,
+            name: product.name,
+            slug: product.slug,
+            image: product.image,
+            price: product.price,
+            rating: product.rating,
+            flashdeal: product.flashdeal,
+            discount: product.discount,
+            checked: !checked, // Toggle the checked state
+            // Add other wish details as needed
+          },
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        toast.success("Added to wish list successfully", {
+          position: "bottom-center",
+        });
+        setChecked(!checked); // Update the checked state
+        console.log(response.data); // Optional: Handle the response as needed
+      } catch (error) {
+        toast.error(getError(error), { position: "bottom-center" });
+        console.error(error);
+      }
+    }
+  };
+  useEffect(() => {
+    const checkProductInWishList = async (product) => {
+      if (!userInfo) return;
+      try {
+        const response = await axios.get(
+          `${request}/api/wishes/product/${product._id}`,
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        setChecked(response.data.exists); // Set the checked state based on the response
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    checkProductInWishList();
+  }, [userInfo]);
+
   const value = {
     state,
     dispatch,
@@ -466,6 +526,8 @@ export function ContextProvider(props) {
     darkMode,
     currencies,
     toggle,
+    checked,
+    handleCheckboxSubmit,
   };
 
   return <Context.Provider value={value}>{props.children}</Context.Provider>;

@@ -1327,6 +1327,10 @@ orderRouter.put(
       let convertedShippingPrice = order.shippingPrice;
       let convertedGrandTotal = order.grandTotal;
 
+      //   let TotalSales = new Intl.NumberFormat("en-GB", {
+      //     style: "currency",
+      //     currency: currency,
+      //   });
       const formatter = new Intl.NumberFormat("en-US", {
         style: "decimal",
         minimumFractionDigits: 2,

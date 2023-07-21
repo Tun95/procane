@@ -8,6 +8,8 @@ import Rating from "../../utilities/rating/Ratings";
 import { toast } from "react-toastify";
 import { Context } from "../../../context/Context";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
+import { RWebShare } from "react-web-share";
+import ShareIcon from "@mui/icons-material/Share";
 
 const NextArrow = (props) => {
   const { onClick } = props;
@@ -167,6 +169,9 @@ function FlashCard() {
       },
     });
   };
+
+  //PAGE URL
+  const pageURL = process.env.REACT_APP_FRONTEND_URL;
   return (
     <>
       <Slider {...Slidersettings}>
@@ -183,6 +188,18 @@ function FlashCard() {
                 </Link>
                 <div className="product-like">
                   {product.flashdeal ? <i className="fa fa-bolt"></i> : ""}
+                  <span className="related_icon l_flex">
+                    <RWebShare
+                      data={{
+                        text: `Check out this cool ${product.name}`,
+                        url: `${pageURL}/product/${product.slug}`,
+                        title: product.name,
+                      }}
+                      onClick={() => console.log("shared successfully!")}
+                    >
+                      <ShareIcon className="related_icons" />
+                    </RWebShare>
+                  </span>
                 </div>
                 {/* <div className="product-like">
                   <label htmlFor="">{count}</label>
