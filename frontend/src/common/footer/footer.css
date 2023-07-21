@@ -40,6 +40,12 @@ footer li {
   margin-bottom: 10px;
   opacity: 0.5;
 }
+footer .developer {
+  color: var(--color-gray);
+}
+footer .developer a {
+  text-decoration: underline;
+}
 @media screen and (max-width: 1400px) {
   .footer-wrap .icon {
     display: grid;

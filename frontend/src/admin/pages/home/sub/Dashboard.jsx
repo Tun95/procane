@@ -70,11 +70,47 @@ function Dashboard() {
     getStats();
   }, [summary.dailyOrders]);
 
+  // const CustomTooltip = ({ active, payload, label }) => {
+  //   let TotalSales = new Intl.NumberFormat("en-GB", {
+  //     style: "currency",
+  //     currency: toCurrency,
+  //   }).format(payload[0]?.value);
+
+  //   //let TotalSales = numeral(payload[0]?.value).format("0,0a");
+
+  //   if (active && payload && payload.length) {
+  //     return (
+  //       <div className="custom_tooltip" style={{ padding: "10px" }}>
+  //         {label ? (
+  //           <p className="label">{`${label}`}</p>
+  //         ) : payload[0]?.name ? (
+  //           <p className="">{`Date: ${payload[0]?.name}`}</p>
+  //         ) : (
+  //           ""
+  //         )}
+  //         <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
+  //           Total Sales: {`${convertCurrency(TotalSales)}`}
+  //         </p>
+  //       </div>
+  //     );
+  //   }
+
+  //   return null;
+  // };
+  console.log(salesStats);
+
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
         <div className="custom_tooltip" style={{ padding: "10px" }}>
-          <p className="label">{label ? `${label}` : ""}</p>
+          {/* <p className="label">{label ? `${label}` : ""}</p> */}
+          {label ? (
+            <p className="label">{`${label}`}</p>
+          ) : payload[0]?.name ? (
+            <p className="">{`Date: ${payload[0]?.name}`}</p>
+          ) : (
+            ""
+          )}
           <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
             Total Sales: {`${convertCurrency(payload[0]?.value)}`}
           </p>
@@ -83,8 +119,6 @@ function Dashboard() {
     }
     return null;
   };
-
-  console.log(salesStats);
 
   // const salesPerc = (
   //   ((summary.income[0]?.sales - summary?.income[1]?.sales) /
@@ -116,7 +150,6 @@ function Dashboard() {
 
   // console.log(summary);
   console.log(summary);
-
   return (
     <>
       <Helmet>

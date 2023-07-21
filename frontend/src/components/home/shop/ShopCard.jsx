@@ -7,6 +7,8 @@ import { getError } from "../../utilities/util/Utils";
 import Rating from "../../utilities/rating/Ratings";
 import { request } from "../../../base url/BaseUrl";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
+import { RWebShare } from "react-web-share";
+import ShareIcon from "@mui/icons-material/Share";
 
 const reducer = (state, action) => {
   switch (action.type) {

@@ -111,6 +111,16 @@ function Footer() {
                   Phone: <a href={`tel:${whatsapp}`}>{whatsapp}</a>
                 </li>
               </div>
+              <small className="developer">
+                Developer By{" "}
+                <a
+                  href="https://my-portfolio-nine-nu-28.vercel.app/"
+                  target="_blank"
+                  rel="noonpener noreferrer"
+                >
+                  Olatunji Akande
+                </a>
+              </small>
             </ul>
           </div>
         </div>
