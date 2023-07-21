@@ -66,7 +66,7 @@ function List({ currencySign }) {
             <TableCell className="tableCell">Date</TableCell>
             <TableCell className="tableCell">Amount</TableCell>
             <TableCell className="tableCell">Payment Method</TableCell>
-            <TableCell className="tableCell">Status</TableCell>
+            <TableCell className="tableCell">Delivery Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody className="tableCenter p_flex">

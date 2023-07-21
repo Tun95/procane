@@ -133,7 +133,7 @@ function SellerOrderList() {
                     <TableCell className="tableCell">Date</TableCell>
                     <TableCell className="tableCell">Total</TableCell>
                     <TableCell className="tableCell">Paid</TableCell>
-                    <TableCell className="tableCell">Delivered</TableCell>
+                    <TableCell className="tableCell">Delivery Status</TableCell>
                     <TableCell className="tableCell">Actions</TableCell>
                   </TableRow>
                 </TableHead>
