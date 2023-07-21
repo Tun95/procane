@@ -87,6 +87,7 @@ import TrackScreen from "./screens/orderscreen/trackscreen/TrackScreen";
 import ReactGA from "react-ga4";
 import LoadingOverlayComponent from "./components/utilities/message loading/OverlayLoading";
 import NotFoundScreen from "./components/utilities/404 error/PageNotFound";
+import ThemeFaqScreen from "./screens/aboutscreen/faqscreen/ThemeFaqScreen";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -147,6 +148,7 @@ function App() {
             <Route path="/terms-and-conditons" element={<TermScreen />}></Route>
             <Route path="/careers" element={<CareerScreen />}></Route>
             <Route path="/our-cares" element={<OurCareScreen />}></Route>
+            <Route path="/theme-faq" element={<ThemeFaqScreen />}></Route>
 
             {/* CUSTOMER CARES */}
             <Route path="/bulk-purchases" element={<BulkScreen />}></Route>

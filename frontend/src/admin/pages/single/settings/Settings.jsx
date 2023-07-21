@@ -329,7 +329,7 @@ function Settings() {
                           />
                         </div>{" "}
                         <div className="form_box">
-                          <h3>Review Guidelines:</h3>
+                          <h3>Theme FAQ's:</h3>
                           <JoditEditor
                             className="editor"
                             id="desc"

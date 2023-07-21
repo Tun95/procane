@@ -712,6 +712,7 @@ orderRouter.post(
         ${order.shippingAddress.firstName},<br/>
         ${order.shippingAddress.lastName},<br/>
         ${order.shippingAddress.address},<br/>
+         ${order.shippingAddress.phone},<br/>
         ${order.shippingAddress.city},<br/>
         ${order.shippingAddress.zipCode}<br/>
         ${order.shippingAddress.cState}<br/>
@@ -986,6 +987,7 @@ orderRouter.post(
         ${order.shippingAddress.firstName},<br/>
         ${order.shippingAddress.lastName},<br/>
         ${order.shippingAddress.address},<br/>
+         ${order.shippingAddress.phone},<br/>
         ${order.shippingAddress.city},<br/>
         ${order.shippingAddress.zipCode}<br/>
         ${order.shippingAddress.cState}<br/>
@@ -1259,6 +1261,7 @@ orderRouter.post(
         ${order.shippingAddress.firstName},<br/>
         ${order.shippingAddress.lastName},<br/>
         ${order.shippingAddress.address},<br/>
+         ${order.shippingAddress.phone},<br/>
         ${order.shippingAddress.city},<br/>
         ${order.shippingAddress.zipCode}<br/>
         ${order.shippingAddress.cState}<br/>
@@ -1455,6 +1458,7 @@ orderRouter.put(
         ${order.shippingAddress.firstName},<br/>
         ${order.shippingAddress.lastName},<br/>
         ${order.shippingAddress.address},<br/>
+        ${order.shippingAddress.phone},<br/>
         ${order.shippingAddress.city},<br/>
         ${order.shippingAddress.zipCode}<br/>
         ${order.shippingAddress.cState}<br/>
