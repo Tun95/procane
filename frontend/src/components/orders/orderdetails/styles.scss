@@ -37,90 +37,42 @@
     }
   }
 
-  .top-split {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .order-table-data {
-    position: relative;
-    width: 270px;
-    height: 210px;
-    -webkit-box-shadow: 0px 0px 7px -1px #b4b4b4;
-    box-shadow: 0px 0px 7px -1px #b4b4b4;
-  }
-  .order-table-data tr {
-    border: 2px solid #b4b4b4;
-  }
-  .order-table-data tbody tr td {
-    border-top: 3px solid #b4b4b4;
-  }
-  .order-table-data .t-header {
-    font-size: 20px;
-    font-weight: 600;
-    padding: 5px;
-  }
-  .order-table-data .items-p {
-    font-weight: 800;
-  }
-  .order-table-data .items-d {
-    font-weight: 600;
-    text-align: center;
-  }
-  .order-table-data .grand {
-    color: #f62f5e;
-    font-size: 20px;
-  }
-  .order-screen .top-box {
-    width: 590px;
-    margin: 20px 0px;
-    -webkit-box-shadow: 0px 0px 7px -1px #b4b4b4;
-    box-shadow: 0px 0px 7px -1px #b4b4b4;
-    padding: 10px;
+  .shipment_summary {
+    gap: 20px;
+    .light_shadow {
+      width: 100%;
+      height: auto;
+      padding: 10px;
+      .info {
+        width: 100%;
+      }
+      .admin_approve_btn {
+        button {
+          background-color: var(--color-primary);
+          color: var(--color-white);
+          font-weight: 600;
+          padding: 10px;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+      }
+    }
+    .alert-danger {
+      width: 100%;
+    }
+    #load-err {
+      display: inline-block;
+      box-shadow: 1px 2px 2px -2px;
+      border-radius: 0.5rem;
+
+      background-color: lightgreen;
+      color: green;
+    }
   }
 
-  .order-screen .top-box .alert-danger {
-    width: 100%;
-  }
-  .order-screen .top-box #load-err {
-    display: inline-block;
-    box-shadow: 1px 2px 2px -2px;
-    border-radius: 0.5rem;
-
-    background-color: lightgreen;
-    color: green;
-  }
-
-  .order-a-ship {
-    padding: 20px 0px;
-    line-height: 20px;
-  }
-  .top-box .place-deliver {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    flex-wrap: wrap;
-    top: 10px;
-    width: 100%;
-  }
-  .place-deliver .admin-approve-btn button {
-    /* position: relative;
-  top: 3px; */
-    width: 150px;
-    height: 40px;
-    background-color: #f62f5e;
-    color: #fff;
-    outline: none;
-    border: none;
-    border-radius: 10px;
-    font-size: 20px;
-    font-weight: 600;
-    cursor: pointer;
-  }
   .sec-box {
     margin-bottom: 20px;
-   
+
     -webkit-box-shadow: 0px 0px 7px -1px #b4b4b4;
     box-shadow: 0px 0px 7px -1px #b4b4b4;
     padding: 10px;
@@ -170,7 +122,7 @@
   }
 
   @media screen and (max-width: 900px) {
-    .top-split {
+    .shipment_summary {
       flex-wrap: wrap-reverse;
     }
     .order-screen .top-box {

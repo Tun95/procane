@@ -134,114 +134,231 @@ function OrderDetails() {
                   <div className="list-box">
                     <div className="order-sec">
                       <div className="order-details">
-                        <div className="top-split">
-                          <div className="top-box">
-                            <h2>Shipping</h2>
-                            <div className="order-a-ship">
-                              <div className="order-top">
-                                <label htmlFor="">
-                                  <strong>Name: </strong>
-                                </label>
-                                {order.shippingAddress.firstName}{" "}
-                                {order.shippingAddress.lastName} <br />
-                                <label htmlFor="">
-                                  <strong>Address: </strong>
-                                </label>
-                                {order.shippingAddress.address},{" "}
-                                {order.shippingAddress.city},{" "}
-                                {order.shippingAddress.cState},{" "}
-                                {order.shippingAddress.zipCode},{" "}
-                                {order.shippingAddress.country} <br />
-                                <label htmlFor="">
-                                  <strong>Shipping Method: </strong>
-                                </label>
-                                {order.shippingAddress.shipping}
-                              </div>
-                              <div className="place-deliver">
-                                <div className="ind-deliver">
-                                  {order.isDelivered ? (
-                                    <div className="suc">
-                                      <MessageBox variant="success">
-                                        Delivered on{" "}
-                                        {dateFormat(order.deliveredAt)}
-                                      </MessageBox>
-                                    </div>
-                                  ) : order.isPaid ? (
-                                    <MessageBox>In Progress</MessageBox>
-                                  ) : (
-                                    <MessageBox variant="danger">
-                                      Not Delivered
-                                    </MessageBox>
-                                  )}
-                                </div>
-                                {userInfo.isAdmin &&
-                                order.isPaid &&
-                                !order.isDelivered ? (
-                                  <div className="admin-approve">
-                                    <div className="admin-approve-btn">
-                                      <button
-                                        type="button"
-                                        onClick={deliverOrderHandler}
-                                      >
-                                        Deliver Order
-                                      </button>
-                                    </div>
+                        <div className="shipment_summary mb d_flex">
+                          <div className="light_shadow a_flex">
+                            <div className="info">
+                              <h3>Shipping</h3>
+                              <div className="order-a-ship">
+                                <div className="order-top">
+                                  <div>
+                                    <label htmlFor="">
+                                      <strong>Name: </strong>
+                                    </label>
+                                    <span>
+                                      {order.shippingAddress?.firstName}{" "}
+                                      {order.shippingAddress?.lastName}{" "}
+                                    </span>
                                   </div>
-                                ) : (
-                                  ""
-                                )}
+                                  <div>
+                                    <label htmlFor="">
+                                      <strong>Address: </strong>
+                                    </label>
+                                    <span>
+                                      {order.shippingAddress?.address},{" "}
+                                      {order.shippingAddress?.city},{" "}
+                                      {order.shippingAddress?.cState},{" "}
+                                      {order.shippingAddress?.zipCode},{" "}
+                                      {order.shippingAddress?.country}{" "}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <label htmlFor="">
+                                      <strong>Phone: </strong>
+                                    </label>
+                                    <span>{order.shippingAddress?.phone}</span>
+                                  </div>
+
+                                  <div>
+                                    <label htmlFor="">
+                                      <strong>Shipping Method: </strong>
+                                    </label>
+                                    <span>
+                                      {order.shippingAddress?.shipping}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="place-deliver c_flex">
+                                  <div className="ind-deliver ">
+                                    {order.isDelivered ? (
+                                      <div className="suc">
+                                        <MessageBox variant="success">
+                                          Delivered on{" "}
+                                          {dateFormat(order.deliveredAt)}
+                                        </MessageBox>
+                                      </div>
+                                    ) : order.isPaid ? (
+                                      <MessageBox>In Progress</MessageBox>
+                                    ) : (
+                                      <MessageBox variant="danger">
+                                        Not Delivered
+                                      </MessageBox>
+                                    )}
+                                  </div>
+                                  <div>
+                                    {userInfo.isAdmin &&
+                                    order.isPaid &&
+                                    !order.isDelivered ? (
+                                      <div className="admin_approve_btn">
+                                        <button
+                                          type="button"
+                                          onClick={deliverOrderHandler}
+                                        >
+                                          Deliver Order
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
-                          <table className="order-table-data">
-                            <thead>
-                              <tr>
-                                <td
-                                  className="t-header"
-                                  colSpan="2"
-                                  align="center"
-                                >
-                                  <h2> Order Summary</h2>
-                                </td>
-                              </tr>
-                            </thead>
-                            <tbody cellPadding="3">
-                              <tr>
-                                <td className="items-p">Items Price</td>
-                                <td className="items-d">
-                                  {convertCurrency(order.itemsPrice.toFixed(2))}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="items-p">Shipping Price</td>
-                                <td className="items-d">
-                                  {convertCurrency(
-                                    order.shippingPrice.toFixed(2)
-                                  )}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="items-p">Tax Price</td>
-                                <td className="items-d">
-                                  {convertCurrency(order.taxPrice.toFixed(2))}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <strong className="items-p grand">
-                                    Grand Total
-                                  </strong>
-                                </td>
-                                <td className="items-d grand">
-                                  <strong>
+                          <div className="light_shadow">
+                            <TableContainer className="table">
+                              <Table aria-label="simple table">
+                                <TableHead>
+                                  <TableRow>
+                                    <TableCell
+                                      className="tableCell"
+                                      colSpan={2}
+                                      style={{
+                                        fontSize: "18px",
+                                        textAlign: "center",
+                                      }}
+                                    >
+                                      Order Summary
+                                    </TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  <TableRow>
+                                    <TableCell
+                                      className="tableCell"
+                                      style={{ textAlign: "left" }}
+                                    >
+                                      Items Price
+                                    </TableCell>
+                                    <TableCell
+                                      className="tableCell"
+                                      style={{ textAlign: "right" }}
+                                    >
+                                      {convertCurrency(
+                                        order.itemsPrice.toFixed(2)
+                                      )}
+                                    </TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                    <TableCell
+                                      className="tableCell"
+                                      style={{ textAlign: "left" }}
+                                    >
+                                      Shipping Price
+                                    </TableCell>
+                                    <TableCell
+                                      className="tableCell"
+                                      style={{ textAlign: "right" }}
+                                    >
+                                      {convertCurrency(
+                                        order.shippingPrice.toFixed(2)
+                                      )}
+                                    </TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                    <TableCell
+                                      className="tableCell"
+                                      style={{ textAlign: "left" }}
+                                    >
+                                      Tax Price
+                                    </TableCell>
+                                    <TableCell
+                                      className="tableCell"
+                                      style={{ textAlign: "right" }}
+                                    >
+                                      {convertCurrency(
+                                        order.taxPrice.toFixed(2)
+                                      )}
+                                    </TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                    <TableCell
+                                      className="tableCell"
+                                      style={{
+                                        textAlign: "left",
+                                        fontWeight: "600",
+                                      }}
+                                    >
+                                      Grand Total
+                                    </TableCell>
+                                    <TableCell
+                                      className="tableCell"
+                                      style={{
+                                        textAlign: "right",
+                                        color: "#f62f5e",
+                                        fontWeight: "600",
+                                      }}
+                                    >
+                                      {convertCurrency(
+                                        order.grandTotal?.toFixed(2)
+                                      )}
+                                    </TableCell>
+                                  </TableRow>
+                                </TableBody>
+                              </Table>
+                            </TableContainer>
+
+                            {/* <table className="order-table-data">
+                              <thead>
+                                <tr>
+                                  <td
+                                    className="t-header"
+                                    colSpan="2"
+                                    align="center"
+                                  >
+                                    <h2> Order Summary</h2>
+                                  </td>
+                                </tr>
+                              </thead>
+                              <tbody cellPadding="3">
+                                <tr>
+                                  <td className="items-p">Items Price</td>
+                                  <td className="items-d">
                                     {convertCurrency(
-                                      order.grandTotal?.toFixed(2)
+                                      order.itemsPrice.toFixed(2)
                                     )}
-                                  </strong>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="items-p">Shipping Price</td>
+                                  <td className="items-d">
+                                    {convertCurrency(
+                                      order.shippingPrice.toFixed(2)
+                                    )}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="items-p">Tax Price</td>
+                                  <td className="items-d">
+                                    {convertCurrency(order.taxPrice.toFixed(2))}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <strong className="items-p grand">
+                                      Grand Total
+                                    </strong>
+                                  </td>
+                                  <td className="items-d grand">
+                                    <strong>
+                                      {convertCurrency(
+                                        order.grandTotal?.toFixed(2)
+                                      )}
+                                    </strong>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table> */}
+                          </div>
                         </div>
                         <div className="sec-box">
                           <h2>Payment</h2>
