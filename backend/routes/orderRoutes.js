@@ -84,10 +84,20 @@ orderRouter.get(
 //===========
 //PLACE ORDER
 //===========
+function generateRandomString(length) {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const randomBytes = crypto.randomBytes(length);
+  const result = Array.from(randomBytes)
+    .map((byte) => characters[byte % characters.length])
+    .join("");
+
+  return result;
+}
 orderRouter.post(
   "/",
   isAuth,
   expressAsyncHandler(async (req, res) => {
+    const trackingId = "R" + generateRandomString(16);
     const newOrder = new Order({
       seller: req.body.orderItems[0].seller,
       orderItems: req.body.orderItems.map((x) => ({ ...x, product: x._id })),
@@ -97,11 +107,64 @@ orderRouter.post(
       shippingPrice: req.body.shippingPrice,
       taxPrice: req.body.taxPrice,
       grandTotal: req.body.grandTotal,
+      trackingId: trackingId,
       user: req.user._id,
       product: req.body.orderItems.product,
     });
     const order = await newOrder.save();
     res.status(201).send({ message: "New Order Created", order });
+  })
+);
+
+//==========================
+// FETCH ORDER BY TRACKINGID
+//==========================
+// orderRouter.get(
+//   "/track",
+//   // isAuth,
+//   expressAsyncHandler(async (req, res) => {
+//     const { trackingId } = req.body;
+
+//     try {
+//       // Find the order by trackingId in the database
+//       const order = await Order.findOne({ trackingId });
+
+//       if (order) {
+//         // If order is found, send it in the response
+//         res.json({ order });
+//       } else {
+//         // If order is not found, send an error message
+//         res.status(404).json({ message: "Order not found" });
+//       }
+//     } catch (error) {
+//       // If an error occurs, send an error response
+//       console.log(error);
+//       res.status(500).json({ message: "Server error" });
+//     }
+//   })
+// );
+orderRouter.get(
+  "/track",
+  // isAuth,
+  expressAsyncHandler(async (req, res) => {
+    const { trackingId } = req.query; // Access trackingId from query parameters
+
+    try {
+      // Find the order by trackingId in the database
+      const order = await Order.findOne({ trackingId });
+
+      if (order) {
+        // If order is found, send it in the response
+        res.json({ order });
+      } else {
+        // If order is not found, send an error message
+        res.status(404).json({ message: "Order not found" });
+      }
+    } catch (error) {
+      // If an error occurs, send an error response
+      console.log(error);
+      res.status(500).json({ message: "Server error" });
+    }
   })
 );
 
@@ -390,6 +453,36 @@ orderRouter.get(
   })
 );
 
+//============================
+//ADMIN FETCH ALL INDIV. ORDER
+//============================
+const USER_ORDER_PAGE_SIZE = 10;
+orderRouter.get(
+  "/mine/:id",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const { query, params } = req;
+    const userId = params.id;
+    const page = query.page || 1;
+    const pageSize = query.pageSize || USER_ORDER_PAGE_SIZE;
+
+    const orders = await Order.find({ user: userId })
+      .sort("-createdAt")
+      .skip(pageSize * (page - 1))
+      .limit(pageSize);
+
+    const countOrders = await Order.countDocuments({ user: userId });
+
+    res.send({
+      orders,
+      countOrders,
+      page,
+      pages: Math.ceil(countOrders / pageSize),
+    });
+  })
+);
+
 //FETCH ORDER DETAILS
 orderRouter.get(
   "/:id",
@@ -521,12 +614,7 @@ orderRouter.post(
               .find(() => true)) ||
           {};
 
-        const formatter = new Intl.NumberFormat("en-US", {
-          style: "decimal",
-          minimumFractionDigits: 2,
-        });
-
-        if (order.currencySign !== currency) {
+        if (order.currencySign !== currencyStripe) {
           try {
             convertedItemsPrice = await convertCurrency(
               order.itemsPrice,
@@ -545,7 +633,11 @@ orderRouter.post(
               order.currencySign
             );
             convertedCurrencySign = order.currencySign;
-
+            const formatter = new Intl.NumberFormat("en-GB", {
+              style: "currency",
+              currency: convertedCurrencySign,
+              currencyDisplay: "symbol", // Display the currency symbol instead of the currency code
+            });
             // Format converted values
             convertedItemsPrice = formatter.format(convertedItemsPrice);
             convertedTaxPrice = formatter.format(convertedTaxPrice);
@@ -561,7 +653,7 @@ orderRouter.post(
         <p>
         Hi ${order.user.lastName} ${order.user.firstName},</p>
         <p>We have finished processing your order.</p>
-        <h2>[Order ${order._id}] (${order.createdAt
+        <h2>[Order Tracking ID:${order.trackingId}] (${order.createdAt
           .toString()
           .substring(0, 10)})</h2>
         
@@ -587,11 +679,7 @@ orderRouter.post(
           item.color ? item.color : ""
         } alt=""/></td>
         <td align="center">${item.quantity}</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedItemsPrice
-        }</td>
+        <td align="right">${convertedItemsPrice}</td>
       </tr>
     `;
        })
@@ -600,35 +688,19 @@ orderRouter.post(
         <tfoot>
         <tr>
         <td colspan="2">Items Price:</td>
-        <td align="right"> ${
-          order.currencySign === "USD"
-            ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedItemsPrice
-        }</td>
+        <td align="right"> ${convertedItemsPrice}</td>
         </tr>
         <tr>
         <td colspan="2">Tax Price:</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.taxPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedTaxPrice
-        }</td>
+        <td align="right">${convertedTaxPrice}</td>
         </tr>
         <tr>
         <td colspan="2">Shipping Price:</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.shippingPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedShippingPrice
-        }</td>
+        <td align="right">${convertedShippingPrice}</td>
         </tr>
         <tr>
         <td colspan="2"><strong>Total Price:</strong></td>
-        <td align="right"><strong>${
-          order.currencySign === "USD"
-            ? `$${order.grandTotal.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedGrandTotal
-        }</strong></td>
+        <td align="right"><strong>${convertedGrandTotal}</strong></td>
         </tr>
         <tr>
         <td colspan="2">Payment Method:</td>
@@ -671,7 +743,7 @@ orderRouter.post(
           .sendTransacEmail({
             sender,
             to: receivers,
-            subject: `New Order ${order._id}`,
+            subject: `New Order ${order.trackingId}`,
             htmlContent: payOrderEmailTemplate,
             params: {
               role: "Frontend",
@@ -816,11 +888,6 @@ orderRouter.post(
       let convertedShippingPrice = order.shippingPrice;
       let convertedGrandTotal = order.grandTotal;
 
-      const formatter = new Intl.NumberFormat("en-US", {
-        style: "decimal",
-        minimumFractionDigits: 2,
-      });
-
       if (order.currencySign !== currency) {
         try {
           convertedItemsPrice = await convertCurrency(
@@ -840,7 +907,11 @@ orderRouter.post(
             order.currencySign
           );
           convertedCurrencySign = order.currencySign;
-
+          const formatter = new Intl.NumberFormat("en-GB", {
+            style: "currency",
+            currency: convertedCurrencySign,
+            currencyDisplay: "symbol", // Display the currency symbol instead of the currency code
+          });
           // Format converted values
           convertedItemsPrice = formatter.format(convertedItemsPrice);
           convertedTaxPrice = formatter.format(convertedTaxPrice);
@@ -856,7 +927,7 @@ orderRouter.post(
         <p>
         Hi ${order.user.lastName} ${order.user.firstName},</p>
         <p>We have finished processing your order.</p>
-        <h2>[Order ${order._id}] (${order.createdAt
+        <h2>[Tracking ID: ${order.trackingId}] (${order.createdAt
         .toString()
         .substring(0, 10)})</h2>
         
@@ -882,11 +953,7 @@ orderRouter.post(
           item.color ? item.color : ""
         } alt=""/></td>
         <td align="center">${item.quantity}</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedItemsPrice
-        }</td>
+        <td align="right">${convertedItemsPrice}</td>
       </tr>
     `;
        })
@@ -895,35 +962,19 @@ orderRouter.post(
         <tfoot>
         <tr>
         <td colspan="2">Items Price:</td>
-        <td align="right"> ${
-          order.currencySign === "USD"
-            ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedItemsPrice
-        }</td>
+        <td align="right"> ${convertedItemsPrice}</td>
         </tr>
         <tr>
         <td colspan="2">Tax Price:</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.taxPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedTaxPrice
-        }</td>
+        <td align="right">${convertedTaxPrice}</td>
         </tr>
         <tr>
         <td colspan="2">Shipping Price:</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.shippingPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedShippingPrice
-        }</td>
+        <td align="right">${convertedShippingPrice}</td>
         </tr>
         <tr>
         <td colspan="2"><strong>Total Price:</strong></td>
-        <td align="right"><strong>${
-          order.currencySign === "USD"
-            ? `$${order.grandTotal.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedGrandTotal
-        }</strong></td>
+        <td align="right"><strong>${convertedGrandTotal}</strong></td>
         </tr>
         <tr>
         <td colspan="2">Payment Method:</td>
@@ -966,7 +1017,7 @@ orderRouter.post(
         .sendTransacEmail({
           sender,
           to: receivers,
-          subject: `New Order ${order._id}`,
+          subject: `New Order ${order.trackingId}`,
           htmlContent: payOrderEmailTemplate,
           params: {
             role: "Frontend",
@@ -1110,11 +1161,6 @@ orderRouter.post(
       let convertedShippingPrice = order.shippingPrice;
       let convertedGrandTotal = order.grandTotal;
 
-      const formatter = new Intl.NumberFormat("en-US", {
-        style: "decimal",
-        minimumFractionDigits: 2,
-      });
-
       if (order.currencySign !== currency) {
         try {
           convertedItemsPrice = await convertCurrency(
@@ -1134,7 +1180,11 @@ orderRouter.post(
             order.currencySign
           );
           convertedCurrencySign = order.currencySign;
-
+          const formatter = new Intl.NumberFormat("en-GB", {
+            style: "currency",
+            currency: convertedCurrencySign,
+            currencyDisplay: "symbol", // Display the currency symbol instead of the currency code
+          });
           // Format converted values
           convertedItemsPrice = formatter.format(convertedItemsPrice);
           convertedTaxPrice = formatter.format(convertedTaxPrice);
@@ -1150,7 +1200,7 @@ orderRouter.post(
         <p>
         Hi ${order.user.lastName} ${order.user.firstName},</p>
         <p>We have finished processing your order.</p>
-        <h2>[Order ${order._id}] (${order.createdAt
+        <h2>[Order Tracking ID:${order.trackingId}] (${order.createdAt
         .toString()
         .substring(0, 10)})</h2>
         
@@ -1176,11 +1226,7 @@ orderRouter.post(
           item.color ? item.color : ""
         } alt=""/></td>
         <td align="center">${item.quantity}</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedItemsPrice
-        }</td>
+        <td align="right">${convertedItemsPrice}</td>
       </tr>
     `;
        })
@@ -1189,35 +1235,19 @@ orderRouter.post(
         <tfoot>
         <tr>
         <td colspan="2">Items Price:</td>
-        <td align="right"> ${
-          order.currencySign === "USD"
-            ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedItemsPrice
-        }</td>
+        <td align="right"> ${convertedItemsPrice}</td>
         </tr>
         <tr>
         <td colspan="2">Tax Price:</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.taxPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedTaxPrice
-        }</td>
+        <td align="right">${convertedTaxPrice}</td>
         </tr>
         <tr>
         <td colspan="2">Shipping Price:</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.shippingPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedShippingPrice
-        }</td>
+        <td align="right">${convertedShippingPrice}</td>
         </tr>
         <tr>
         <td colspan="2"><strong>Total Price:</strong></td>
-        <td align="right"><strong>${
-          order.currencySign === "USD"
-            ? `$${order.grandTotal.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedGrandTotal
-        }</strong></td>
+        <td align="right"><strong>${convertedGrandTotal}</strong></td>
         </tr>
         <tr>
         <td colspan="2">Payment Method:</td>
@@ -1260,7 +1290,7 @@ orderRouter.post(
         .sendTransacEmail({
           sender,
           to: receivers,
-          subject: `New Order ${order._id}`,
+          subject: `New Order ${order.trackingId}`,
           htmlContent: payOrderEmailTemplate,
           params: {
             role: "Frontend",
@@ -1327,15 +1357,6 @@ orderRouter.put(
       let convertedShippingPrice = order.shippingPrice;
       let convertedGrandTotal = order.grandTotal;
 
-      //   let TotalSales = new Intl.NumberFormat("en-GB", {
-      //     style: "currency",
-      //     currency: currency,
-      //   });
-      const formatter = new Intl.NumberFormat("en-US", {
-        style: "decimal",
-        minimumFractionDigits: 2,
-      });
-
       if (order.currencySign !== currency) {
         try {
           convertedItemsPrice = await convertCurrency(
@@ -1355,7 +1376,11 @@ orderRouter.put(
             order.currencySign
           );
           convertedCurrencySign = order.currencySign;
-
+          const formatter = new Intl.NumberFormat("en-GB", {
+            style: "currency",
+            currency: convertedCurrencySign,
+            currencyDisplay: "symbol", // Display the currency symbol instead of the currency code
+          });
           // Format converted values
           convertedItemsPrice = formatter.format(convertedItemsPrice);
           convertedTaxPrice = formatter.format(convertedTaxPrice);
@@ -1371,7 +1396,7 @@ orderRouter.put(
         <p>
         Hi ${order.user.lastName} ${order.user.firstName},</p>
         <p>We have finished processing your order.</p>
-        <h2>[Order ${order._id}] (${order.createdAt
+        <h2>[Order Tracking ID:${order.trackingId}] (${order.createdAt
         .toString()
         .substring(0, 10)})</h2>
         
@@ -1397,11 +1422,7 @@ orderRouter.put(
           item.color ? item.color : ""
         } alt=""/></td>
         <td align="center">${item.quantity}</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedItemsPrice
-        }</td>
+        <td align="right">${convertedItemsPrice}</td>
       </tr>
     `;
        })
@@ -1410,35 +1431,19 @@ orderRouter.put(
         <tfoot>
         <tr>
         <td colspan="2">Items Price:</td>
-        <td align="right"> ${
-          order.currencySign === "USD"
-            ? `$${order.itemsPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedItemsPrice
-        }</td>
+        <td align="right"> ${convertedItemsPrice}</td>
         </tr>
         <tr>
         <td colspan="2">Tax Price:</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.taxPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedTaxPrice
-        }</td>
+        <td align="right">${convertedTaxPrice}</td>
         </tr>
         <tr>
         <td colspan="2">Shipping Price:</td>
-        <td align="right">${
-          order.currencySign === "USD"
-            ? `$${order.shippingPrice.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedShippingPrice
-        }</td>
+        <td align="right">${convertedShippingPrice}</td>
         </tr>
         <tr>
         <td colspan="2"><strong>Total Price:</strong></td>
-        <td align="right"><strong>${
-          order.currencySign === "USD"
-            ? `$${order.grandTotal.toFixed(2)}`
-            : convertedCurrencySign + " " + convertedGrandTotal
-        }</strong></td>
+        <td align="right"><strong>${convertedGrandTotal}</strong></td>
         </tr>
         <tr>
         <td colspan="2">Payment Method:</td>
@@ -1481,7 +1486,7 @@ orderRouter.put(
         .sendTransacEmail({
           sender,
           to: receivers,
-          subject: `New Order ${order._id}`,
+          subject: `New Order ${order.trackingId}`,
           htmlContent: payOrderEmailTemplate,
           params: {
             role: "Frontend",

@@ -18,6 +18,10 @@
     .negate {
       color: var(--color-primary);
     }
+    .in_progress {
+      color: #2a7ade;
+      background: transparent;
+    }
     .with_cash {
       color: var(--color-green);
       font-weight: 600;

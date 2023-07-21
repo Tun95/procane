@@ -77,7 +77,7 @@ function List({ currencySign }) {
           )}
           {orders?.slice(0, 10).map((order, index) => (
             <TableRow key={index}>
-              <TableCell className="tableCell">{order._id}</TableCell>
+              <TableCell className="tableCell">{order.trackingId}</TableCell>
               <TableCell className="tableCell">
                 {order.user
                   ? order.user.firstName && order.user.lastName
@@ -107,7 +107,7 @@ function List({ currencySign }) {
                 {order.isDelivered ? (
                   <Button type="Approved" />
                 ) : order.isPaid ? (
-                  <Button type="Pending" />
+                  <Button type="InProgress" />
                 ) : (
                   <Button type="Passive" />
                 )}

@@ -62,6 +62,7 @@ function SideBar() {
     localStorage.removeItem("!userInfo" && "cartItems");
     localStorage.removeItem("shippingAddress");
     localStorage.removeItem("paymentMethod");
+    localStorage.removeItem("shipmentData");
     window.location.href = "/login";
   };
 

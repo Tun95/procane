@@ -88,7 +88,7 @@ function OrderDetails() {
     try {
       // dispatch({ type: "DELIVER_REQUEST" });
       const { data } = await axios.put(
-        `/api/orders/${order._id}/deliver`,
+        `${request}/api/orders/${order._id}/deliver`,
         {},
         {
           headers: { authorization: `Bearer ${userInfo.token}` },
@@ -111,8 +111,6 @@ function OrderDetails() {
   };
   console.log(order);
 
- 
-
   return (
     <div className="mtb">
       <Helmet>
@@ -129,7 +127,10 @@ function OrderDetails() {
             <>
               <div className="order-screen">
                 <div className="o-screen">
-                  <h1 className="order-header"> Order {orderId}</h1>
+                  <h2 className="order-header">
+                    {" "}
+                    Tracking ID: {order.trackingId}
+                  </h2>
                   <div className="list-box">
                     <div className="order-sec">
                       <div className="order-details">
@@ -165,6 +166,8 @@ function OrderDetails() {
                                         {dateFormat(order.deliveredAt)}
                                       </MessageBox>
                                     </div>
+                                  ) : order.isPaid ? (
+                                    <MessageBox>In Progress</MessageBox>
                                   ) : (
                                     <MessageBox variant="danger">
                                       Not Delivered

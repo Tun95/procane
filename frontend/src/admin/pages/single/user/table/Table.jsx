@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import "./table.scss";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,11 +8,34 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import MessageBox from "../../../../../components/utilities/message loading/MessageBox";
+import axios from "axios";
+import { request } from "../../../../../base url/BaseUrl";
 
-function UserOrderList({ convertCurrency, user }) {
+function UserOrderList({ convertCurrency, userId, userInfo }) {
   const Button = ({ type }) => {
     return <button className={"widgetLgButton " + type}>{type}</button>;
   };
+
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const { data } = await axios.get(
+          `${request}/api/orders/mine/${userId}`,
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        setOrders(data.orders);
+      } catch (error) {
+        // Handle error
+        console.error("Error fetching orders:", error);
+      }
+    };
+
+    fetchOrders();
+  }, [userId]);
 
   return (
     <TableContainer component={Paper} className="table">
@@ -27,14 +50,14 @@ function UserOrderList({ convertCurrency, user }) {
           </TableRow>
         </TableHead>
         <TableBody className="tableCenter p_flex">
-          {user?.order?.length === 0 && (
+          {orders?.length === 0 && (
             <span className="product-not">
               <MessageBox>No Orders This Month </MessageBox>
             </span>
           )}
-          {user?.order?.slice(0, 20).map((order, index) => (
+          {orders?.map((order, index) => (
             <TableRow key={index}>
-              <TableCell className="tableCell">{order._id}</TableCell>
+              <TableCell className="tableCell">{order.trackingId}</TableCell>
               <TableCell className="tableCell">
                 {order.createdAt.substring(0, 10)}
               </TableCell>
@@ -57,7 +80,7 @@ function UserOrderList({ convertCurrency, user }) {
                 {order.isDelivered ? (
                   <Button type="Approved" />
                 ) : order.isPaid ? (
-                  <Button type="Pending" />
+                  <Button type="InProgress" />
                 ) : (
                   <Button type="Passive" />
                 )}

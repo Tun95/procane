@@ -170,7 +170,11 @@ function UserInfo() {
       <div className="bottom">
         <h1 className="title">Last Transactions</h1>
 
-        <UserOrderList user={user?.user} convertCurrency={convertCurrency} />
+        <UserOrderList
+          userId={userId}
+          userInfo={userInfo}
+          convertCurrency={convertCurrency}
+        />
       </div>
     </div>
   );

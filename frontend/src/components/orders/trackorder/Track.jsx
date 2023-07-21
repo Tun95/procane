@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { request } from "../../../base url/BaseUrl";
 import "./styles.scss";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+import OrderInfo from "./OrderInfo";
+import { Helmet } from "react-helmet-async";
 
 function Track() {
   //================
@@ -39,10 +40,58 @@ function Track() {
   //================
   // TRACK SHIPMENT
   //================
-  const trackShipment = async (shipmentId) => {
+  // const trackShipment = async (shipmentId) => {
+  //   try {
+  //     const response = await fetch(
+  //       `${request}/api/orders/shipments/${shipmentId}`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+
+  //     if (response.ok) {
+  //       const result = await response.json();
+  //       const shipmentId = JSON.stringify(result.shipment.object_id);
+  //       const shipmentData = JSON.stringify(result.shipment); // Convert shipment object to a string
+  //       localStorage.setItem("shipmentData", shipmentData);
+  //       toast.success(`${shipmentId} Shipment retrieved successfully`, {
+  //         position: "bottom-center",
+  //       });
+  //       return result.shipment;
+  //     } else {
+  //       const error = await response.json();
+  //       toast.error(error.message, {
+  //         position: "bottom-center",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error(error, {
+  //       position: "bottom-center",
+  //     });
+  //   }
+  // };
+
+  // Validation schema using Yup
+  const validationSchema = Yup.object().shape({
+    trackingId: Yup.string().required("Tracking id is required"),
+  });
+
+  const initialValues = {
+    trackingId: "",
+  };
+  //=======================
+  // Handle form submission
+  //=======================
+  const [orderData, setOrderData] = useState();
+
+  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
       const response = await fetch(
-        `${request}/api/orders/shipments/${shipmentId}`,
+        `${request}/api/orders/track?trackingId=${values.trackingId}`,
         {
           method: "GET",
           headers: {
@@ -52,58 +101,44 @@ function Track() {
       );
 
       if (response.ok) {
-        const result = await response.json();
-        const shipmentId = JSON.stringify(result.shipment.object_id);
-        const shipmentData = JSON.stringify(result.shipment); // Convert shipment object to a string
-        localStorage.setItem("shipmentData", shipmentData);
-        toast.success(`${shipmentId} Shipment retrieved successfully`, {
-          position: "bottom-center",
-        });
-        return result.shipment;
+        const data = await response.json();
+        // Set the fetched order data in the state
+        setOrderData(data.order);
       } else {
-        const error = await response.json();
-        toast.error(error.message, {
-          position: "bottom-center",
-        });
+        const errorData = await response.json();
+        // Handle error response
+        setErrors({ trackingId: errorData.message });
       }
     } catch (error) {
-      console.error(error);
-      toast.error(error, {
-        position: "bottom-center",
-      });
+      console.log(error);
+      setErrors({ trackingId: "Server error" });
     }
+    setSubmitting(false);
   };
 
-  // Validation schema using Yup
-  const validationSchema = Yup.object().shape({
-    trackingNumber: Yup.string().required("Tracking number is required"),
-  });
+  // const handleSubmit = (values, { setSubmitting }) => {
+  //   const { trackingNumber } = values;
+  //   setSubmitting(true); // Set isSubmitting to true
 
-  const initialValues = {
-    trackingNumber: "",
-  };
-  //=======================
-  // Handle form submission
-  //=======================
-  const handleSubmit = (values, { setSubmitting }) => {
-    const { trackingNumber } = values;
-    setSubmitting(true); // Set isSubmitting to true
-
-    trackShipment(trackingNumber)
-      .then((shipment) => {
-        // Handle tracked shipment
-        console.log("Tracked Shipment:", shipment);
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setSubmitting(false); // Set isSubmitting back to false after the request completes
-      });
-  };
+  //   trackShipment(trackingNumber)
+  //     .then((shipment) => {
+  //       // Handle tracked shipment
+  //       console.log("Tracked Shipment:", shipment);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     })
+  //     .finally(() => {
+  //       setSubmitting(false); // Set isSubmitting back to false after the request completes
+  //     });
+  // };
+  console.log(orderData);
 
   return (
     <>
+      <Helmet>
+        <title>Track Order</title>
+      </Helmet>
       <div className="shipment light_shadow">
         <Formik
           initialValues={initialValues}
@@ -132,13 +167,13 @@ function Track() {
                     <div className="table_data a_flex">
                       <Field
                         type="text"
-                        name="trackingNumber"
-                        value={values.trackingNumber}
+                        name="trackingId"
+                        value={values.trackingId}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         placeholder="Enter Tracking Number"
                         className={
-                          errors.trackingNumber && touched.trackingNumber
+                          errors.trackingId && touched.trackingId
                             ? "input-error"
                             : ""
                         }
@@ -148,14 +183,14 @@ function Track() {
                       </div>{" "}
                     </div>
                     <ErrorMessage
-                      name="trackingNumber"
+                      name="trackingId"
                       component="div"
                       className="error"
                     />
                   </div>
                   <div className="table_rows ">
                     <div className="table_data">
-                      <strong>Ex: 1199419b02054b17a7afe342295c890d</strong>
+                      <strong>Ex: R49464OB2RM5NV8HE</strong>
                     </div>
                   </div>
                 </div>
@@ -163,6 +198,9 @@ function Track() {
             </Form>
           )}
         </Formik>
+        <div className="info_shipment mt">
+          <OrderInfo orderInfo={orderData} />
+        </div>
       </div>
     </>
   );

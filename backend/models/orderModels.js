@@ -22,6 +22,7 @@ const orderSchema = new mongoose.Schema(
         },
       },
     ],
+    trackingId: { type: String, unique: true, index: true },
     shippingAddress: {
       firstName: { type: String, required: true },
       lastName: { type: String, required: true },

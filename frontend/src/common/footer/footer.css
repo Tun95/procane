@@ -45,6 +45,8 @@ footer .developer {
 }
 footer .developer a {
   text-decoration: underline;
+  color: var(--color-gray);
+  font-size: 11px;
 }
 @media screen and (max-width: 1400px) {
   .footer-wrap .icon {

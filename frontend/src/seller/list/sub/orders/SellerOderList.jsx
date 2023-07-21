@@ -147,7 +147,9 @@ function SellerOrderList() {
                   )}
                   {orders?.map((order, index) => (
                     <TableRow key={index}>
-                      <TableCell className="tableCell">{order._id}</TableCell>
+                      <TableCell className="tableCell">
+                        {order.trackingId}
+                      </TableCell>
                       <TableCell className="tableCell">
                         {order.user
                           ? order.user.firstName && order.user.lastName
@@ -185,6 +187,8 @@ function SellerOrderList() {
                           <div className="paidAt">
                             {formatDate(order.deliveredAt)}
                           </div>
+                        ) : order.isPaid ? (
+                          <div className="in_progress">In Progress</div>
                         ) : (
                           <div className="negate">No</div>
                         )}

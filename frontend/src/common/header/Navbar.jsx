@@ -142,7 +142,7 @@ function Navbar() {
 
               {userInfo && (
                 <li>
-                  <Link to="/track-order">track my order</Link>
+                  <Link to="/track-shipment">track my order</Link>
                 </li>
               )}
               <li>

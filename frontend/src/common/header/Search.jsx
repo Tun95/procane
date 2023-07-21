@@ -103,6 +103,7 @@ function Search() {
     localStorage.removeItem("!userInfo" && "cartItems");
     localStorage.removeItem("shippingAddress");
     localStorage.removeItem("paymentMethod");
+    localStorage.removeItem("shipmentData");
     window.location.href = "/login";
   };
 
@@ -112,7 +113,7 @@ function Search() {
         <div className="container c_flex search_bar">
           <div className="logo width">
             <Link to="/">
-              <img src={logo} alt="" className="logo_img"/>
+              <img src={logo} alt="" className="logo_img" />
             </Link>
           </div>
           <form

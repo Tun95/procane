@@ -174,8 +174,22 @@ function App() {
                 </ProtectedRoute>
               }
             ></Route>
-            <Route path="/track-order" element={<OrderHistoryScreen />}></Route>
-            <Route path="/track-shipment" element={<TrackScreen />}></Route>
+            <Route
+              path="/track-order"
+              element={
+                <ProtectedRoute>
+                  <OrderHistoryScreen />
+                </ProtectedRoute>
+              }
+            ></Route>
+            <Route
+              path="/track-shipment"
+              element={
+                <ProtectedRoute>
+                  <TrackScreen />
+                </ProtectedRoute>
+              }
+            ></Route>
             {/* USER */}
 
             {/* VALIDATION */}
