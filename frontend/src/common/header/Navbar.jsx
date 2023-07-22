@@ -6,6 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { styled, alpha } from "@mui/material/styles";
 import { Context } from "../../context/Context";
 import { toast } from "react-toastify";
+import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -85,7 +86,7 @@ function Navbar() {
         <div className="container d_flex">
           <div className="categories ">
             <div className="d_flex ctg_btn" onClick={handleClick}>
-              <span className="fa-solid fa-border-all"></span>
+              <FormatAlignLeftIcon className="align_left"/>
               <h4>
                 Categories <i className="fa fa-chevron-down"></i>
               </h4>

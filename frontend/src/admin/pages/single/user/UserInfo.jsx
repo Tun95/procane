@@ -44,8 +44,8 @@ function UserInfo() {
   const params = useParams();
   const { id: userId } = params;
 
-  const { state, convertCurrency, toCurrency } = useContext(Context);
-  const { userInfo, settings } = state;
+  const { state, convertCurrency } = useContext(Context);
+  const { userInfo } = state;
 
   const [{ loading, error, user }, dispatch] = useReducer(reducer, {
     user: [],
@@ -163,7 +163,7 @@ function UserInfo() {
             CustomTooltip={CustomTooltip}
             grid
             dataKey="Total Sales"
-            title="User Spending (Last 10 Days)"
+            title="User Spending (Last 5 Days)"
           />
         </div>
       </div>

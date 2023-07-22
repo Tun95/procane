@@ -173,6 +173,7 @@ function UserList() {
     fetchData();
   }, [successBlock, successDelete, successUnBlock, userInfo]);
   console.log(users);
+
   //==============
   //BLOCK HANDLER
   //==============
@@ -181,9 +182,13 @@ function UserList() {
       toast.error("Can Not Block Admin User");
     } else {
       try {
-        await axios.put(`${request}/api/users/block/${user.id}`, {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
-        });
+        await axios.put(
+          `${request}/api/users/block/${user.id}`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
         dispatch({ type: "BLOCK_SUCCESS" });
       } catch (err) {
         toast.error(getError(err), { position: "bottom-center" });
@@ -198,9 +203,13 @@ function UserList() {
   const unBlockHandler = async (user) => {
     try {
       dispatch({ type: "UNBLOCK_REQUEST" });
-      await axios.put(`${request}/api/users/unblock/${user.id}`, {
-        headers: { Authorization: `Bearer ${userInfo.token}` },
-      });
+      await axios.put(
+        `${request}/api/users/unblock/${user.id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        }
+      );
       dispatch({ type: "UNBLOCK_SUCCESS" });
     } catch (err) {
       toast.error(getError(err), { position: "bottom-center" });
@@ -208,7 +217,9 @@ function UserList() {
     }
   };
 
+  //===========
   //USER DELETE
+  //===========
   const deleteHandler = async (user) => {
     if (window.confirm("Are you sure to delete this user?")) {
       try {

@@ -359,8 +359,8 @@ userRouter.delete(
 //ADMIN BLOCK USER
 userRouter.put(
   "/block/:id",
-  // isAuth,
-  // isAdmin,
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
     const user = await User.findById(req.params.id);
@@ -389,8 +389,8 @@ userRouter.put(
 //ADMIN UNBLOCK USER
 userRouter.put(
   "/unblock/:id",
-  // isAuth,
-  // isAdmin,
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const id = req.params.id;
     try {

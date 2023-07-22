@@ -632,7 +632,7 @@ orderRouter.post(
             throw new Error("Failed to convert currency");
           }
         }
-             const payOrderEmailTemplate = `<!DOCTYPE html>
+        const payOrderEmailTemplate = `<!DOCTYPE html>
 <html>
 <head>
   <style>
@@ -673,12 +673,7 @@ orderRouter.post(
       font-size: 12px;
       color: #888;
     }
-    /* Remove the CSS styling for the specific anchor tag */
-    a[href="${process.env.MY_PORTFOLIO_URL}"] {
-      /* Optional: If you want to set specific styles for this anchor tag */
-      text-decoration: none; /* Remove the underline from the anchor tag */
-      /* Add any other desired styles here */
-    }
+   
   </style>
 </head>
 <body>
@@ -686,8 +681,8 @@ orderRouter.post(
   <p>Hello ${order.user.lastName} ${order.user.firstName},</p>
   <p>We have finished processing your order.</p>
   <h2>Order Tracking ID: ${order.trackingId} (${order.createdAt
-               .toString()
-               .substring(0, 10)})</h2>
+          .toString()
+          .substring(0, 10)})</h2>
   <table>
     <thead>
       <tr>
@@ -742,16 +737,49 @@ orderRouter.post(
   </table>
   <h2>Shipping address</h2>
   <p>
-    ${order.shippingAddress.firstName},<br/>
-    ${order.shippingAddress.lastName},<br/>
-    ${order.shippingAddress.address},<br/>
-    ${order.shippingAddress.phone},<br/>
-    ${order.shippingAddress.city},<br/>
-    ${order.shippingAddress.zipCode}<br/>
-    ${order.shippingAddress.cState}<br/>
-    ${order.shippingAddress.country},<br/>
-    ${order.shippingAddress.shipping},<br/>
-  </p>
+  <table>
+    <tr>
+      <th>Field</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td><strong>First Name:</strong></td>
+      <td>${order.shippingAddress.firstName}</td>
+    </tr>
+    <tr>
+      <td><strong>Last Name:</strong></td>
+      <td>${order.shippingAddress.lastName}</td>
+    </tr>
+    <tr>
+      <td><strong>Address:</strong></td>
+      <td>${order.shippingAddress.address}</td>
+    </tr>
+    <tr>
+      <td><strong>Phone:</strong></td>
+      <td>${order.shippingAddress.phone}</td>
+    </tr>
+    <tr>
+      <td><strong>City:</strong></td>
+      <td>${order.shippingAddress.city}</td>
+    </tr>
+    <tr>
+      <td><strong>Zip Code:</strong></td>
+      <td>${order.shippingAddress.zipCode}</td>
+    </tr>
+    <tr>
+      <td><strong>State:</strong></td>
+      <td>${order.shippingAddress.cState}</td>
+    </tr>
+    <tr>
+      <td><strong>Country:</strong></td>
+      <td>${order.shippingAddress.country}</td>
+    </tr>
+    <tr>
+      <td><strong>Shipping:</strong></td>
+      <td>${order.shippingAddress.shipping}</td>
+    </tr>
+  </table>
+</p>
   <hr/>
   <p class="thanks">Thanks for shopping with us.</p>
   <!-- This anchor tag will be displayed as a plain link without any additional styles -->
@@ -958,7 +986,7 @@ orderRouter.post(
         }
       }
 
-          const payOrderEmailTemplate = `<!DOCTYPE html>
+      const payOrderEmailTemplate = `<!DOCTYPE html>
 <html>
 <head>
   <style>
@@ -999,12 +1027,7 @@ orderRouter.post(
       font-size: 12px;
       color: #888;
     }
-    /* Remove the CSS styling for the specific anchor tag */
-    a[href="${process.env.MY_PORTFOLIO_URL}"] {
-      /* Optional: If you want to set specific styles for this anchor tag */
-      text-decoration: none; /* Remove the underline from the anchor tag */
-      /* Add any other desired styles here */
-    }
+   
   </style>
 </head>
 <body>
@@ -1012,8 +1035,8 @@ orderRouter.post(
   <p>Hello ${order.user.lastName} ${order.user.firstName},</p>
   <p>We have finished processing your order.</p>
   <h2>Order Tracking ID: ${order.trackingId} (${order.createdAt
-            .toString()
-            .substring(0, 10)})</h2>
+        .toString()
+        .substring(0, 10)})</h2>
   <table>
     <thead>
       <tr>
@@ -1068,16 +1091,49 @@ orderRouter.post(
   </table>
   <h2>Shipping address</h2>
   <p>
-    ${order.shippingAddress.firstName},<br/>
-    ${order.shippingAddress.lastName},<br/>
-    ${order.shippingAddress.address},<br/>
-    ${order.shippingAddress.phone},<br/>
-    ${order.shippingAddress.city},<br/>
-    ${order.shippingAddress.zipCode}<br/>
-    ${order.shippingAddress.cState}<br/>
-    ${order.shippingAddress.country},<br/>
-    ${order.shippingAddress.shipping},<br/>
-  </p>
+  <table>
+    <tr>
+      <th>Field</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td><strong>First Name:</strong></td>
+      <td>${order.shippingAddress.firstName}</td>
+    </tr>
+    <tr>
+      <td><strong>Last Name:</strong></td>
+      <td>${order.shippingAddress.lastName}</td>
+    </tr>
+    <tr>
+      <td><strong>Address:</strong></td>
+      <td>${order.shippingAddress.address}</td>
+    </tr>
+    <tr>
+      <td><strong>Phone:</strong></td>
+      <td>${order.shippingAddress.phone}</td>
+    </tr>
+    <tr>
+      <td><strong>City:</strong></td>
+      <td>${order.shippingAddress.city}</td>
+    </tr>
+    <tr>
+      <td><strong>Zip Code:</strong></td>
+      <td>${order.shippingAddress.zipCode}</td>
+    </tr>
+    <tr>
+      <td><strong>State:</strong></td>
+      <td>${order.shippingAddress.cState}</td>
+    </tr>
+    <tr>
+      <td><strong>Country:</strong></td>
+      <td>${order.shippingAddress.country}</td>
+    </tr>
+    <tr>
+      <td><strong>Shipping:</strong></td>
+      <td>${order.shippingAddress.shipping}</td>
+    </tr>
+  </table>
+</p>
   <hr/>
   <p class="thanks">Thanks for shopping with us.</p>
   <!-- This anchor tag will be displayed as a plain link without any additional styles -->
@@ -1283,7 +1339,7 @@ orderRouter.post(
         }
       }
 
-           const payOrderEmailTemplate = `<!DOCTYPE html>
+      const payOrderEmailTemplate = `<!DOCTYPE html>
 <html>
 <head>
   <style>
@@ -1324,12 +1380,7 @@ orderRouter.post(
       font-size: 12px;
       color: #888;
     }
-    /* Remove the CSS styling for the specific anchor tag */
-    a[href="${process.env.MY_PORTFOLIO_URL}"] {
-      /* Optional: If you want to set specific styles for this anchor tag */
-      text-decoration: none; /* Remove the underline from the anchor tag */
-      /* Add any other desired styles here */
-    }
+   
   </style>
 </head>
 <body>
@@ -1337,8 +1388,8 @@ orderRouter.post(
   <p>Hello ${order.user.lastName} ${order.user.firstName},</p>
   <p>We have finished processing your order.</p>
   <h2>Order Tracking ID: ${order.trackingId} (${order.createdAt
-             .toString()
-             .substring(0, 10)})</h2>
+        .toString()
+        .substring(0, 10)})</h2>
   <table>
     <thead>
       <tr>
@@ -1393,16 +1444,49 @@ orderRouter.post(
   </table>
   <h2>Shipping address</h2>
   <p>
-    ${order.shippingAddress.firstName},<br/>
-    ${order.shippingAddress.lastName},<br/>
-    ${order.shippingAddress.address},<br/>
-    ${order.shippingAddress.phone},<br/>
-    ${order.shippingAddress.city},<br/>
-    ${order.shippingAddress.zipCode}<br/>
-    ${order.shippingAddress.cState}<br/>
-    ${order.shippingAddress.country},<br/>
-    ${order.shippingAddress.shipping},<br/>
-  </p>
+  <table>
+    <tr>
+      <th>Field</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td><strong>First Name:</strong></td>
+      <td>${order.shippingAddress.firstName}</td>
+    </tr>
+    <tr>
+      <td><strong>Last Name:</strong></td>
+      <td>${order.shippingAddress.lastName}</td>
+    </tr>
+    <tr>
+      <td><strong>Address:</strong></td>
+      <td>${order.shippingAddress.address}</td>
+    </tr>
+    <tr>
+      <td><strong>Phone:</strong></td>
+      <td>${order.shippingAddress.phone}</td>
+    </tr>
+    <tr>
+      <td><strong>City:</strong></td>
+      <td>${order.shippingAddress.city}</td>
+    </tr>
+    <tr>
+      <td><strong>Zip Code:</strong></td>
+      <td>${order.shippingAddress.zipCode}</td>
+    </tr>
+    <tr>
+      <td><strong>State:</strong></td>
+      <td>${order.shippingAddress.cState}</td>
+    </tr>
+    <tr>
+      <td><strong>Country:</strong></td>
+      <td>${order.shippingAddress.country}</td>
+    </tr>
+    <tr>
+      <td><strong>Shipping:</strong></td>
+      <td>${order.shippingAddress.shipping}</td>
+    </tr>
+  </table>
+</p>
   <hr/>
   <p class="thanks">Thanks for shopping with us.</p>
   <!-- This anchor tag will be displayed as a plain link without any additional styles -->
@@ -1572,12 +1656,7 @@ orderRouter.put(
       font-size: 12px;
       color: #888;
     }
-    /* Remove the CSS styling for the specific anchor tag */
-    a[href="${process.env.MY_PORTFOLIO_URL}"] {
-      /* Optional: If you want to set specific styles for this anchor tag */
-      text-decoration: none; /* Remove the underline from the anchor tag */
-      /* Add any other desired styles here */
-    }
+   
   </style>
 </head>
 <body>
@@ -1641,16 +1720,49 @@ orderRouter.put(
   </table>
   <h2>Shipping address</h2>
   <p>
-    ${order.shippingAddress.firstName},<br/>
-    ${order.shippingAddress.lastName},<br/>
-    ${order.shippingAddress.address},<br/>
-    ${order.shippingAddress.phone},<br/>
-    ${order.shippingAddress.city},<br/>
-    ${order.shippingAddress.zipCode}<br/>
-    ${order.shippingAddress.cState}<br/>
-    ${order.shippingAddress.country},<br/>
-    ${order.shippingAddress.shipping},<br/>
-  </p>
+  <table>
+    <tr>
+      <th>Field</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td><strong>First Name:</strong></td>
+      <td>${order.shippingAddress.firstName}</td>
+    </tr>
+    <tr>
+      <td><strong>Last Name:</strong></td>
+      <td>${order.shippingAddress.lastName}</td>
+    </tr>
+    <tr>
+      <td><strong>Address:</strong></td>
+      <td>${order.shippingAddress.address}</td>
+    </tr>
+    <tr>
+      <td><strong>Phone:</strong></td>
+      <td>${order.shippingAddress.phone}</td>
+    </tr>
+    <tr>
+      <td><strong>City:</strong></td>
+      <td>${order.shippingAddress.city}</td>
+    </tr>
+    <tr>
+      <td><strong>Zip Code:</strong></td>
+      <td>${order.shippingAddress.zipCode}</td>
+    </tr>
+    <tr>
+      <td><strong>State:</strong></td>
+      <td>${order.shippingAddress.cState}</td>
+    </tr>
+    <tr>
+      <td><strong>Country:</strong></td>
+      <td>${order.shippingAddress.country}</td>
+    </tr>
+    <tr>
+      <td><strong>Shipping:</strong></td>
+      <td>${order.shippingAddress.shipping}</td>
+    </tr>
+  </table>
+</p>
   <hr/>
   <p class="thanks">Thanks for shopping with us.</p>
   <!-- This anchor tag will be displayed as a plain link without any additional styles -->

@@ -161,9 +161,8 @@
 .categories .demo_customized_menu {
   height: 100px !important;
 }
-.categories span {
-  margin-right: 20px;
-  font-size: 30px;
+.categories .align_left {
+  margin-right: 20px !important;
 }
 .categories h4 {
   font-weight: 500;
