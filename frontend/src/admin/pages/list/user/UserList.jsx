@@ -231,19 +231,31 @@ function UserList() {
       field: "action",
       headerName: "Actions",
       width: 300,
-      renderCell: (user) => {
+      renderCell: (params) => {
         return (
           <div className="cellAction">
-            <div onClick={() => blockHandler(user)} className="blockButton">
-              Block
-            </div>
-            <div onClick={() => unBlockHandler(user)} className="blockButton">
-              UnBlock
-            </div>
-            <div onClick={() => deleteHandler(user)} className="deleteButton">
+            {params.row.isBlocked === true ? (
+              <div
+                onClick={() => unBlockHandler(params.row)}
+                className="blockButton"
+              >
+                UnBlock
+              </div>
+            ) : (
+              <div
+                onClick={() => blockHandler(params.row)}
+                className="blockButton"
+              >
+                Block
+              </div>
+            )}
+            <div
+              onClick={() => deleteHandler(params.row)}
+              className="deleteButton"
+            >
               Delete
             </div>
-            <Link to={`/admin/user/${user.id}`}>
+            <Link to={`/admin/user/${params.row._id}`}>
               <div className="viewButton">View</div>
             </Link>
           </div>
@@ -251,6 +263,7 @@ function UserList() {
       },
     },
   ];
+
   return (
     <>
       <Helmet>

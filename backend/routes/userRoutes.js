@@ -341,10 +341,12 @@ userRouter.delete(
   isAdmin,
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).send({ message: "User Not Found" });
+    }
     if (user) {
-      if (user.email === process.env.EMAIL_ADDRESS) {
-        res.status(400).send({ message: "Can Not Delete Admin User" });
-        return;
+      if (user.isAdmin) {
+        return res.status(400).send({ message: "Cannot Delete Admin User" });
       }
       await user.remove();
       res.send({ message: "User Deleted Successfuly" });
@@ -357,13 +359,13 @@ userRouter.delete(
 //ADMIN BLOCK USER
 userRouter.put(
   "/block/:id",
-  isAuth,
-  isAdmin,
+  // isAuth,
+  // isAdmin,
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
     const user = await User.findById(req.params.id);
-    if (user.email === process.env.EMAIL_ADDRESS) {
-      throw new Error("Can Not Block This Admin User");
+    if (user.isAdmin) {
+      res.status(400).send({ message: "Cannot Block Admin User" });
     } else {
       try {
         const user = await User.findByIdAndUpdate(
@@ -387,8 +389,8 @@ userRouter.put(
 //ADMIN UNBLOCK USER
 userRouter.put(
   "/unblock/:id",
-  isAuth,
-  isAdmin,
+  // isAuth,
+  // isAdmin,
   expressAsyncHandler(async (req, res) => {
     const id = req.params.id;
     try {
