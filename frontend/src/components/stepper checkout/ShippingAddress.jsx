@@ -15,17 +15,30 @@ import "./style.scss";
 import { toast } from "react-toastify";
 import { Context } from "../../context/Context";
 import PhoneInput from "react-phone-number-input";
+import expressImg from "../../assets/express.png";
+import standardImg from "../../assets/standard.png";
 
 const steps = ["Billing Address", "Confirmation", "Payment Method", "Finish"];
 
 function ShippingAddress() {
   const navigate = useNavigate();
-  const { state, dispatch: ctxDispatch } = useContext(Context);
+  const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
   const {
     userInfo,
     settings,
     cart: { cartItems, shippingAddress },
   } = state;
+  const { standard, express, expressCharges, standardCharges } =
+    (settings &&
+      settings
+        .map((s) => ({
+          standard: s.standard,
+          express: s.express,
+          expressCharges: s.expressCharges,
+          standardCharges: s.standardCharges,
+        }))
+        .find((props) => !isNaN(props.expressCharges))) ||
+    {};
 
   const [firstName, setFirstName] = useState(shippingAddress.firstName || "");
   const [lastName, setLastName] = useState(shippingAddress.lastName || "");
@@ -35,10 +48,48 @@ function ShippingAddress() {
   const [cState, setcState] = useState(shippingAddress.cState || "");
   const [country, setCountry] = useState(shippingAddress.country || "");
   const [zipCode, setZipCode] = useState(shippingAddress.zipCode || "");
-  const [shipping, setShipping] = useState("");
   const [countryCode, setCountryCode] = useState(
     shippingAddress.countryCode || ""
   );
+
+  let standardShipping = standard;
+  let expressShipping = express;
+  //SHIPPING METHOD
+  const [shippingMethod, setshippingMethod] = useState();
+  console.log(shippingMethod);
+
+  //==============
+  //STANDARD MODAL
+  //==============
+  const [openStandardModal, is0penStandardModal] = useState(false);
+  const closeStandardModal = () => {
+    is0penStandardModal(false);
+    document.body.style.overflow = "unset";
+  };
+  const showStandardModal = () => {
+    is0penStandardModal(true);
+  };
+  const StandardModal = () => {
+    closeExpressModal();
+    showStandardModal();
+  };
+
+  //==============
+  //EXPRESS MODAL
+  //==============
+  const [openExpressModal, is0penExpressModal] = useState(false);
+  const closeExpressModal = () => {
+    is0penExpressModal(false);
+    document.body.style.overflow = "unset";
+  };
+  const showExpressModal = () => {
+    is0penExpressModal(true);
+  };
+
+  const ExpressModal = () => {
+    showExpressModal();
+    closeStandardModal();
+  };
 
   useEffect(() => {
     if (!userInfo || cartItems.length === 0) {
@@ -66,7 +117,7 @@ function ShippingAddress() {
       !cState ||
       !country ||
       !zipCode ||
-      !shipping
+      !shippingMethod
     ) {
       displayToastError();
     } else {
@@ -81,7 +132,7 @@ function ShippingAddress() {
           cState,
           country,
           zipCode,
-          shipping,
+          shipping: shippingMethod,
           countryCode,
         },
       });
@@ -96,7 +147,7 @@ function ShippingAddress() {
           cState,
           country,
           zipCode,
-          shipping,
+          shipping: shippingMethod,
           countryCode,
         })
       );
@@ -145,7 +196,7 @@ function ShippingAddress() {
         position: "bottom-center",
       });
     }
-    if (!shipping) {
+    if (!shippingMethod) {
       toast.error("Please select a shipping method", {
         position: "bottom-center",
       });
@@ -174,7 +225,11 @@ function ShippingAddress() {
               ))}
             </Stepper>
           </Box>
-          <form className="checkout_form  mtb" onSubmit={submitHandler}>
+          <form
+            action=""
+            className="checkout_form  mtb"
+            onSubmit={submitHandler}
+          >
             <div className="d_grid inner_form">
               <div className="form-group">
                 <label htmlFor="firstName">First Name*:</label>
@@ -261,48 +316,110 @@ function ShippingAddress() {
                 />
               </div>
             </div>
-            <div className="delivery">
+            <div className="delivery light_shadow">
               <h2>Delivery options*</h2>
-              {settings?.map((s, index) => (
-                <div key={index} className="delivery-container c_flex product">
-                  <span className="a_flex">
-                    <input
-                      type="radio"
-                      id="standard"
-                      className="dev_input"
-                      name="shipping"
-                      value={s.standard}
-                      onChange={(e) => setShipping(e.target.value)}
-                    />
-                    <label htmlFor="standard">
+              <div className=" d_grid mtb">
+                <label
+                  className={
+                    openStandardModal ? "active payment_label" : "payment_label"
+                  }
+                  htmlFor="standardShipping"
+                  onClick={StandardModal}
+                >
+                  <div className="label-svg">
+                    <div className="svg">
+                      <img src={standardImg} alt="" />
+                    </div>
+                    <span className="a_flex input_text">
+                      <input
+                        type="radio"
+                        name="standardShipping"
+                        id="standardShipping"
+                        value={standardShipping}
+                        onChange={(e) => setshippingMethod(e.target.value)}
+                      />
                       <span>
-                        <div className="label">{s.standard}</div>
+                        <small>{standard}</small>
                       </span>
-                    </label>
-                  </span>
-                  <span className="a_flex">
-                    <input
-                      type="radio"
-                      className="dev_input"
-                      id="express"
-                      value={s.express}
-                      name="shipping"
-                      onChange={(e) => setShipping(e.target.value)}
-                    />
-                    <label htmlFor="express">
                       <span>
-                        <div className="label">{s.express}</div>
+                        <small>Fee: {convertCurrency(standardCharges)}</small>
                       </span>
-                    </label>
-                  </span>
-                </div>
-              ))}
+                    </span>
+                  </div>
+                </label>
+                <label
+                  className={
+                    openExpressModal
+                      ? "active payment_label "
+                      : "payment_label "
+                  }
+                  htmlFor="expressShipping"
+                  onClick={ExpressModal}
+                >
+                  <div className="label-svg">
+                    <div className="svg">
+                      <img src={expressImg} alt="" />
+                    </div>
+
+                    <span className="a_flex input_text">
+                      <input
+                        type="radio"
+                        name="expressShipping"
+                        id="expressShipping"
+                        value={expressShipping}
+                        onChange={(e) => setshippingMethod(e.target.value)}
+                      />
+                      <span>
+                        <small>{express}</small>
+                      </span>
+
+                      <span>
+                        <small>Fee: {convertCurrency(expressCharges)}</small>
+                      </span>
+                    </span>
+                  </div>
+                </label>
+              </div>
+              {/* <div className="delivery-container c_flex product">
+                <span className="a_flex">
+                  <input
+                    type="radio"
+                    id="standard"
+                    className="dev_input"
+                    name="shipping"
+                    value={standard}
+                    onChange={(e) => setShipping(e.target.value)}
+                  />
+                  <label htmlFor="standard">
+                    <span>
+                      <div className="label">{standard}</div>
+                    </span>
+                  </label>
+                </span>
+                <span className="a_flex">
+                  <input
+                    type="radio"
+                    className="dev_input"
+                    id="express"
+                    value={express}
+                    name="shipping"
+                    onChange={(e) => setShipping(e.target.value)}
+                  />
+                  <label htmlFor="express">
+                    <span>
+                      <div className="label">{express}</div>
+                    </span>
+                  </label>
+                </span>
+              </div> */}
             </div>
             <div className="submit_btn">
               <button className="stepper_back_btn" onClick={backHandler}>
                 BACK
               </button>
-              <button className="stepper_next_btn">NEXT</button>
+              <button type="submit" className="stepper_next_btn">
+                NEXT
+              </button>
             </div>
           </form>
         </div>

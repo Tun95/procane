@@ -549,7 +549,14 @@ orderRouter.post(
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const settings = await Settings.find({});
-
+    const { currency: currencyStripe } =
+      (settings &&
+        settings
+          .map((s) => ({
+            currency: s.currency,
+          }))
+          .find(() => true)) ||
+      {};
     const { stripeApiKey } = (await Settings.findOne({})) ?? {};
     const stripe = Stripe(stripeApiKey);
     console.log(stripeApiKey);
@@ -562,9 +569,7 @@ orderRouter.post(
         description,
       });
 
-      const order = await Order.findById(req.params.id)
-        .populate("user", "email name")
-        .exec();
+      const order = await Order.findById(req.params.id).populate("user");
 
       if (charge) {
         // Update the necessary fields in the order object and save it
@@ -598,21 +603,13 @@ orderRouter.post(
           product.numSales += item.quantity;
           await product.save();
         }
+
         // Convert the currency if needed
         let convertedCurrencySign = order.currencySign;
         let convertedItemsPrice = order.itemsPrice;
         let convertedTaxPrice = order.taxPrice;
         let convertedShippingPrice = order.shippingPrice;
         let convertedGrandTotal = order.grandTotal;
-
-        const { currency: currencyStripe } =
-          (settings &&
-            settings
-              .map((s) => ({
-                currency: s.currency,
-              }))
-              .find(() => true)) ||
-          {};
 
         if (order.currencySign !== currencyStripe) {
           try {
@@ -648,10 +645,9 @@ orderRouter.post(
             throw new Error("Failed to convert currency");
           }
         }
-
         const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
         <p>
-        Hi ${order.user.lastName} ${order.user.firstName},</p>
+        Hi ${order?.user?.lastName} ${order?.user?.firstName},</p>
         <p>We have finished processing your order.</p>
         <h2>[Order Tracking ID:${order.trackingId}] (${order.createdAt
           .toString()
@@ -675,9 +671,9 @@ orderRouter.post(
         <td>${item.name}</td>
         <td align="left">${item.keygen}</td>
         <td align="left">${item.size === "" ? "" : item.size}</td>
-        <td align="center"><img src=${
-          item.color ? item.color : ""
-        } alt=""/></td>
+        <td align="center">${
+          item.color ? `<img src=${item.color} alt=""/>` : ""
+        }</td>
         <td align="center">${item.quantity}</td>
         <td align="right">${convertedItemsPrice}</td>
       </tr>
@@ -712,7 +708,7 @@ orderRouter.post(
         ${order.shippingAddress.firstName},<br/>
         ${order.shippingAddress.lastName},<br/>
         ${order.shippingAddress.address},<br/>
-         ${order.shippingAddress.phone},<br/>
+        ${order.shippingAddress.phone},<br/>
         ${order.shippingAddress.city},<br/>
         ${order.shippingAddress.zipCode}<br/>
         ${order.shippingAddress.cState}<br/>
@@ -1656,6 +1652,31 @@ orderRouter.get("/dhl/:trackingNumber", async (req, res) => {
     res.send(data);
   } else {
     res.sendStatus(response.status);
+  }
+});
+
+//==============
+//SHIPPING PRICE
+//==============
+orderRouter.get("/shippingPrice", async (req, res) => {
+  // Get the country code from the request
+  const countryCode = req.query.countryCode;
+
+  // Make an API call to fetch the shipping price for the country
+  const response = await axios.get(
+    `https://api.shipping.com/v1/shippingPrice?countryCode=${countryCode}`
+  );
+
+  // Check if the response was successful
+  if (response.status === 200) {
+    // The shipping price is in the response body
+    const shippingPrice = response.data.shippingPrice;
+
+    // Return the shipping price
+    res.json({ shippingPrice });
+  } else {
+    // The request failed
+    res.status(response.status).json({ error: response.statusText });
   }
 });
 
