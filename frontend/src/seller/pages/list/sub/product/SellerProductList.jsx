@@ -5,13 +5,13 @@ import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-import photo from "../../../../admin/assets/photo.jpg";
+import photo from "../../../../../admin/assets/photo.jpg";
 import ReactTimeAgo from "react-time-ago";
-import { Context } from "../../../../context/Context";
-import { request } from "../../../../base url/BaseUrl";
-import { getError } from "../../../../components/utilities/util/Utils";
-import LoadingBox from "../../../../components/utilities/message loading/LoadingBox";
-import MessageBox from "../../../../components/utilities/message loading/MessageBox";
+import { Context } from "../../../../../context/Context";
+import { request } from "../../../../../base url/BaseUrl";
+import { getError } from "../../../../../components/utilities/util/Utils";
+import LoadingBox from "../../../../../components/utilities/message loading/LoadingBox";
+import MessageBox from "../../../../../components/utilities/message loading/MessageBox";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -44,7 +44,7 @@ const reducer = (state, action) => {
   }
 };
 
-function ProductList({ rows }) {
+function SellerProductList({ rows }) {
   const columns = [
     { field: "_id", headerName: "ID", width: 220 },
     {
@@ -248,4 +248,4 @@ function ProductList({ rows }) {
   );
 }
 
-export default ProductList;
+export default SellerProductList;

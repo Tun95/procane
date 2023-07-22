@@ -1,18 +1,19 @@
 import React, { useContext, useEffect, useReducer, useState } from "react";
 import "./styles.scss";
-import photo from "../../../assets/photo.jpg";
-import Rating from "../../../components/utilities/rating/Ratings";
-import { Context } from "../../../context/Context";
+import photo from "../../../../assets/photo.jpg";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { request } from "../../../base url/BaseUrl";
+
 import axios from "axios";
 import parse from "html-react-parser";
-import { getError } from "../../../components/utilities/util/Utils";
-import LoadingBox from "../../../components/utilities/message loading/LoadingBox";
-import MessageBox from "../../../components/utilities/message loading/MessageBox";
 import { toast } from "react-toastify";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import Button from "@mui/material/Button";
+import { Context } from "../../../../context/Context";
+import { request } from "../../../../base url/BaseUrl";
+import { getError } from "../../../../components/utilities/util/Utils";
+import LoadingBox from "../../../../components/utilities/message loading/LoadingBox";
+import MessageBox from "../../../../components/utilities/message loading/MessageBox";
+import Rating from "../../../../components/utilities/rating/Ratings";
 
 const reducer = (state, action) => {
   switch (action.type) {

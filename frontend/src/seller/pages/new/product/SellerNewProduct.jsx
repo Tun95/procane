@@ -6,14 +6,14 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import photo from "../../../admin/assets/photo.png";
+import photo from "../../../../admin/assets/photo.png";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { request } from "../../../base url/BaseUrl";
-import { Context } from "../../../context/Context";
-import { getError } from "../../../components/utilities/util/Utils";
+import { Context } from "../../../../context/Context";
+import { request } from "../../../../base url/BaseUrl";
+import { getError } from "../../../../components/utilities/util/Utils";
 
 const reducer = (state, action) => {
   switch (action.type) {

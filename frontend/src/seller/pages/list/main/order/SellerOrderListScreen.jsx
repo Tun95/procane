@@ -1,6 +1,6 @@
 import React from "react";
-import SellerOrderList from "../../sub/orders/SellerOderList";
 import { Helmet } from "react-helmet-async";
+import SellerOrderList from "../../sub/order/SellerOrderList";
 
 function SellerOrderListScreen() {
   return (

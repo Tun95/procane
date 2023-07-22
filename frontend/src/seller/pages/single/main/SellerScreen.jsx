@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import Seller from "../sub/Seller";
 import { Helmet } from "react-helmet-async";
-import { Context } from "../../../context/Context";
+import { Context } from "../../../../context/Context";
 
 function SellerScreen() {
   const { state } = useContext(Context);

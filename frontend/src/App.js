@@ -71,13 +71,8 @@ import OrderHistoryScreen from "./screens/orderscreen/orderhistoryscren/OrderHis
 import OrderDetailScreen from "./screens/orderscreen/orderdetailscreen/OrderDetailScreen";
 import OrderlistScreen from "./admin/pages/list/order/main/OrderlistScreen";
 import SellerRoute from "./components/utilities/protectedRoute/SellerRoute";
-import SellerProductListScreen from "./seller/list/main/product/SellerProductListScreen";
-import SellerOrderListScreen from "./seller/list/main/order/SellerOrderListScreen";
 import ProductlistScreen from "./admin/pages/list/product/main/ProductListScreen";
 import DashboardScreen from "./admin/pages/home/main/DashboardScreen";
-import SellerProductEdit from "./seller/edit/product/SellerProductEdit";
-import SellerNewProduct from "./seller/new/product/SellerNewProduct";
-import SellerScreen from "./seller/single/main/SellerScreen";
 import Settings from "./admin/pages/single/settings/Settings";
 import procane from "../src/assets/procanes.png";
 import VendorScreen from "./screens/formscreens/vendorscreen/VendorScreen";
@@ -88,6 +83,11 @@ import ReactGA from "react-ga4";
 import LoadingOverlayComponent from "./components/utilities/message loading/OverlayLoading";
 import NotFoundScreen from "./components/utilities/404 error/PageNotFound";
 import ThemeFaqScreen from "./screens/aboutscreen/faqscreen/ThemeFaqScreen";
+import SellerProductEdit from "./seller/pages/edit/SellerProductEdit";
+import SellerNewProduct from "./seller/pages/new/product/SellerNewProduct";
+import SellerOrderListScreen from "./seller/pages/list/main/order/SellerOrderListScreen";
+import SellerScreen from "./seller/pages/single/main/SellerScreen";
+import SellerProductListScreen from "./seller/pages/list/main/product/SellerProductListScreen";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
