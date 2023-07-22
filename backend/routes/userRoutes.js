@@ -19,14 +19,14 @@ userRouter.post(
   "/signin",
   expressAsyncHandler(async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
-     if (!user) {
-       return res.status(401).send({ message: "Invalid email or password" });
-     }
-     if (user.isBlocked === true) {
-       return res.status(403).send({
-         message: "😲 It appears this account has been blocked by Admin",
-       });
-     }
+    if (!user) {
+      return res.status(401).send({ message: "Invalid email or password" });
+    }
+    if (user.isBlocked === true) {
+      return res.status(403).send({
+        message: "😲 It appears this account has been blocked by Admin",
+      });
+    }
     if (bcrypt.compareSync(req.body.password, user.password)) {
       res.send({
         _id: user._id,
@@ -357,8 +357,8 @@ userRouter.delete(
 //ADMIN BLOCK USER
 userRouter.put(
   "/block/:id",
-  // isAuth,
-  // isAdmin,
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
     const user = await User.findById(req.params.id);
@@ -387,8 +387,8 @@ userRouter.put(
 //ADMIN UNBLOCK USER
 userRouter.put(
   "/unblock/:id",
-  // isAuth,
-  // isAdmin,
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const id = req.params.id;
     try {
@@ -413,7 +413,7 @@ userRouter.put(
 userRouter.put(
   "/:id",
   isAuth,
-  // isAdmin,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
     if (user) {
@@ -451,12 +451,51 @@ userRouter.post(
       await user.save();
       console.log(verificationToken);
 
-      //HTML message
-      const subdomain = process.env.SUB_DOMAIN;
-      const resetURL = `<p>if you were requested to verify your
-      account,<br/> verify now within the next 10mins,<br/>
-      otherwise ignore this message</p>
-      <a href=${`${process.env.SUB_DOMAIN}/verify-success/${user.id}/${verificationToken}`}>Click here to verify</a>`;
+      // Generate the verification link
+      const verificationLink = `${process.env.SUB_DOMAIN}/verify-success/${user.id}/${verificationToken}`;
+
+      // HTML message
+      const emailMessage = `
+        <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+            }
+            h1 {
+              color: #007BFF;
+            }
+            p {
+              margin-bottom: 16px;
+            }
+            a {
+              display: inline-block;
+              padding: 10px 20px;
+              background-color: #007BFF;
+              color: #FFFFFF !important;
+              text-decoration: none;
+              border-radius: 4px;
+            }
+            
+          </style>
+        </head>
+        <body>
+          <h1>Email Verification</h1>
+          <p>Hello ${user.firstName},</p>
+          <p>You have received this email because you have been requested to verify your account.</p>
+          <p>Please click the button below to verify your account:</p>
+          <a href="${verificationLink}">Verify Account</a>
+          <p>If you did not request this verification, you can safely ignore this email.</p>
+          <p>This verification link is valid for the next 10 minutes.</p>
+          <p>Thank you,</p>
+          <p>${process.env.SHOP_NAME} Team</p>
+          <hr/>
+          <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
+        </body>
+        </html>
+      `;
+
+      // Create a nodemailer transport
       const smtpTransport = nodemailer.createTransport({
         service: process.env.MAIL_SERVICE,
         auth: {
@@ -464,16 +503,30 @@ userRouter.post(
           pass: process.env.GMAIL_PASS,
         },
       });
+
+      // Setup email data
       const mailOptions = {
         from: `${process.env.SHOP_NAME} ${process.env.EMAIL_ADDRESS}`,
         to: `${user.email}`,
         subject: "Verify your email address",
-        html: resetURL,
+        html: emailMessage,
       };
-      smtpTransport.sendMail(mailOptions);
-      res.send(resetURL);
+
+      // Send the email
+      smtpTransport.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log(error);
+          res.status(500).json({ message: "Failed to send email" });
+        } else {
+          console.log("Email sent: " + info.response);
+          res
+            .status(200)
+            .json({ message: "Verification email sent successfully" });
+        }
+      });
     } catch (error) {
-      res.send(error);
+      console.log(error);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   })
 );
@@ -516,12 +569,22 @@ userRouter.post(
       const token = await user.createPasswordResetToken();
       await user.save();
 
-      //HTML message
-      const subdomain = process.env.SUB_DOMAIN;
-      const resetURL = `<p>if you were requested to reset your 
-		password,<br/> resest now within the next 10mins,<br/>
-		otherwise ignore this message </p>
-		<a href=${`${process.env.SUB_DOMAIN}/${user.id}/new-password/${token}`}>Click here to reset</a>`;
+      // HTML message
+      const resetURL = `<p>Hello ${user.firstName},</p>
+        <p>We received a request to reset your password for your account at [Your Website Name]. If you did not request this, please ignore this email.</p>
+        <p>To reset your password, click the button below:</p>
+        <a href=${`${process.env.SUB_DOMAIN}/${user.id}/new-password/${token}`} style="display: inline-block; margin: 10px 0; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 4px;">Reset Password</a>
+        <p style="color: #777; font-size: 14px;">Please note that this link will expire in 10 minutes for security reasons.</p>
+        <p>If the button above doesn't work, you can also copy and paste the following URL into your web browser:</p>
+        <p>${`${process.env.SUB_DOMAIN}/${user.id}/new-password/${token}`}</p>
+        <p>If you have any questions or need further assistance, please contact our support team at ${
+          process.env.EMAIL_ADDRESS
+        }.</p>
+        <p>Best regards,<br/>${process.env.SHOP_NAME} Team</p>
+        <hr/>
+        <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
+        `;
+
       const smtpTransport = nodemailer.createTransport({
         service: process.env.MAIL_SERVICE,
         auth: {
@@ -529,17 +592,17 @@ userRouter.post(
           pass: process.env.GMAIL_PASS,
         },
       });
-      //kakszzxtewcdustm
+
       const mailOptions = {
         from: `${process.env.SHOP_NAME} ${process.env.EMAIL_ADDRESS}`,
         to: email,
         subject: "Reset Password",
         html: resetURL,
       };
+
       smtpTransport.sendMail(mailOptions);
       res.send({
-        msg: `A verification email has been successfully sent to ${user?.email}.
-			 Reset now within 10mins, ${resetURL} `,
+        msg: `A verification email has been successfully sent to ${user?.email}. Reset now within 10 minutes.`,
       });
     } catch (error) {
       res.send(error);

@@ -41,14 +41,22 @@ function VendorScreen() {
     status: false,
   };
 
+  //==============
+  // APPLY
+  //==============
   const handleSubmit = async (values, actions) => {
-    if (userInfo.isSeller) {
-      toast.error("You account has been approved as a vendor already", {
-        position: "bottom-center",
-      });
-    } else {
-      dispatch({ type: "CREATE_REQUEST" });
-      try {
+    dispatch({ type: "CREATE_REQUEST" });
+
+    try {
+      if (userInfo.isAccountVerified) {
+        toast.error("You need to be a verified user to apply as a merchant", {
+          position: "bottom-center",
+        });
+      } else if (userInfo.isSeller) {
+        toast.error("Your account has already been approved as a vendor", {
+          position: "bottom-center",
+        });
+      } else {
         const { data } = await axios.post(
           `${request}/api/apply`,
           {
@@ -65,15 +73,61 @@ function VendorScreen() {
         toast.success("Application sent successfully", {
           position: "bottom-center",
         });
-      } catch (err) {
-        dispatch({ type: "CREATE_FAIL" });
+      }
+    } catch (err) {
+      dispatch({ type: "CREATE_FAIL" });
+      if (err.response && err.response.status === 401) {
+        toast.error("Unauthorized. Please log in.", {
+          position: "bottom-center",
+        });
+      } else {
         toast.error(getError(err), { position: "bottom-center" });
       }
-      setTimeout(() => {
-        actions.resetForm();
-      }, 1000);
     }
+    setTimeout(() => {
+      actions.resetForm();
+    }, 1000);
   };
+
+  // const handleSubmit = async (values, actions) => {
+  //   if (userInfo.isAccountVerified) {
+  //     toast.error("You need to be a verify user to apply as a merchant", {
+  //       position: "bottom-center",
+  //     });
+  //   } else {
+  //     if (userInfo.isSeller) {
+  //       toast.error("You account has been approved as a vendor already", {
+  //         position: "bottom-center",
+  //       });
+  //     } else {
+  //       dispatch({ type: "CREATE_REQUEST" });
+  //       try {
+  //         const { data } = await axios.post(
+  //           `${request}/api/apply`,
+  //           {
+  //             sellerName: values.sellerName,
+  //             storeAddress: values.storeAddress,
+  //             sellerDescription: values.sellerDescription,
+  //             status: true,
+  //           },
+  //           {
+  //             headers: { Authorization: `Bearer ${userInfo.token}` },
+  //           }
+  //         );
+  //         dispatch({ type: "CREATE_SUCCESS", payload: data });
+  //         toast.success("Application sent successfully", {
+  //           position: "bottom-center",
+  //         });
+  //       } catch (err) {
+  //         dispatch({ type: "CREATE_FAIL" });
+  //         toast.error(getError(err), { position: "bottom-center" });
+  //       }
+  //       setTimeout(() => {
+  //         actions.resetForm();
+  //       }, 1000);
+  //     }
+  //   }
+  // };
   return (
     <div className="form_container">
       <Helmet>
@@ -207,7 +261,7 @@ function VendorScreen() {
                     className="form_submit_btn"
                   >
                     {isSubmitting ? (
-                      <LoadingBox className="loading_submit"/>
+                      <LoadingBox className="loading_submit" />
                     ) : (
                       <React.Fragment>Submit</React.Fragment>
                     )}

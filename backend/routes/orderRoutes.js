@@ -119,30 +119,6 @@ orderRouter.post(
 //==========================
 // FETCH ORDER BY TRACKINGID
 //==========================
-// orderRouter.get(
-//   "/track",
-//   // isAuth,
-//   expressAsyncHandler(async (req, res) => {
-//     const { trackingId } = req.body;
-
-//     try {
-//       // Find the order by trackingId in the database
-//       const order = await Order.findOne({ trackingId });
-
-//       if (order) {
-//         // If order is found, send it in the response
-//         res.json({ order });
-//       } else {
-//         // If order is not found, send an error message
-//         res.status(404).json({ message: "Order not found" });
-//       }
-//     } catch (error) {
-//       // If an error occurs, send an error response
-//       console.log(error);
-//       res.status(500).json({ message: "Server error" });
-//     }
-//   })
-// );
 orderRouter.get(
   "/track",
   // isAuth,
@@ -167,40 +143,6 @@ orderRouter.get(
     }
   })
 );
-
-//===========
-//PLACE ORDER
-//===========
-// orderRouter.post(
-//   "/",
-//   isAuth,
-//   expressAsyncHandler(async (req, res) => {
-//     const newOrder = new Order({
-//       seller: req.body.orderItems[0].seller,
-//       orderItems: req.body.orderItems.map((x) => ({ ...x, product: x._id })),
-//       shippingAddress: req.body.shippingAddress,
-//       //paymentMethod: req.body.paymentMethod,
-//       itemsPrice: req.body.itemsPrice,
-//       shippingPrice: req.body.shippingPrice,
-//       taxPrice: req.body.taxPrice,
-//       grandTotal: req.body.grandTotal,
-//       user: req.user._id,
-//       product: req.body.orderItems.product,
-//     });
-
-//     // Create a shipment booking with DHL
-//     const shipmentBooking = await dhlService.createShipmentBooking(newOrder);
-
-//     // Update the order with shipment details (e.g., tracking number)
-//     newOrder.shipment = {
-//       trackingNumber: shipmentBooking.trackingNumber,
-//       // Other relevant shipment information
-//     };
-
-//     const order = await newOrder.save();
-//     res.status(201).send({ message: "New Order Created", order });
-//   })
-// );
 
 //ADMIN ORDER LIST
 const PAGE_SIZE = 15;
@@ -241,7 +183,52 @@ orderRouter.get(
   })
 );
 
-//ORDER SUMMARY
+//====================
+//SELLER ORDER SUMMARY
+//====================
+orderRouter.get(
+  "/seller/summary",
+  isAuth, // Middleware to check if the user is authenticated
+  isSellerOrAdmin, // Middleware to check if the user is a seller or admin
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const sellerId = req.user._id; // Assuming the authenticated user's ID is stored in req.user._id
+
+      // Define the aggregation pipeline to calculate the seller order summary
+      const pipeline = [
+        // Match orders belonging to the seller and isPaid is true
+        {
+          $match: { seller: sellerId, isPaid: true },
+        },
+        // Group by date, calculate total earnings per day
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            totalEarningsPerDay: { $sum: "$grandTotal" },
+            productsSold: { $sum: { $size: "$orderItems" } },
+          },
+        },
+        // Sort by date in descending order (most recent first)
+        {
+          $sort: { _id: -1 },
+        },
+        // Optionally, you can add a $limit stage to limit the number of results
+        // { $limit: 10 },
+      ];
+
+      // Run the aggregation pipeline on the "orders" collection
+      const sellerSummary = await Order.aggregate(pipeline);
+
+      res.json(sellerSummary);
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  })
+);
+
+//===================
+//ADMIN ORDER SUMMARY
+//===================
 orderRouter.get(
   "/summary",
   // isAuth,
@@ -645,82 +632,133 @@ orderRouter.post(
             throw new Error("Failed to convert currency");
           }
         }
-        const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
-        <p>
-        Hi ${order?.user?.lastName} ${order?.user?.firstName},</p>
-        <p>We have finished processing your order.</p>
-        <h2>[Order Tracking ID:${order.trackingId}] (${order.createdAt
-          .toString()
-          .substring(0, 10)})</h2>
-        
-            <table>
-        <thead>
-        <tr>
-        <td><strong>Product</strong></td>
-        <td><strong>Keygen</strong></td>
-        <td><strong>Size</strong></td>
-        <td><strong>Color</strong></td>
-        <td><strong>Quantity</strong></td>
-        <td><strong align="right">Price</strong></td>
-        </thead>
-        <tbody>
-     ${await Promise.all(
-       order.orderItems.map(async (item) => {
-         return `
+             const payOrderEmailTemplate = `<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      color: #333;
+    }
+    h1 {
+      color: #007BFF;
+    }
+    p {
+      margin-bottom: 16px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    td img {
+      max-width: 50px;
+      max-height: 50px;
+    }
+    .total {
+      font-weight: bold;
+    }
+    .thanks {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #888;
+    }
+    /* Remove the CSS styling for the specific anchor tag */
+    a[href="${process.env.MY_PORTFOLIO_URL}"] {
+      /* Optional: If you want to set specific styles for this anchor tag */
+      text-decoration: none; /* Remove the underline from the anchor tag */
+      /* Add any other desired styles here */
+    }
+  </style>
+</head>
+<body>
+  <h1>Thanks for shopping with us</h1>
+  <p>Hello ${order.user.lastName} ${order.user.firstName},</p>
+  <p>We have finished processing your order.</p>
+  <h2>Order Tracking ID: ${order.trackingId} (${order.createdAt
+               .toString()
+               .substring(0, 10)})</h2>
+  <table>
+    <thead>
       <tr>
-        <td>${item.name}</td>
-        <td align="left">${item.keygen}</td>
-        <td align="left">${item.size === "" ? "" : item.size}</td>
-        <td align="center">${
-          item.color ? `<img src=${item.color} alt=""/>` : ""
-        }</td>
-        <td align="center">${item.quantity}</td>
+        <th>Product</th>
+        <th>Keygen</th>
+        <th>Size</th>
+        <th>Color</th>
+        <th>Quantity</th>
+        <th align="right">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${await Promise.all(
+        order.orderItems.map(async (item) => {
+          return `
+          <tr>
+            <td>${item.name}</td>
+            <td align="left">${item.keygen}</td>
+            <td align="left">${item.size === "" ? "" : item.size}</td>
+            <td align="center">${
+              item.color ? `<img src=${item.color} alt=""/>` : ""
+            }</td>
+            <td align="center">${item.quantity}</td>
+            <td align="right">${convertedItemsPrice}</td>
+          </tr>
+        `;
+        })
+      )}
+    </tbody>
+    <tfoot>
+      <tr class="total">
+        <td colspan="2">Items Price:</td>
         <td align="right">${convertedItemsPrice}</td>
       </tr>
-    `;
-       })
-     )}
-        </tbody>
-        <tfoot>
-        <tr>
-        <td colspan="2">Items Price:</td>
-        <td align="right"> ${convertedItemsPrice}</td>
-        </tr>
-        <tr>
+      <tr class="total">
         <td colspan="2">Tax Price:</td>
         <td align="right">${convertedTaxPrice}</td>
-        </tr>
-        <tr>
+      </tr>
+      <tr class="total">
         <td colspan="2">Shipping Price:</td>
         <td align="right">${convertedShippingPrice}</td>
-        </tr>
-        <tr>
+      </tr>
+      <tr class="total">
         <td colspan="2"><strong>Total Price:</strong></td>
         <td align="right"><strong>${convertedGrandTotal}</strong></td>
-        </tr>
-        <tr>
+      </tr>
+      <tr>
         <td colspan="2">Payment Method:</td>
         <td align="right">${order.paymentMethod}</td>
-        </tr>
-        </table>
-        <h2>Shipping address</h2>
-        <p>
-        ${order.shippingAddress.firstName},<br/>
-        ${order.shippingAddress.lastName},<br/>
-        ${order.shippingAddress.address},<br/>
-        ${order.shippingAddress.phone},<br/>
-        ${order.shippingAddress.city},<br/>
-        ${order.shippingAddress.zipCode}<br/>
-        ${order.shippingAddress.cState}<br/>
-        ${order.shippingAddress.country},<br/>
-        ${order.shippingAddress.shipping},<br/>
-        </p>
-        <hr/>
-        <p>
-        Thanks for shopping with us.
-        </p>
-        <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
-        </body></html>`;
+      </tr>
+    </tfoot>
+  </table>
+  <h2>Shipping address</h2>
+  <p>
+    ${order.shippingAddress.firstName},<br/>
+    ${order.shippingAddress.lastName},<br/>
+    ${order.shippingAddress.address},<br/>
+    ${order.shippingAddress.phone},<br/>
+    ${order.shippingAddress.city},<br/>
+    ${order.shippingAddress.zipCode}<br/>
+    ${order.shippingAddress.cState}<br/>
+    ${order.shippingAddress.country},<br/>
+    ${order.shippingAddress.shipping},<br/>
+  </p>
+  <hr/>
+  <p class="thanks">Thanks for shopping with us.</p>
+  <!-- This anchor tag will be displayed as a plain link without any additional styles -->
+  <p class="footer">Developed by <a href="https://my-portfolio-nine-nu-28.vercel.app/">Olatunji Akande</a></p>
+</body>
+</html>
+`;
         const client = Sib.ApiClient.instance;
         const apiKey = client.authentications["api-key"];
         apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
@@ -762,9 +800,9 @@ orderRouter.post(
   })
 );
 
-//=============
+//=========
 //RAZORPAY
-//============
+//=========
 orderRouter.post(
   "/:id/razorpay",
   isAuth,
@@ -920,82 +958,133 @@ orderRouter.post(
         }
       }
 
-      const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
-        <p>
-        Hi ${order.user.lastName} ${order.user.firstName},</p>
-        <p>We have finished processing your order.</p>
-        <h2>[Tracking ID: ${order.trackingId}] (${order.createdAt
-        .toString()
-        .substring(0, 10)})</h2>
-        
-            <table>
-        <thead>
-        <tr>
-        <td><strong>Product</strong></td>
-        <td><strong>Keygen</strong></td>
-        <td><strong>Size</strong></td>
-        <td><strong>Color</strong></td>
-        <td><strong>Quantity</strong></td>
-        <td><strong align="right">Price</strong></td>
-        </thead>
-        <tbody>
-     ${await Promise.all(
-       order.orderItems.map(async (item) => {
-         return `
+          const payOrderEmailTemplate = `<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      color: #333;
+    }
+    h1 {
+      color: #007BFF;
+    }
+    p {
+      margin-bottom: 16px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    td img {
+      max-width: 50px;
+      max-height: 50px;
+    }
+    .total {
+      font-weight: bold;
+    }
+    .thanks {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #888;
+    }
+    /* Remove the CSS styling for the specific anchor tag */
+    a[href="${process.env.MY_PORTFOLIO_URL}"] {
+      /* Optional: If you want to set specific styles for this anchor tag */
+      text-decoration: none; /* Remove the underline from the anchor tag */
+      /* Add any other desired styles here */
+    }
+  </style>
+</head>
+<body>
+  <h1>Thanks for shopping with us</h1>
+  <p>Hello ${order.user.lastName} ${order.user.firstName},</p>
+  <p>We have finished processing your order.</p>
+  <h2>Order Tracking ID: ${order.trackingId} (${order.createdAt
+            .toString()
+            .substring(0, 10)})</h2>
+  <table>
+    <thead>
       <tr>
-        <td>${item.name}</td>
-        <td align="left">${item.keygen}</td>
-        <td align="left">${item.size === "" ? "" : item.size}</td>
-        <td align="center"><img src=${
-          item.color ? item.color : ""
-        } alt=""/></td>
-        <td align="center">${item.quantity}</td>
+        <th>Product</th>
+        <th>Keygen</th>
+        <th>Size</th>
+        <th>Color</th>
+        <th>Quantity</th>
+        <th align="right">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${await Promise.all(
+        order.orderItems.map(async (item) => {
+          return `
+          <tr>
+            <td>${item.name}</td>
+            <td align="left">${item.keygen}</td>
+            <td align="left">${item.size === "" ? "" : item.size}</td>
+            <td align="center">${
+              item.color ? `<img src=${item.color} alt=""/>` : ""
+            }</td>
+            <td align="center">${item.quantity}</td>
+            <td align="right">${convertedItemsPrice}</td>
+          </tr>
+        `;
+        })
+      )}
+    </tbody>
+    <tfoot>
+      <tr class="total">
+        <td colspan="2">Items Price:</td>
         <td align="right">${convertedItemsPrice}</td>
       </tr>
-    `;
-       })
-     )}
-        </tbody>
-        <tfoot>
-        <tr>
-        <td colspan="2">Items Price:</td>
-        <td align="right"> ${convertedItemsPrice}</td>
-        </tr>
-        <tr>
+      <tr class="total">
         <td colspan="2">Tax Price:</td>
         <td align="right">${convertedTaxPrice}</td>
-        </tr>
-        <tr>
+      </tr>
+      <tr class="total">
         <td colspan="2">Shipping Price:</td>
         <td align="right">${convertedShippingPrice}</td>
-        </tr>
-        <tr>
+      </tr>
+      <tr class="total">
         <td colspan="2"><strong>Total Price:</strong></td>
         <td align="right"><strong>${convertedGrandTotal}</strong></td>
-        </tr>
-        <tr>
+      </tr>
+      <tr>
         <td colspan="2">Payment Method:</td>
         <td align="right">${order.paymentMethod}</td>
-        </tr>
-        </table>
-        <h2>Shipping address</h2>
-        <p>
-        ${order.shippingAddress.firstName},<br/>
-        ${order.shippingAddress.lastName},<br/>
-        ${order.shippingAddress.address},<br/>
-         ${order.shippingAddress.phone},<br/>
-        ${order.shippingAddress.city},<br/>
-        ${order.shippingAddress.zipCode}<br/>
-        ${order.shippingAddress.cState}<br/>
-        ${order.shippingAddress.country},<br/>
-        ${order.shippingAddress.shipping},<br/>
-        </p>
-        <hr/>
-        <p>
-        Thanks for shopping with us.
-        </p>
-        <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
-        </body></html>`;
+      </tr>
+    </tfoot>
+  </table>
+  <h2>Shipping address</h2>
+  <p>
+    ${order.shippingAddress.firstName},<br/>
+    ${order.shippingAddress.lastName},<br/>
+    ${order.shippingAddress.address},<br/>
+    ${order.shippingAddress.phone},<br/>
+    ${order.shippingAddress.city},<br/>
+    ${order.shippingAddress.zipCode}<br/>
+    ${order.shippingAddress.cState}<br/>
+    ${order.shippingAddress.country},<br/>
+    ${order.shippingAddress.shipping},<br/>
+  </p>
+  <hr/>
+  <p class="thanks">Thanks for shopping with us.</p>
+  <!-- This anchor tag will be displayed as a plain link without any additional styles -->
+  <p class="footer">Developed by <a href="https://my-portfolio-nine-nu-28.vercel.app/">Olatunji Akande</a></p>
+</body>
+</html>
+`;
       const client = Sib.ApiClient.instance;
       const apiKey = client.authentications["api-key"];
       apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
@@ -1194,82 +1283,133 @@ orderRouter.post(
         }
       }
 
-      const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
-        <p>
-        Hi ${order.user.lastName} ${order.user.firstName},</p>
-        <p>We have finished processing your order.</p>
-        <h2>[Order Tracking ID:${order.trackingId}] (${order.createdAt
-        .toString()
-        .substring(0, 10)})</h2>
-        
-            <table>
-        <thead>
-        <tr>
-        <td><strong>Product</strong></td>
-        <td><strong>Keygen</strong></td>
-        <td><strong>Size</strong></td>
-        <td><strong>Color</strong></td>
-        <td><strong>Quantity</strong></td>
-        <td><strong align="right">Price</strong></td>
-        </thead>
-        <tbody>
-     ${await Promise.all(
-       order.orderItems.map(async (item) => {
-         return `
+           const payOrderEmailTemplate = `<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      color: #333;
+    }
+    h1 {
+      color: #007BFF;
+    }
+    p {
+      margin-bottom: 16px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    td img {
+      max-width: 50px;
+      max-height: 50px;
+    }
+    .total {
+      font-weight: bold;
+    }
+    .thanks {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #888;
+    }
+    /* Remove the CSS styling for the specific anchor tag */
+    a[href="${process.env.MY_PORTFOLIO_URL}"] {
+      /* Optional: If you want to set specific styles for this anchor tag */
+      text-decoration: none; /* Remove the underline from the anchor tag */
+      /* Add any other desired styles here */
+    }
+  </style>
+</head>
+<body>
+  <h1>Thanks for shopping with us</h1>
+  <p>Hello ${order.user.lastName} ${order.user.firstName},</p>
+  <p>We have finished processing your order.</p>
+  <h2>Order Tracking ID: ${order.trackingId} (${order.createdAt
+             .toString()
+             .substring(0, 10)})</h2>
+  <table>
+    <thead>
       <tr>
-        <td>${item.name}</td>
-        <td align="left">${item.keygen}</td>
-        <td align="left">${item.size === "" ? "" : item.size}</td>
-        <td align="center"><img src=${
-          item.color ? item.color : ""
-        } alt=""/></td>
-        <td align="center">${item.quantity}</td>
+        <th>Product</th>
+        <th>Keygen</th>
+        <th>Size</th>
+        <th>Color</th>
+        <th>Quantity</th>
+        <th align="right">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${await Promise.all(
+        order.orderItems.map(async (item) => {
+          return `
+          <tr>
+            <td>${item.name}</td>
+            <td align="left">${item.keygen}</td>
+            <td align="left">${item.size === "" ? "" : item.size}</td>
+            <td align="center">${
+              item.color ? `<img src=${item.color} alt=""/>` : ""
+            }</td>
+            <td align="center">${item.quantity}</td>
+            <td align="right">${convertedItemsPrice}</td>
+          </tr>
+        `;
+        })
+      )}
+    </tbody>
+    <tfoot>
+      <tr class="total">
+        <td colspan="2">Items Price:</td>
         <td align="right">${convertedItemsPrice}</td>
       </tr>
-    `;
-       })
-     )}
-        </tbody>
-        <tfoot>
-        <tr>
-        <td colspan="2">Items Price:</td>
-        <td align="right"> ${convertedItemsPrice}</td>
-        </tr>
-        <tr>
+      <tr class="total">
         <td colspan="2">Tax Price:</td>
         <td align="right">${convertedTaxPrice}</td>
-        </tr>
-        <tr>
+      </tr>
+      <tr class="total">
         <td colspan="2">Shipping Price:</td>
         <td align="right">${convertedShippingPrice}</td>
-        </tr>
-        <tr>
+      </tr>
+      <tr class="total">
         <td colspan="2"><strong>Total Price:</strong></td>
         <td align="right"><strong>${convertedGrandTotal}</strong></td>
-        </tr>
-        <tr>
+      </tr>
+      <tr>
         <td colspan="2">Payment Method:</td>
         <td align="right">${order.paymentMethod}</td>
-        </tr>
-        </table>
-        <h2>Shipping address</h2>
-        <p>
-        ${order.shippingAddress.firstName},<br/>
-        ${order.shippingAddress.lastName},<br/>
-        ${order.shippingAddress.address},<br/>
-         ${order.shippingAddress.phone},<br/>
-        ${order.shippingAddress.city},<br/>
-        ${order.shippingAddress.zipCode}<br/>
-        ${order.shippingAddress.cState}<br/>
-        ${order.shippingAddress.country},<br/>
-        ${order.shippingAddress.shipping},<br/>
-        </p>
-        <hr/>
-        <p>
-        Thanks for shopping with us.
-        </p>
-        <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
-        </body></html>`;
+      </tr>
+    </tfoot>
+  </table>
+  <h2>Shipping address</h2>
+  <p>
+    ${order.shippingAddress.firstName},<br/>
+    ${order.shippingAddress.lastName},<br/>
+    ${order.shippingAddress.address},<br/>
+    ${order.shippingAddress.phone},<br/>
+    ${order.shippingAddress.city},<br/>
+    ${order.shippingAddress.zipCode}<br/>
+    ${order.shippingAddress.cState}<br/>
+    ${order.shippingAddress.country},<br/>
+    ${order.shippingAddress.shipping},<br/>
+  </p>
+  <hr/>
+  <p class="thanks">Thanks for shopping with us.</p>
+  <!-- This anchor tag will be displayed as a plain link without any additional styles -->
+  <p class="footer">Developed by <a href="https://my-portfolio-nine-nu-28.vercel.app/">Olatunji Akande</a></p>
+</body>
+</html>
+`;
       const client = Sib.ApiClient.instance;
       const apiKey = client.authentications["api-key"];
       apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
@@ -1391,82 +1531,133 @@ orderRouter.put(
         }
       }
 
-      const payOrderEmailTemplate = `<!DOCTYPE html><html><body><h1>Thanks for shopping with us</h1>
-        <p>
-        Hi ${order.user.lastName} ${order.user.firstName},</p>
-        <p>We have finished processing your order.</p>
-        <h2>[Order Tracking ID:${order.trackingId}] (${order.createdAt
+      const payOrderEmailTemplate = `<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      color: #333;
+    }
+    h1 {
+      color: #007BFF;
+    }
+    p {
+      margin-bottom: 16px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    td img {
+      max-width: 50px;
+      max-height: 50px;
+    }
+    .total {
+      font-weight: bold;
+    }
+    .thanks {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #888;
+    }
+    /* Remove the CSS styling for the specific anchor tag */
+    a[href="${process.env.MY_PORTFOLIO_URL}"] {
+      /* Optional: If you want to set specific styles for this anchor tag */
+      text-decoration: none; /* Remove the underline from the anchor tag */
+      /* Add any other desired styles here */
+    }
+  </style>
+</head>
+<body>
+  <h1>Thanks for shopping with us</h1>
+  <p>Hello ${order.user.lastName} ${order.user.firstName},</p>
+  <p>We have finished processing your order.</p>
+  <h2>Order Tracking ID: ${order.trackingId} (${order.createdAt
         .toString()
         .substring(0, 10)})</h2>
-        
-            <table>
-        <thead>
-        <tr>
-        <td><strong>Product</strong></td>
-        <td><strong>Keygen</strong></td>
-        <td><strong>Size</strong></td>
-        <td><strong>Color</strong></td>
-        <td><strong>Quantity</strong></td>
-        <td><strong align="right">Price</strong></td>
-        </thead>
-        <tbody>
-     ${await Promise.all(
-       order.orderItems.map(async (item) => {
-         return `
+  <table>
+    <thead>
       <tr>
-        <td>${item.name}</td>
-        <td align="left">${item.keygen}</td>
-        <td align="left">${item.size === "" ? "" : item.size}</td>
-        <td align="center">${
-          item.color ? `<img src=${item.color} alt=""/>` : ""
-        }</td>
-        <td align="center">${item.quantity}</td>
+        <th>Product</th>
+        <th>Keygen</th>
+        <th>Size</th>
+        <th>Color</th>
+        <th>Quantity</th>
+        <th align="right">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${await Promise.all(
+        order.orderItems.map(async (item) => {
+          return `
+          <tr>
+            <td>${item.name}</td>
+            <td align="left">${item.keygen}</td>
+            <td align="left">${item.size === "" ? "" : item.size}</td>
+            <td align="center">${
+              item.color ? `<img src=${item.color} alt=""/>` : ""
+            }</td>
+            <td align="center">${item.quantity}</td>
+            <td align="right">${convertedItemsPrice}</td>
+          </tr>
+        `;
+        })
+      )}
+    </tbody>
+    <tfoot>
+      <tr class="total">
+        <td colspan="2">Items Price:</td>
         <td align="right">${convertedItemsPrice}</td>
       </tr>
-    `;
-       })
-     )}
-        </tbody>
-        <tfoot>
-        <tr>
-        <td colspan="2">Items Price:</td>
-        <td align="right"> ${convertedItemsPrice}</td>
-        </tr>
-        <tr>
+      <tr class="total">
         <td colspan="2">Tax Price:</td>
         <td align="right">${convertedTaxPrice}</td>
-        </tr>
-        <tr>
+      </tr>
+      <tr class="total">
         <td colspan="2">Shipping Price:</td>
         <td align="right">${convertedShippingPrice}</td>
-        </tr>
-        <tr>
+      </tr>
+      <tr class="total">
         <td colspan="2"><strong>Total Price:</strong></td>
         <td align="right"><strong>${convertedGrandTotal}</strong></td>
-        </tr>
-        <tr>
+      </tr>
+      <tr>
         <td colspan="2">Payment Method:</td>
         <td align="right">${order.paymentMethod}</td>
-        </tr>
-        </table>
-        <h2>Shipping address</h2>
-        <p>
-        ${order.shippingAddress.firstName},<br/>
-        ${order.shippingAddress.lastName},<br/>
-        ${order.shippingAddress.address},<br/>
-        ${order.shippingAddress.phone},<br/>
-        ${order.shippingAddress.city},<br/>
-        ${order.shippingAddress.zipCode}<br/>
-        ${order.shippingAddress.cState}<br/>
-        ${order.shippingAddress.country},<br/>
-        ${order.shippingAddress.shipping},<br/>
-        </p>
-        <hr/>
-        <p>
-        Thanks for shopping with us.
-        </p>
-        <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
-        </body></html>`;
+      </tr>
+    </tfoot>
+  </table>
+  <h2>Shipping address</h2>
+  <p>
+    ${order.shippingAddress.firstName},<br/>
+    ${order.shippingAddress.lastName},<br/>
+    ${order.shippingAddress.address},<br/>
+    ${order.shippingAddress.phone},<br/>
+    ${order.shippingAddress.city},<br/>
+    ${order.shippingAddress.zipCode}<br/>
+    ${order.shippingAddress.cState}<br/>
+    ${order.shippingAddress.country},<br/>
+    ${order.shippingAddress.shipping},<br/>
+  </p>
+  <hr/>
+  <p class="thanks">Thanks for shopping with us.</p>
+  <!-- This anchor tag will be displayed as a plain link without any additional styles -->
+  <p class="footer">Developed by <a href="https://my-portfolio-nine-nu-28.vercel.app/">Olatunji Akande</a></p>
+</body>
+</html>
+`;
       const client = Sib.ApiClient.instance;
       const apiKey = client.authentications["api-key"];
       apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
