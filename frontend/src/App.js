@@ -124,6 +124,11 @@ function App() {
         <ToastContainer />
         <ScrollToTop />
         <Header />
+        <MessengerCustomerChat
+          appId="6222862251176447"
+          pageId="107454247668619"
+          htmlRef="messenger-container"
+        />
         <LoadingOverlayComponent>
           <Routes>
             <Route path="*" element={<NotFoundScreen />} />
@@ -509,11 +514,6 @@ function App() {
           phoneNumber={whatsapp}
           accountName={webname}
           // avatar={procane}
-        />
-        <MessengerCustomerChat
-          appId="6222862251176447"
-          pageId="107454247668619"
-          htmlRef="YOUR_UNIQUE_HTML_REF"
         />
 
         <Footer />
