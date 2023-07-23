@@ -6,7 +6,9 @@ import { isAdmin, isAuth } from "../utils.js";
 
 const bannerRoutes = express.Router();
 
+//======
 //create
+//======
 bannerRoutes.post(
   "/",
   isAuth,
