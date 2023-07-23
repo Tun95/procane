@@ -511,13 +511,12 @@ function App() {
           accountName={webname}
           // avatar={procane}
         /> */}
-
+        <MessengerCustomerChat
+          pageId="107454247668619"
+          appId="6222862251176447"
+        />
         <Footer />
       </Router>
-      <MessengerCustomerChat
-        pageId="107454247668619"
-        appId="6222862251176447"
-      />
     </div>
   );
 }
