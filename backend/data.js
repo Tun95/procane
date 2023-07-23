@@ -175,9 +175,6 @@ const data = {
       rating: 0,
       numReviews: 0,
       reviews: [],
-      createdAt: "2023-06-18T08:25:43.975Z",
-      updatedAt: "2023-06-18T08:25:43.975Z",
-      __v: 0,
     },
     {
       flashdeal: false,
@@ -199,9 +196,6 @@ const data = {
       rating: 0,
       numReviews: 0,
       reviews: [],
-      createdAt: "2023-06-18T08:28:03.183Z",
-      updatedAt: "2023-06-18T08:28:03.183Z",
-      __v: 0,
     },
     {
       flashdeal: false,
@@ -223,9 +217,109 @@ const data = {
       rating: 0,
       numReviews: 0,
       reviews: [],
-      createdAt: "2023-06-18T08:30:04.206Z",
-      updatedAt: "2023-06-18T08:30:04.206Z",
-      __v: 0,
+    },
+  ],
+  banners: [
+    {
+      title: "Flower verse 50% off",
+      background:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1686848034/hsr8nzjz7y3wi1h5lzc1.png",
+      category: "Dinning Table",
+      descriptions:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor libero id et, in gravida. Sit diam duis mauris nulla cursus. Erat et lectus vel ut sollicitudin elit at amet.",
+    },
+    {
+      title: "50% Off For Your First Shopping",
+      background:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1686847287/jzlspyhgkwegtaxvmkai.png",
+      category: "office chair",
+      descriptions:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor libero id et, in gravida. Sit diam duis mauris nulla cursus. Erat et lectus vel ut sollicitudin elit at amet.",
+    },
+    {
+      title: "Shop With Confidence",
+      background:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1686844702/prj99rsxuhl5buu2ohei.png",
+      category: "office chair",
+      descriptions:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor libero id et, in gravida. Sit diam duis mauris nulla cursus. Erat et lectus vel ut sollicitudin elit at amet.",
+    },
+  ],
+  categories: [
+    {
+      category: "Half Round Sofa",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687618056/dhnpmuobkqa1celdckik.png",
+    },
+    {
+      category: "Foot Rest",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687618030/hhourhlfwv9fth5urla5.png",
+    },
+    {
+      category: "Center Table",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687617301/pvbpzxpf4d4sbtgdzhrc.png",
+    },
+    {
+      category: "Side Table",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687614419/teuxnuaceijwrwtfbmdx.png",
+    },
+    {
+      category: "Chair with SS frame",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687021470/aspjmty0b26mi6oxcnku.png",
+    },
+    {
+      category: "Stackable Chair",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687021396/kokvbdyb9qoihlhma2kc.png",
+    },
+    {
+      category: "Table with SS base",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687021344/iyoblb2ltsxnwc6udc3y.png",
+    },
+    {
+      category: "Table with wooden base",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687021304/tsgdfjawgnlmjzbrqbyl.png",
+    },
+    {
+      category: "SS Table",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687021267/eahvhf8p0laty3z0y8nm.png",
+    },
+    {
+      category: "Table with wooden top",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687021235/eoanvixxgzzvtqo2pzvc.png",
+    },
+    {
+      category: "Wooden Table",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687021138/phyoo2oxku5rm1rqzkrt.png",
+    },
+    {
+      category: "Coffee Table",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687021073/qmng45nlmso7l5nitika.png",
+    },
+    {
+      category: "Round Table",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687009069/sf3fyyiqyqstylksigde.png",
+    },
+    {
+      category: "Dinning Table",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687008971/fdxm0z42w7wjnhc5i9jn.png",
+    },
+    {
+      category: "Table",
+      categoryImg:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1687009007/ozby3umdkkq52kldepem.png",
     },
   ],
   settings: [
@@ -273,7 +367,7 @@ const data = {
       navThree: "Kids",
       navFour: "Shoes",
       navFive: "Brand",
-      __v: 0,
+
       createdAt: "2023-06-19T13:51:02.784Z",
       updatedAt: "2023-07-01T00:09:45.182Z",
       appstore: "https://www.appstore.com/",

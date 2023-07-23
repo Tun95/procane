@@ -6,12 +6,14 @@
       margin: 10px;
       padding: 10px;
       height: auto;
-      .seller_img {
-        margin-right: 20px;
-        .img {
-          width: 200px;
-          height: 200px;
-          border-radius: 10px;
+      .seller_details {
+        .seller_img {
+          margin-right: 20px;
+          .img {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+          }
         }
       }
       .seller_info {

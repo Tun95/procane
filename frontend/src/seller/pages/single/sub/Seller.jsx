@@ -35,7 +35,7 @@ function formatDate(date) {
 }
 function Seller() {
   const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
-
+  const { cart: cartItems } = state;
   const params = useParams();
 
   const { id: sellerId } = params;
@@ -73,27 +73,28 @@ function Seller() {
   //ADD TO CART
   const addToCartHandler = async (item) => {
     const { data } = await axios.get(`${request}/api/products/${item._id}`);
-    // if (cartItems.length > 0 && data.seller._id !== cartItems[0].seller._id) {
-    //   dispatch({
-    //     type: "CART_ADD_ITEM_FAIL",
-    //     payload: `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
-    //   });
-    //   toast.error(
-    //     `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
-    //     {
-    //       position: "bottom-center",
-    //     }
-    //   );
-    // } else {
-    if (data.countInStock < quantity) {
-      toast.error("Sorry, Product stock limit reached or out of stock", {
-        position: "bottom-center",
+    if (cartItems.length > 0 && data.seller._id !== cartItems[0].seller._id) {
+      dispatch({
+        type: "CART_ADD_ITEM_FAIL",
+        payload: `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
       });
-      return;
+      toast.error(
+        `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
+        {
+          position: "bottom-center",
+        }
+      );
     } else {
-      toast.success(`${item.name} is successfully added to cart`, {
-        position: "bottom-center",
-      });
+      if (data.countInStock < quantity) {
+        toast.error("Sorry, Product stock limit reached or out of stock", {
+          position: "bottom-center",
+        });
+        return;
+      } else {
+        toast.success(`${item.name} is successfully added to cart`, {
+          position: "bottom-center",
+        });
+      }
     }
     ctxDispatch({
       type: "CART_ADD_ITEM",
@@ -171,6 +172,13 @@ function Seller() {
                             {user?.rating[0]?.rating?.toFixed(1)}
                           </span>
                           &#160; avg. ratings)
+                        </span>
+                      </div>
+                      <div className="seller_member a_flex">
+                        <h3>Items Sold:</h3>
+                        <span className="info">
+                          ({user?.totalNumSales[0]?.numSales || 0} Items sold so
+                          far)
                         </span>
                       </div>
                       <div className="seller_member a_flex">

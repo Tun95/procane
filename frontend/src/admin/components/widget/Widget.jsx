@@ -17,7 +17,16 @@ function Widget({
   let data;
 
   //temp
-  const amount = TotalUsers || TotalOrders || TotalSales || GrandTotalSales;
+  const amount =
+    type === "user"
+      ? TotalUsers || 0
+      : type === "order"
+      ? TotalOrders || 0
+      : type === "income"
+      ? TotalSales || 0
+      : type === "balance"
+      ? GrandTotalSales || 0
+      : 0;
   const diff = 20;
 
   switch (type) {

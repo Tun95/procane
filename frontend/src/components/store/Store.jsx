@@ -107,7 +107,12 @@ function Store() {
             </div>
 
             <div className="product-content">
-              <StoreItems products={products} loading={loading} error={error} />
+              <StoreItems
+                products={products}
+                loading={loading}
+                error={error}
+                dispatch={dispatch}
+              />
             </div>
             {countProducts > 6 ? (
               <div className="pagination">

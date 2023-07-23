@@ -94,7 +94,7 @@ function OrderList(props) {
   //DELETE
   //======
   const deleteHandler = async (order) => {
-    if (window.confirm("Are you sure to delete this product?")) {
+    if (window.confirm("Are you sure to delete this order?")) {
       try {
         dispatch({ type: "DELETE_REQUEST" });
         await axios.delete(`${request}/api/orders/${order._id}`, {

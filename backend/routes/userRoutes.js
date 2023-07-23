@@ -14,7 +14,9 @@ import passport from "./passport.js";
 const userRouter = express.Router();
 userRouter.use(passport.initialize());
 
+//===========
 //USER SIGNIN
+//===========
 userRouter.post(
   "/signin",
   expressAsyncHandler(async (req, res) => {
@@ -191,12 +193,17 @@ userRouter.get(
     const user = await User.findById(req.params.id).populate("products");
     let numReviewsSum = 0;
     let ratingSum = 0;
+    let numSales = 0;
 
     if (user) {
       for (const product of user.products) {
         numReviewsSum += product.numReviews;
         ratingSum += product.rating;
+        numSales += product.numSales;
       }
+
+      // Calculate the total number of sales for the seller's products
+      const totalNumSales = [{ _id: null, numSales: numSales }];
       const numReviews = [{ _id: null, numReviews: numReviewsSum }];
       const rating = [
         {
@@ -206,7 +213,7 @@ userRouter.get(
         },
       ];
 
-      res.send({ user, numReviews, rating });
+      res.send({ user, numReviews, rating, totalNumSales });
     } else {
       res.status(404).send({ message: "User Not Found" });
     }

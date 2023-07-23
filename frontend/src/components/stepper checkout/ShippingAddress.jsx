@@ -182,12 +182,12 @@ function ShippingAddress() {
       });
     }
     if (!cState) {
-      toast.error("Please enter your state", {
+      toast.error("Please select your state", {
         position: "bottom-center",
       });
     }
     if (!country) {
-      toast.error("Please enter your country", {
+      toast.error("Please select your country", {
         position: "bottom-center",
       });
     }
