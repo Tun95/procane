@@ -501,9 +501,9 @@ orderRouter.put(
   })
 );
 
-//====================
+//==============
 // EXHANGE RATE
-//====================
+//==============
 async function convertCurrency(amount, toCurrency) {
   const settings = await Settings.find({});
   const { exhangerate, currency } =
