@@ -151,7 +151,7 @@ function ReviewDesc({ product, userInfo, handleDelete }) {
                         </div>
                       </div>
                       <div className="date a_flex">
-                        {userInfo ? (
+                        {userInfo && userInfo.email === review.email ? (
                           <span>
                             <MoreVertIcon
                               onClick={handleClickUsr}
