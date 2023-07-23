@@ -228,6 +228,15 @@ function Search() {
                 {userInfo && userInfo.isSeller
                   ? [
                       <MenuItem
+                        key="dashboard"
+                        component={Link}
+                        to="/vendor/dashboard"
+                        onClick={handleClose}
+                        disableRipple
+                      >
+                        Dashboard
+                      </MenuItem>,
+                      <MenuItem
                         key="products"
                         component={Link}
                         to="/vendor/products"

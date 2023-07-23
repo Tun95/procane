@@ -10,6 +10,7 @@ import { getError } from "../../../../components/utilities/util/Utils";
 import { request } from "../../../../base url/BaseUrl";
 import UserOrderList from "./table/Table";
 import { Helmet } from "react-helmet-async";
+import Widget from "../../../components/widget/Widget";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -35,6 +36,13 @@ const reducer = (state, action) => {
     case "FETCH_ORDER_FAIL":
       return { ...state, loading: false, error: action.payload };
 
+    case "FETCH_EARNING_REQUEST":
+      return { ...state, loading: true, error: "" };
+    case "FETCH_EARNING_SUCCESS":
+      return { ...state, loading: false, summary: action.payload, error: "" };
+    case "FETCH_EARNING_FAIL":
+      return { ...state, loading: false, error: action.payload };
+
     default:
       return state;
   }
@@ -47,9 +55,10 @@ function UserInfo() {
   const { state, convertCurrency } = useContext(Context);
   const { userInfo } = state;
 
-  const [{ loading, error, user }, dispatch] = useReducer(reducer, {
+  const [{ loading, error, user, summary }, dispatch] = useReducer(reducer, {
     user: [],
     loading: true,
+    summary: { salesData: [] },
   });
 
   //FETCHING
@@ -68,6 +77,26 @@ function UserInfo() {
     };
     fetchData();
     console.log(userId);
+  }, [userId, userInfo]);
+  console.log(user);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        dispatch({ type: "FETCH_EARNING_REQUEST" });
+        const { data } = await axios.get(
+          `${request}/api/orders/seller-summary/${userId}`,
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        dispatch({ type: "FETCH_EARNING_SUCCESS", payload: data });
+      } catch (err) {
+        dispatch({ type: "FETCH_EARNING_FAIL", payload: getError(err) });
+        console.log(err);
+      }
+    };
+    fetchData();
   }, [userId, userInfo]);
   console.log(user);
 
@@ -102,12 +131,19 @@ function UserInfo() {
 
     return null;
   };
+
+  //TOTAL SALES PER DAY
+  const grandTotal = summary.totalEarnings
+    ? summary.totalEarnings?.toFixed(0)
+    : 0;
+  const SellersGrandTotalSales = convertCurrency(grandTotal);
+
   return (
     <div className="container">
       <Helmet>
         <title>User Info</title>
       </Helmet>
-      <div className="utop ">
+      <div className="userInfotop">
         <div className="left">
           <div className="editButton">
             <Link to={`/admin/user/${userId}/edit`}>Edit</Link>
@@ -155,6 +191,14 @@ function UserInfo() {
               </div>
             </div>
           </div>
+          {user?.user?.isSeller ? (
+            <div className="userInfo_widget">
+              <Widget
+                SellersGrandTotalSales={SellersGrandTotalSales}
+                type="seller"
+              />
+            </div>
+          ) : null}
         </div>
         <div className="right">
           <Chart

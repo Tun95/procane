@@ -177,7 +177,7 @@ function ProductDetailScreen({ productItems, onAdd }) {
           <MessageBox variant="danger">{error}</MessageBox>
         ) : (
           <>
-            <Details product={product} />
+            <Details product={product} dispatch={dispatch} />
             <ReviewDesc
               handleDelete={handleDelete}
               product={product}

@@ -159,6 +159,11 @@ function SideBar() {
   const vendorProfileLink = userInfo ? `/vendor-profile/${userInfo._id}` : "";
   const vendorItemlist = [
     {
+      text: "Dashboard",
+      icon: <LineStyleIcon style={{ fill: "black" }} />,
+      to: "/vendor/dashboard", // <-- add link targets
+    },
+    {
       text: "Vendor Profile",
       icon: <AccountCircleIcon style={{ fill: "black" }} />,
       to: vendorProfileLink, // <-- add link targets

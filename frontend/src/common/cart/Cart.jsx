@@ -26,15 +26,14 @@ function Cart() {
   //============
   //CART QUANTITY
   //============
- const updateCartHandler = async (item, quantity) => {
-   const { data } = await axios.get(`${request}/api/products/${item._id}`);
-   if (data.countInStock < quantity) {
-     window.alert("Sorry, Product is out of stock");
-     return;
-   }
-   ctxDispatch({ type: "CART_ADD_ITEM", payload: { ...item, quantity } });
- };
-
+  const updateCartHandler = async (item, quantity) => {
+    const { data } = await axios.get(`${request}/api/products/${item._id}`);
+    if (data.countInStock < quantity) {
+      window.alert("Sorry, Product is out of stock");
+      return;
+    }
+    ctxDispatch({ type: "CART_ADD_ITEM", payload: { ...item, quantity } });
+  };
 
   //============
   //REMOVE ITEMS
@@ -44,7 +43,7 @@ function Cart() {
       type: "CART_REMOVE_ITEM",
       payload: { _id: item._id, size: item.size, color: item.color },
     });
-    toast.error(`${item.name} is successfully removed from cart`, {
+    toast.success(`${item.name} is successfully removed from cart`, {
       position: "bottom-center",
     });
   };
@@ -70,7 +69,6 @@ function Cart() {
       navigate("/billing");
     }
   };
-
 
   console.log(cartItems);
 

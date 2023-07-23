@@ -12,6 +12,7 @@ import axios from "axios";
 import fetch from "node-fetch";
 import crypto from "crypto";
 import shippo from "shippo";
+import mongoose from "mongoose";
 
 const orderRouter = express.Router();
 
@@ -186,45 +187,248 @@ orderRouter.get(
 //====================
 //SELLER ORDER SUMMARY
 //====================
-orderRouter.get(
-  "/seller/summary",
-  isAuth, // Middleware to check if the user is authenticated
-  isSellerOrAdmin, // Middleware to check if the user is a seller or admin
-  expressAsyncHandler(async (req, res) => {
-    try {
-      const sellerId = req.user._id; // Assuming the authenticated user's ID is stored in req.user._id
+// orderRouter.get(
+//   "/seller-summary",
+//   isAuth,
+//   isSellerOrAdmin,
+//   expressAsyncHandler(async (req, res) => {
+//     const sellerId = req.user._id; // Assuming the seller's ID is available in the request user object
 
-      // Define the aggregation pipeline to calculate the seller order summary
-      const pipeline = [
-        // Match orders belonging to the seller and isPaid is true
+//     try {
+//       const sellerSummary = await Order.aggregate([
+//         // Match orders for the specific seller
+//         {
+//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
+//         },
+//         // Group orders by date
+//         {
+//           $group: {
+//             _id: {
+//               year: { $year: "$createdAt" },
+//               month: { $month: "$createdAt" },
+//               day: { $dayOfMonth: "$createdAt" },
+//             },
+//             orders: { $sum: 1 }, // Count the number of orders per day
+//             totalEarningsPerDay: { $sum: "$grandTotal" }, // Sum up total earnings per day
+//           },
+//         },
+//         // Group again to get the grand total of earnings for all days
+//         {
+//           $group: {
+//             _id: null,
+//             totalOrders: { $sum: "$orders" },
+//             totalEarnings: { $sum: "$totalEarningsPerDay" },
+//             earningsPerDay: {
+//               $push: { date: "$_id", totalEarnings: "$totalEarningsPerDay" },
+//             },
+//           },
+//         },
+//         // Project to show only the desired fields in the result
+//         {
+//           $project: {
+//             _id: 0,
+//             totalOrders: 1,
+//             totalEarnings: 1,
+//             earningsPerDay: 1,
+//           },
+//         },
+//       ]);
+
+//       if (sellerSummary.length > 0) {
+//         res.status(200).json(sellerSummary[0]);
+//       } else {
+//         // No data found for the seller
+//         res.status(404).json({ message: "Seller data not found" });
+//       }
+//     } catch (err) {
+//       res
+//         .status(500)
+//         .json({ message: "An error occurred while fetching seller summary" });
+//     }
+//   })
+// );
+orderRouter.get(
+  "/seller-summary",
+  isAuth,
+  isSellerOrAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const sellerId = req.user._id; // Assuming the seller's ID is available in the request user object
+
+    try {
+      const sellerSummary = await Order.aggregate([
+        // Match orders for the specific seller
         {
-          $match: { seller: sellerId, isPaid: true },
+          $match: { seller: mongoose.Types.ObjectId(sellerId) },
         },
-        // Group by date, calculate total earnings per day
+        // Group orders by date
         {
           $group: {
             _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-            totalEarningsPerDay: { $sum: "$grandTotal" },
-            productsSold: { $sum: { $size: "$orderItems" } },
+            orders: { $sum: 1 }, // Count the number of orders per day
+            totalEarningsPerDay: { $sum: "$grandTotal" }, // Sum up total earnings per day
           },
         },
-        // Sort by date in descending order (most recent first)
+        // Sort by date in descending order to get the last day's sales
         {
-          $sort: { _id: -1 },
+          $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
         },
-        // Optionally, you can add a $limit stage to limit the number of results
-        // { $limit: 10 },
-      ];
+        // Limit to only one document to get the last day's sales
+        {
+          $limit: 10,
+        },
+        // Group again to get the grand total of earnings for all days
+        {
+          $group: {
+            _id: null,
+            totalOrders: { $sum: "$orders" },
+            totalEarnings: { $sum: "$totalEarningsPerDay" },
+            earningsPerDay: {
+              $push: { date: "$_id", totalEarnings: "$totalEarningsPerDay" },
+            },
+          },
+        },
+        // Project to show only the desired fields in the result
+        {
+          $project: {
+            _id: 0,
+            totalOrders: 1,
+            totalEarnings: 1,
+            earningsPerDay: 1,
+          },
+        },
+      ]);
 
-      // Run the aggregation pipeline on the "orders" collection
-      const sellerSummary = await Order.aggregate(pipeline);
-
-      res.json(sellerSummary);
-    } catch (error) {
-      res.status(500).json({ message: "Internal Server Error" });
+      if (sellerSummary.length > 0) {
+        res.status(200).json(sellerSummary[0]);
+      } else {
+        // No data found for the seller
+        res.status(404).json({ message: "Seller data not found" });
+      }
+    } catch (err) {
+      res
+        .status(500)
+        .json({ message: "An error occurred while fetching seller summary" });
     }
   })
 );
+
+// orderRouter.get(
+//   "/seller-summary",
+//   isAuth,
+//   isSellerOrAdmin,
+//   expressAsyncHandler(async (req, res) => {
+//     const sellerId = req.user._id; // Assuming the seller's ID is available in the request user object
+
+//     try {
+//       const sellerSummary = await Order.aggregate([
+//         // Match orders for the specific seller
+//         {
+//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
+//         },
+//         // Group orders by date
+//         {
+//           $group: {
+//             _id: {
+//               year: { $year: "$createdAt" },
+//               month: { $month: "$createdAt" },
+//               day: { $dayOfMonth: "$createdAt" },
+//             },
+//             orders: { $sum: 1 }, // Count the number of orders per day
+//             totalEarningsPerDay: { $sum: "$grandTotal" }, // Sum up total earnings per day
+//           },
+//         },
+//         // Sort by date in descending order to get the last 10 days' sales
+//         {
+//           $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
+//         },
+//         // Limit to 10 documents to get the past 10 days' sales
+//         {
+//           $limit: 10,
+//         },
+//         // Sort by date in ascending order to get the array in chronological order
+//         {
+//           $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 },
+//         },
+//         // Project to show only the desired fields in the result
+//         {
+//           $project: {
+//             _id: 0,
+//             date: {
+//               year: "$_id.year",
+//               month: "$_id.month",
+//               day: "$_id.day",
+//             },
+//             totalEarnings: "$totalEarningsPerDay",
+//           },
+//         },
+//       ]);
+
+//       res.status(200).json(sellerSummary);
+//     } catch (err) {
+//       res
+//         .status(500)
+//         .json({ message: "An error occurred while fetching seller summary" });
+//     }
+//   })
+// );
+
+//================================
+//SINGLE SELLER EARNINGS PER MONTH
+//================================
+orderRouter.get(
+  "/seller-summary/:id",
+  isAuth,
+  isSellerOrAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const sellerId = req.params?.id;
+
+    try {
+      const sellerSummary = await Order.aggregate([
+        // Match orders for the specific seller
+        {
+          $match: { seller: mongoose.Types.ObjectId(sellerId) },
+        },
+        // Group orders by month
+        {
+          $group: {
+            _id: {
+              year: { $year: "$createdAt" },
+              month: { $month: "$createdAt" },
+            },
+            totalEarningsPerMonth: { $sum: "$grandTotal" }, // Sum up total earnings per month
+          },
+        },
+        // Sort by date in descending order to get the latest month's earnings first
+        {
+          $sort: { "_id.year": -1, "_id.month": -1 },
+        },
+        // Limit to only one document to get the latest month's earnings
+        {
+          $limit: 1,
+        },
+        // Project to show only the desired fields in the result
+        {
+          $project: {
+            _id: 0,
+            totalEarnings: "$totalEarningsPerMonth", // Rename the field to totalEarnings
+          },
+        },
+      ]);
+
+      if (sellerSummary.length > 0) {
+        res.status(200).json(sellerSummary[0]);
+      } else {
+        // No data found for the seller
+        res.status(404).json({ message: "Seller data not found" });
+      }
+    } catch (err) {
+      res
+        .status(500)
+        .json({ message: "An error occurred while fetching seller summary" });
+    }
+  })
+);
+
 
 //===================
 //ADMIN ORDER SUMMARY

@@ -1,4 +1,4 @@
-.utop {
+.userInfotop {
   display: flex;
   // padding: 20px;
   margin-top: 20px;
@@ -10,7 +10,12 @@
     box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
     padding: 20px;
     position: relative;
-
+    .userInfo_widget {
+      .left,
+      .right {
+        box-shadow: none;
+      }
+    }
     .editButton a {
       position: absolute;
       top: 0;
@@ -54,6 +59,7 @@
       }
     }
   }
+
   .right {
     flex: 2;
     -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
@@ -73,7 +79,7 @@
   color: var(--color-light-gray);
 }
 @media screen and (max-width: 900px) {
-  .utop {
+  .userInfotop {
     flex-direction: column;
   }
 }

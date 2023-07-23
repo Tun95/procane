@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useReducer, useState } from "react";
 import "./styles.scss";
 import photo from "../../../../assets/photo.jpg";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import axios from "axios";
 import parse from "html-react-parser";
@@ -14,6 +14,8 @@ import { getError } from "../../../../components/utilities/util/Utils";
 import LoadingBox from "../../../../components/utilities/message loading/LoadingBox";
 import MessageBox from "../../../../components/utilities/message loading/MessageBox";
 import Rating from "../../../../components/utilities/rating/Ratings";
+import { RWebShare } from "react-web-share";
+import ShareIcon from "@mui/icons-material/Share";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -122,6 +124,8 @@ function Seller() {
     handleLoadMoreClick();
   };
 
+  //PAGE URL
+  const pageURL = process.env.REACT_APP_FRONTEND_URL;
   return (
     <div className="mtb">
       <div className="container ">
@@ -239,6 +243,20 @@ function Seller() {
                               ) : (
                                 ""
                               )}
+                              <span className="related_icon l_flex">
+                                <RWebShare
+                                  data={{
+                                    text: `Check out this cool ${product.name}`,
+                                    url: `${pageURL}/product/${product.slug}`,
+                                    title: product.name,
+                                  }}
+                                  onClick={() =>
+                                    console.log("shared successfully!")
+                                  }
+                                >
+                                  <ShareIcon className="related_icons" />
+                                </RWebShare>
+                              </span>
                             </div>
                           </div>
                           <div className="product-details">

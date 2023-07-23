@@ -13,24 +13,20 @@ function Widget({
   TotalOrders,
   TotalSales,
   GrandTotalSales,
-  SellersGrandTotalSales,
 }) {
   let data;
 
   //temp
   const amount =
-    type === "user"
-      ? TotalUsers || 0
-      : type === "order"
+    type === "order"
       ? TotalOrders || 0
       : type === "income"
       ? TotalSales || 0
       : type === "balance"
       ? GrandTotalSales || 0
-      : type === "seller"
-      ? SellersGrandTotalSales || 0
       : 0;
   const diff = 20;
+
   switch (type) {
     case "user":
       data = {
@@ -77,19 +73,6 @@ function Widget({
     case "balance":
       data = {
         title: "BALANCE",
-        isMoney: true,
-        link: "Total Balance",
-        icon: (
-          <AccountBalanceWalletOutlinedIcon
-            className="icon"
-            style={{ color: "purple", backgroundColor: "rgba(128,0,128,0.2)" }}
-          />
-        ),
-      };
-      break;
-    case "seller":
-      data = {
-        title: "MONTHLY EARNINGS",
         isMoney: true,
         link: "Total Balance",
         icon: (

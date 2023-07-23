@@ -88,6 +88,7 @@ import SellerNewProduct from "./seller/pages/new/product/SellerNewProduct";
 import SellerOrderListScreen from "./seller/pages/list/main/order/SellerOrderListScreen";
 import SellerScreen from "./seller/pages/single/main/SellerScreen";
 import SellerProductListScreen from "./seller/pages/list/main/product/SellerProductListScreen";
+import SellerDashboard from "./seller/pages/dashboard/Dashboard";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -460,6 +461,14 @@ function App() {
             {/* ADMIN ROUTES */}
 
             {/* SELLER ROUTES */}
+            <Route
+              path="/vendor/dashboard"
+              element={
+                <SellerRoute>
+                  <SellerDashboard />
+                </SellerRoute>
+              }
+            ></Route>
             <Route
               path="/vendor/products"
               element={

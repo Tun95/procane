@@ -30,7 +30,7 @@ import {
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-function Details({ product }) {
+function Details({ product, dispatch }) {
   const smallSettings = {
     dots: false,
     infinite: true,
@@ -94,42 +94,43 @@ function Details({ product }) {
   const addToCartHandler = async () => {
     const { data } = await axios.get(`${request}/api/products/${product._id}`);
 
-    // if (cartItems.length > 0 && data.seller._id !== cartItems[0].seller._id) {
-    //   dispatch({
-    //     type: "CART_ADD_ITEM_FAIL",
-    //     payload: `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
-    //   });
-    //   toast.error(
-    //     `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
-    //     {
-    //       position: "bottom-center",
-    //     }
-    //   );
-    // } else {
-    if (data.countInStock < count) {
-      toast.error("Sorry, Product stock limit reached or out of stock", {
-        position: "bottom-center",
+    if (cartItems.length > 0 && data.seller?._id !== cartItems[0].seller?._id) {
+      dispatch({
+        type: "CART_ADD_ITEM_FAIL",
+        payload: `Can't Add To Cart. Buy only from ${cartItems[0]?.seller?.seller?.name} in this order`,
       });
-      return;
+      toast.error(
+        `Can't Add To Cart. Buy only from ${cartItems[0]?.seller?.seller?.name} in this order`,
+        {
+          position: "bottom-center",
+        }
+      );
     } else {
-      toast.success(`${product.name} is successfully added to cart`, {
-        position: "bottom-center",
-      });
-    }
+      if (data.countInStock < count) {
+        toast.error("Sorry, Product stock limit reached or out of stock", {
+          position: "bottom-center",
+        });
+        return;
+      } else {
+        toast.success(`${product.name} is successfully added to cart`, {
+          position: "bottom-center",
+        });
+      }
 
-    ctxDispatch({
-      type: "CART_ADD_ITEM",
-      payload: {
-        ...product,
-        seller: data.seller,
-        sellerName: product?.seller?.seller?.name,
-        category: product?.category,
-        quantity: count,
-        size,
-        color,
-      },
-    });
-    localStorage.setItem("cartItems", JSON.stringify(state.cart.cartItems));
+      ctxDispatch({
+        type: "CART_ADD_ITEM",
+        payload: {
+          ...product,
+          seller: data.seller,
+          sellerName: product?.seller?.seller?.name,
+          category: product?.category,
+          quantity: count,
+          size,
+          color,
+        },
+      });
+      localStorage.setItem("cartItems", JSON.stringify(state.cart.cartItems));
+    }
   };
 
   console.log(product);
