@@ -12,6 +12,8 @@ import { getError } from "../../utilities/util/Utils";
 import MessageBox from "../../utilities/message loading/MessageBox";
 import LoadingBox from "../../utilities/message loading/LoadingBox";
 import { Link } from "react-router-dom";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -29,6 +31,12 @@ const reducer = (state, action) => {
   }
 };
 function ReviewBox({ product }) {
+  const reviewSchema = Yup.object().shape({
+    rating: Yup.number().required("Rating is required"),
+    comment: Yup.string()
+      .required("Comment is required")
+      .min(50, "Your review must be at least 50 characters"),
+  });
   const [{ loadingCreateReview }, dispatch] = useReducer(reducer, {
     loading: true,
     error: "",
@@ -38,77 +46,57 @@ function ReviewBox({ product }) {
   //CONTEXT
   //==========
   const { state, dispatch: ctxDispatch } = useContext(Context);
-  const {
-    cart: { cartItems },
-    userInfo,
-    settings,
-  } = state;
+  const { userInfo } = state;
 
   //=============
   //SUBMIT REVIEW
   //=============
   let reviewsRef = useRef();
-  const [rating, setRating] = useState(5.0);
-  const [comment, setComment] = useState("");
+  const submitHandler = async (values, actions) => {
+    try {
+      const { data } = await axios.post(
+        `${request}/api/products/${product._id}/reviews`,
+        {
+          rating: values.rating,
+          comment: values.comment,
+          image: userInfo.image,
+          email: userInfo.email,
+          firstName: userInfo.firstName,
+          lastName: userInfo.lastName,
+        },
+        {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        }
+      );
 
-  const submitHandler = async (e, values, actions) => {
-    e.preventDefault();
-    if (!comment && !rating) {
-      toast.error("Please enter a comment and select a rating of your choice", {
+      dispatch({
+        type: "CREATE_SUCCESS",
+        payload: { seller: data.seller },
+      });
+      toast.success("Review submitted successfully", {
         position: "bottom-center",
       });
-      return;
-    } else {
-      if (comment.length < 50) {
-        toast.error("Your review must be at least 50 characters", {
-          position: "bottom-center",
-        });
-      } else {
-        try {
-          const { data } = await axios.post(
-            `${request}/api/products/${product._id}/reviews`,
-            {
-              rating,
-              comment,
-              image: userInfo.image,
-              email: userInfo.email,
-              firstName: userInfo.firstName,
-              lastName: userInfo.lastName,
-            },
-            {
-              headers: { Authorization: `Bearer ${userInfo.token}` },
-            }
-          );
 
-          dispatch({
-            type: "CREATE_SUCCESS",
-            payload: { seller: data.seller },
-          });
-          toast.success("Review submitted successfully", {
-            position: "bottom-center",
-          });
+      product.reviews.unshift(data.review);
+      product.numReviews = data.numReviews;
+      product.rating = data.rating;
+      dispatch({ type: "REFRESH_PRODUCT", payload: product });
+      window.scrollTo({
+        behavior: "smooth",
+        top: reviewsRef.current.offsetTop,
+      });
 
-          product.reviews.unshift(data.review);
-          product.numReviews = data.numReviews;
-          product.rating = data.rating;
-          dispatch({ type: "REFRESH_PRODUCT", payload: product });
-          window.scrollTo({
-            behavior: "smooth",
-            top: reviewsRef.current.offsetTop,
-          });
-
-          // Refresh the page after a short delay
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        } catch (err) {
-          toast.error(getError(err), { position: "bottom-center" });
-          dispatch({ type: "CREATE_FAIL" });
-          console.log(err);
-        }
-      }
+      // Refresh the page after a short delay
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (err) {
+      toast.error(getError(err), { position: "bottom-center" });
+      dispatch({ type: "CREATE_FAIL" });
+      console.log(err);
     }
-    actions?.resetForm();
+
+    actions.resetForm();
   };
 
   const ratings = [
@@ -171,54 +159,81 @@ function ReviewBox({ product }) {
           {userInfo ? (
             <>
               <h4 ref={reviewsRef}>Write Your Reviews</h4>
-
-              <form action="" className="form_input" onSubmit={submitHandler}>
-                <div className="select_input">
-                  <FormControl variant="filled" size="small" id="formControl">
-                    <Select
-                      labelId="mui-simple-select-label"
-                      id="mui-simple-select"
-                      className="select_mui"
-                      value={rating}
-                      label={rating}
-                      disableUnderline={true}
-                      SelectDisplayProps={{
-                        style: { paddingTop: 8, paddingBottom: 8 },
-                      }}
-                      MenuProps={MenuProps}
-                      onChange={(e) => setRating(e.target.value)}
-                    >
-                      {ratings?.map((r, index) => (
-                        <MenuItem
-                          className="c_flex"
-                          id="menu_item"
-                          key={index}
-                          value={r.rating}
+              <Formik
+                initialValues={{
+                  rating: 5.0,
+                  comment: "",
+                }}
+                validationSchema={reviewSchema}
+                onSubmit={(values, actions) => submitHandler(values, actions)}
+              >
+                {({ isSubmitting }) => (
+                  <Form className="form_input">
+                    {/* ... */}
+                    <div className="select_input">
+                      <FormControl
+                        variant="filled"
+                        size="small"
+                        id="formControl"
+                      >
+                        <Field
+                          as={Select}
+                          labelId="mui-simple-select-label"
+                          id="mui-simple-select"
+                          className="select_mui"
+                          name="rating"
+                          disableUnderline={true}
+                          SelectDisplayProps={{
+                            style: { paddingTop: 8, paddingBottom: 8 },
+                          }}
+                          MenuProps={MenuProps}
                         >
-                          <span className="rate">
-                            <Rating rating={r.rating} />
-                          </span>
-                          <small className="">({r.rating})</small>
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </div>
-                <div className="text_area">
-                  <textarea
-                    name="text"
-                    className="write_reviews"
-                    placeholder="Your Message"
-                    id="text"
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                  ></textarea>
-                </div>
-                <div className="submit_btn">
-                  <button disabled={loadingCreateReview}>Submit</button>
-                  {loadingCreateReview && <LoadingBox></LoadingBox>}
-                </div>
-              </form>
+                          {ratings?.map((r, index) => (
+                            <MenuItem
+                              className="c_flex"
+                              id="menu_item"
+                              key={index}
+                              value={r.rating}
+                            >
+                              <span className="rate">
+                                <Rating rating={r.rating} />
+                              </span>
+                              <small className="">({r.rating})</small>
+                            </MenuItem>
+                          ))}
+                        </Field>
+                      </FormControl>
+                      <ErrorMessage
+                        name="rating"
+                        component="div"
+                        className="error"
+                      />
+                    </div>
+                    {/* ... */}
+                    <div className="text_area">
+                      <Field
+                        as="textarea"
+                        name="comment"
+                        className="write_reviews"
+                        placeholder="Your comment here..."
+                        id="text"
+                      />
+                      <ErrorMessage
+                        name="comment"
+                        component="div"
+                        className="error"
+                      />
+                    </div>
+                    {/* ... */}
+                    <div className="submit_btn">
+                      <button type="submit" disabled={isSubmitting}>
+                        Submit
+                      </button>
+                      {isSubmitting && <LoadingBox></LoadingBox>}
+                    </div>
+                  </Form>
+                )}
+              </Formik>
             </>
           ) : (
             <div className="message-box">

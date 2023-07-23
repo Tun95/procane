@@ -300,6 +300,13 @@
   /*--- Review Box ---*/
   .review_box {
     .form_input {
+      input.input-error {
+        border-color: var(--color-primary);
+      }
+      .error {
+        color: var(--color-primary);
+        font-size: 14px;
+      }
       #formControl {
         float: right;
         margin-bottom: 10px;
