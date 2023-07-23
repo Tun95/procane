@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import "./theme style/dark.scss";
 import { FloatingWhatsApp } from "react-floating-whatsapp";
-import { MessengerChat } from "react-messenger-chat-plugin";
+import MessengerCustomerChat from "react-messenger-customer-chat";
 import Header from "./common/header/Header";
 import HomeScreen from "./screens/homescreen/HomeScreen";
 import Cart from "./common/cart/Cart";
@@ -509,6 +509,11 @@ function App() {
           phoneNumber={whatsapp}
           accountName={webname}
           // avatar={procane}
+        />
+        <MessengerCustomerChat
+          appId="6222862251176447"
+          pageId="107454247668619"
+          htmlRef="YOUR_UNIQUE_HTML_REF"
         />
 
         <Footer />
