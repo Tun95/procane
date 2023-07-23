@@ -125,9 +125,8 @@ function App() {
         <ScrollToTop />
         <Header />
         <MessengerCustomerChat
+          pageId="100069538185120"
           appId="6222862251176447"
-          pageId="107454247668619"
-          htmlRef="messenger-container"
         />
         <LoadingOverlayComponent>
           <Routes>
