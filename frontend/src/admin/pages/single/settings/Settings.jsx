@@ -96,6 +96,9 @@ function Settings() {
   const [themeFaq, setThemeFaq] = useState("");
   const [googleAnalytics, setGoogleAnalytics] = useState("");
 
+  const [messengerAppId, setMessengerAppId] = useState("");
+  const [messengerPageId, setMessengerPageId] = useState("");
+
   //===============
   //FETCH SETTINGS
   //===============
@@ -142,6 +145,8 @@ function Settings() {
         setOurCares(data.ourcares);
         setThemeFaq(data.themeFaq);
         setGoogleAnalytics(data.googleAnalytics);
+        setMessengerAppId(data.messengerAppId);
+        setMessengerPageId(data.messengerPageId);
         dispatch({ type: "FETCH_SUCCESS", payload: data });
         window.scrollTo(0, 0);
       } catch (error) {
@@ -202,6 +207,8 @@ function Settings() {
           ourcares,
           themeFaq,
           googleAnalytics,
+          messengerAppId,
+          messengerPageId,
         },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -502,6 +509,34 @@ function Settings() {
                             </span>
                           </div>
                           <div className="lower_group">
+                            <span className="d_flex">
+                              <span className="flex_row">
+                                <small>Messenger App Id:</small>
+                                <input
+                                  className="sub_input"
+                                  value={messengerAppId}
+                                  onChange={(e) =>
+                                    setMessengerAppId(e.target.value)
+                                  }
+                                  type="text"
+                                  placeholder="messenger app id"
+                                />
+                              </span>
+                              <span className="flex_row">
+                                <small>Messager Page Id:</small>
+                                <input
+                                  className="sub_input"
+                                  value={messengerPageId}
+                                  onChange={(e) =>
+                                    setMessengerPageId(e.target.value)
+                                  }
+                                  type="text"
+                                  placeholder="messenger page id"
+                                />
+                              </span>
+                            </span>
+                          </div>
+                          <div className="lower_group">
                             <small>PayStack API key:</small>
                             <input
                               value={paystackkey}
@@ -519,7 +554,7 @@ function Settings() {
                               placeholder="api key"
                             />
                           </div>
-                          <div className="lower_group">
+                          {/* <div className="lower_group">
                             <small>Your google analytics Id:</small>
                             <input
                               value={googleAnalytics}
@@ -529,7 +564,7 @@ function Settings() {
                               type="text"
                               placeholder="google analytics Id"
                             />
-                          </div>
+                          </div> */}
                           <div className="lower_group">
                             <small>Set your tax percentage:</small>
                             <input

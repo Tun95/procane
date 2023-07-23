@@ -159,6 +159,14 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: "G-MNF3WLVGEC",
     },
+    messengerAppId: {
+      type: String,
+      default: "6222862251176447",
+    },
+    messengerPageId: {
+      type: String,
+      default: "107454247668619",
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

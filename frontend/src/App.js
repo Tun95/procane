@@ -96,12 +96,12 @@ TimeAgo.addLocale(ru);
 function App() {
   const { darkMode, state } = useContext(Context);
   const { settings } = state;
-  const { whatsapp, webname } =
+  const { messengerAppId, messengerPageId } =
     (settings &&
       settings
         .map((s) => ({
-          whatsapp: s.whatsapp,
-          webname: s.webname,
+          messengerAppId: s.messengerAppId,
+          messengerPageId: s.messengerPageId,
         }))
         .find(() => true)) ||
     {};
@@ -512,8 +512,8 @@ function App() {
           // avatar={procane}
         /> */}
         <MessengerCustomerChat
-          pageId="107454247668619"
-          appId="6222862251176447"
+          pageId={messengerPageId}
+          appId={messengerAppId}
         />
         <Footer />
       </Router>
