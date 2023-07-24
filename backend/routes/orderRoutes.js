@@ -272,6 +272,7 @@ orderRouter.get(
         {
           $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
         },
+        // { $sort: { _id: -1 } },
         // Limit to only one document to get the last day's sales
         {
           $limit: 10,
@@ -428,7 +429,6 @@ orderRouter.get(
     }
   })
 );
-
 
 //===================
 //ADMIN ORDER SUMMARY

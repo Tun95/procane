@@ -61,14 +61,12 @@ function SellerDashboard() {
 
   useEffect(() => {
     const getStats = async () => {
-      summary.earningsPerDay
-        ?.reverse()
-        ?.map((item) =>
-          setSalesStats((prev) => [
-            ...prev,
-            { name: item.date, "Total Sales": item.totalEarnings },
-          ])
-        );
+      summary.earningsPerDay?.map((item) =>
+        setSalesStats((prev) => [
+          ...prev,
+          { name: item.date, "Total Sales": item.totalEarnings },
+        ])
+      );
     };
     getStats();
   }, [summary.earningsPerDay]);
