@@ -195,9 +195,10 @@ function OrderDetails() {
                                     )}
                                   </div>
                                   <div>
-                                    {userInfo.isAdmin &&
-                                    order.isPaid &&
-                                    !order.isDelivered ? (
+                                    {userInfo.isAdmin ||
+                                    (userInfo.isSeller &&
+                                      order.isPaid &&
+                                      !order.isDelivered) ? (
                                       <div className="admin_approve_btn">
                                         <button
                                           type="button"
