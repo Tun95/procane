@@ -187,66 +187,7 @@ orderRouter.get(
 //====================
 //SELLER ORDER SUMMARY
 //====================
-// orderRouter.get(
-//   "/seller-summary",
-//   isAuth,
-//   isSellerOrAdmin,
-//   expressAsyncHandler(async (req, res) => {
-//     const sellerId = req.user._id; // Assuming the seller's ID is available in the request user object
 
-//     try {
-//       const sellerSummary = await Order.aggregate([
-//         // Match orders for the specific seller
-//         {
-//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
-//         },
-//         // Group orders by date
-//         {
-//           $group: {
-//             _id: {
-//               year: { $year: "$createdAt" },
-//               month: { $month: "$createdAt" },
-//               day: { $dayOfMonth: "$createdAt" },
-//             },
-//             orders: { $sum: 1 }, // Count the number of orders per day
-//             totalEarningsPerDay: { $sum: "$grandTotal" }, // Sum up total earnings per day
-//           },
-//         },
-//         // Group again to get the grand total of earnings for all days
-//         {
-//           $group: {
-//             _id: null,
-//             totalOrders: { $sum: "$orders" },
-//             totalEarnings: { $sum: "$totalEarningsPerDay" },
-//             earningsPerDay: {
-//               $push: { date: "$_id", totalEarnings: "$totalEarningsPerDay" },
-//             },
-//           },
-//         },
-//         // Project to show only the desired fields in the result
-//         {
-//           $project: {
-//             _id: 0,
-//             totalOrders: 1,
-//             totalEarnings: 1,
-//             earningsPerDay: 1,
-//           },
-//         },
-//       ]);
-
-//       if (sellerSummary.length > 0) {
-//         res.status(200).json(sellerSummary[0]);
-//       } else {
-//         // No data found for the seller
-//         res.status(404).json({ message: "Seller data not found" });
-//       }
-//     } catch (err) {
-//       res
-//         .status(500)
-//         .json({ message: "An error occurred while fetching seller summary" });
-//     }
-//   })
-// );
 orderRouter.get(
   "/seller-summary",
   isAuth,
@@ -255,7 +196,7 @@ orderRouter.get(
     const sellerId = req.user._id; // Assuming the seller's ID is available in the request user object
 
     try {
-      const sellerSummary = await Order.aggregate([
+      const last10DaysEarnings = await Order.aggregate([
         // Match orders for the specific seller
         {
           $match: { seller: mongoose.Types.ObjectId(sellerId) },
@@ -269,23 +210,59 @@ orderRouter.get(
           },
         },
         // Sort by date in descending order to get the last day's sales
-        {
-          $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
-        },
-        // { $sort: { _id: -1 } },
-        // Limit to only one document to get the last day's sales
+        { $sort: { _id: -1 } },
+        // Limit to only 10 documents to get the last 10 days' sales
         {
           $limit: 10,
         },
-        // Group again to get the grand total of earnings for all days
+        // Project to show only the desired fields in the result
+        {
+          $project: {
+            _id: 0,
+            date: "$_id",
+            totalEarningsPerDay: 1,
+          },
+        },
+      ]);
+
+      const earningsPerDay = await Order.aggregate([
+        // Match orders for the specific seller
+        {
+          $match: { seller: mongoose.Types.ObjectId(sellerId) },
+        },
+        // Group orders by date and limit to only one document to get earnings for each day
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            totalEarningsPerDay: { $sum: "$grandTotal" }, // Sum up total earnings per day
+          },
+        },
+        // Sort by date in descending order to get the last day's sales
+        { $sort: { _id: -1 } },
+        // Limit to only one document to get earnings for each day
+        {
+          $limit: 1,
+        },
+        // Project to show only the desired fields in the result
+        {
+          $project: {
+            _id: 0,
+            date: "$_id",
+            totalEarningsPerDay: 1,
+          },
+        },
+      ]);
+
+      const totalOrders = await Order.aggregate([
+        // Match orders for the specific seller
+        {
+          $match: { seller: mongoose.Types.ObjectId(sellerId) },
+        },
+        // Group orders to get the total number of orders
         {
           $group: {
             _id: null,
-            totalOrders: { $sum: "$orders" },
-            totalEarnings: { $sum: "$totalEarningsPerDay" },
-            earningsPerDay: {
-              $push: { date: "$_id", totalEarnings: "$totalEarningsPerDay" },
-            },
+            totalOrders: { $sum: 1 }, // Sum up total number of orders
           },
         },
         // Project to show only the desired fields in the result
@@ -293,14 +270,47 @@ orderRouter.get(
           $project: {
             _id: 0,
             totalOrders: 1,
-            totalEarnings: 1,
-            earningsPerDay: 1,
           },
         },
       ]);
 
-      if (sellerSummary.length > 0) {
-        res.status(200).json(sellerSummary[0]);
+      const grandTotalEarnings = await Order.aggregate([
+        // Match orders for the specific seller
+        {
+          $match: { seller: mongoose.Types.ObjectId(sellerId) },
+        },
+        // Group orders to get the grand total earnings of all time
+        {
+          $group: {
+            _id: null,
+            grandTotalEarnings: { $sum: "$grandTotal" }, // Sum up grand total earnings
+          },
+        },
+        // Project to show only the desired fields in the result
+        {
+          $project: {
+            _id: 0,
+            grandTotalEarnings: 1,
+          },
+        },
+      ]);
+
+      // Merge all the results into the final seller summary object
+      const sellerSummary = {
+        last10DaysEarnings,
+        earningsPerDay,
+        totalOrders: totalOrders.length > 0 ? totalOrders[0].totalOrders : 0,
+        grandTotalEarnings:
+          grandTotalEarnings.length > 0
+            ? grandTotalEarnings[0].grandTotalEarnings
+            : 0,
+      };
+
+      if (
+        sellerSummary.last10DaysEarnings.length > 0 ||
+        sellerSummary.earningsPerDay.length > 0
+      ) {
+        res.status(200).json(sellerSummary);
       } else {
         // No data found for the seller
         res.status(404).json({ message: "Seller data not found" });
@@ -312,66 +322,6 @@ orderRouter.get(
     }
   })
 );
-
-// orderRouter.get(
-//   "/seller-summary",
-//   isAuth,
-//   isSellerOrAdmin,
-//   expressAsyncHandler(async (req, res) => {
-//     const sellerId = req.user._id; // Assuming the seller's ID is available in the request user object
-
-//     try {
-//       const sellerSummary = await Order.aggregate([
-//         // Match orders for the specific seller
-//         {
-//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
-//         },
-//         // Group orders by date
-//         {
-//           $group: {
-//             _id: {
-//               year: { $year: "$createdAt" },
-//               month: { $month: "$createdAt" },
-//               day: { $dayOfMonth: "$createdAt" },
-//             },
-//             orders: { $sum: 1 }, // Count the number of orders per day
-//             totalEarningsPerDay: { $sum: "$grandTotal" }, // Sum up total earnings per day
-//           },
-//         },
-//         // Sort by date in descending order to get the last 10 days' sales
-//         {
-//           $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
-//         },
-//         // Limit to 10 documents to get the past 10 days' sales
-//         {
-//           $limit: 10,
-//         },
-//         // Sort by date in ascending order to get the array in chronological order
-//         {
-//           $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 },
-//         },
-//         // Project to show only the desired fields in the result
-//         {
-//           $project: {
-//             _id: 0,
-//             date: {
-//               year: "$_id.year",
-//               month: "$_id.month",
-//               day: "$_id.day",
-//             },
-//             totalEarnings: "$totalEarningsPerDay",
-//           },
-//         },
-//       ]);
-
-//       res.status(200).json(sellerSummary);
-//     } catch (err) {
-//       res
-//         .status(500)
-//         .json({ message: "An error occurred while fetching seller summary" });
-//     }
-//   })
-// );
 
 //================================
 //SINGLE SELLER EARNINGS PER MONTH

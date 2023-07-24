@@ -61,15 +61,17 @@ function SellerDashboard() {
 
   useEffect(() => {
     const getStats = async () => {
-      summary.earningsPerDay?.map((item) =>
-        setSalesStats((prev) => [
-          ...prev,
-          { name: item.date, "Total Sales": item.totalEarnings },
-        ])
-      );
+      summary.last10DaysEarnings
+        ?.reverse()
+        ?.map((item) =>
+          setSalesStats((prev) => [
+            ...prev,
+            { name: item.date, "Total Sales": item.totalEarningsPerDay },
+          ])
+        );
     };
     getStats();
-  }, [summary.earningsPerDay]);
+  }, [summary.last10DaysEarnings]);
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -97,13 +99,13 @@ function SellerDashboard() {
 
   //TOTAL SALES PER DAY
   const salesTotal = summary.earningsPerDay
-    ? summary.earningsPerDay[0]?.totalEarnings.toFixed(0)
+    ? summary.earningsPerDay[0]?.totalEarningsPerDay.toFixed(0)
     : 0;
   const TotalSales = convertCurrency(salesTotal);
 
   //TOTAL SALES PER DAY
-  const grandTotal = summary.totalEarnings
-    ? summary.totalEarnings?.toFixed(0)
+  const grandTotal = summary.grandTotalEarnings
+    ? summary.grandTotalEarnings?.toFixed(0)
     : 0;
   const GrandTotalSales = convertCurrency(grandTotal);
 
