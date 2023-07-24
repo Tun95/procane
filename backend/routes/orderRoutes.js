@@ -187,7 +187,6 @@ orderRouter.get(
 //====================
 //SELLER ORDER SUMMARY
 //====================
-
 orderRouter.get(
   "/seller-summary",
   isAuth,
