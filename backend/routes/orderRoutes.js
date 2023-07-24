@@ -187,6 +187,140 @@ orderRouter.get(
 //====================
 //SELLER ORDER SUMMARY
 //====================
+// orderRouter.get(
+//   "/seller-summary",
+//   isAuth,
+//   isSellerOrAdmin,
+//   expressAsyncHandler(async (req, res) => {
+//     const sellerId = req.user._id; // Assuming the seller's ID is available in the request user object
+
+//     try {
+//       const last10DaysEarnings = await Order.aggregate([
+//         // Match orders for the specific seller
+//         {
+//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
+//         },
+//         // Group orders by date
+//         {
+//           $group: {
+//             _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+//             orders: { $sum: 1 }, // Count the number of orders per day
+//             totalEarningsPerDay: { $sum: "$grandTotal" }, // Sum up total earnings per day
+//           },
+//         },
+//         // Sort by date in descending order to get the last day's sales
+//         { $sort: { _id: -1 } },
+//         // Limit to only 10 documents to get the last 10 days' sales
+//         {
+//           $limit: 10,
+//         },
+//         // Project to show only the desired fields in the result
+//         {
+//           $project: {
+//             _id: 0,
+//             date: "$_id",
+//             totalEarningsPerDay: 1,
+//           },
+//         },
+//       ]);
+
+//       const earningsPerDay = await Order.aggregate([
+//         // Match orders for the specific seller
+//         {
+//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
+//         },
+//         // Group orders by date and limit to only one document to get earnings for each day
+//         {
+//           $group: {
+//             _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+//             totalEarningsPerDay: { $sum: "$grandTotal" }, // Sum up total earnings per day
+//           },
+//         },
+//         // Sort by date in descending order to get the last day's sales
+//         { $sort: { _id: -1 } },
+//         // Limit to only one document to get earnings for each day
+//         {
+//           $limit: 1,
+//         },
+//         // Project to show only the desired fields in the result
+//         {
+//           $project: {
+//             _id: 0,
+//             date: "$_id",
+//             totalEarningsPerDay: 1,
+//           },
+//         },
+//       ]);
+
+//       const totalOrders = await Order.aggregate([
+//         // Match orders for the specific seller
+//         {
+//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
+//         },
+//         // Group orders to get the total number of orders
+//         {
+//           $group: {
+//             _id: null,
+//             totalOrders: { $sum: 1 }, // Sum up total number of orders
+//           },
+//         },
+//         // Project to show only the desired fields in the result
+//         {
+//           $project: {
+//             _id: 0,
+//             totalOrders: 1,
+//           },
+//         },
+//       ]);
+
+//       const grandTotalEarnings = await Order.aggregate([
+//         // Match orders for the specific seller
+//         {
+//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
+//         },
+//         // Group orders to get the grand total earnings of all time
+//         {
+//           $group: {
+//             _id: null,
+//             grandTotalEarnings: { $sum: "$grandTotal" }, // Sum up grand total earnings
+//           },
+//         },
+//         // Project to show only the desired fields in the result
+//         {
+//           $project: {
+//             _id: 0,
+//             grandTotalEarnings: 1,
+//           },
+//         },
+//       ]);
+
+//       // Merge all the results into the final seller summary object
+//       const sellerSummary = {
+//         last10DaysEarnings,
+//         earningsPerDay,
+//         totalOrders: totalOrders.length > 0 ? totalOrders[0].totalOrders : 0,
+//         grandTotalEarnings:
+//           grandTotalEarnings.length > 0
+//             ? grandTotalEarnings[0].grandTotalEarnings
+//             : 0,
+//       };
+
+//       if (
+//         sellerSummary.last10DaysEarnings.length > 0 ||
+//         sellerSummary.earningsPerDay.length > 0
+//       ) {
+//         res.status(200).json(sellerSummary);
+//       } else {
+//         // No data found for the seller
+//         res.status(404).json({ message: "Seller data not found" });
+//       }
+//     } catch (err) {
+//       res
+//         .status(500)
+//         .json({ message: "An error occurred while fetching seller summary" });
+//     }
+//   })
+// );
 orderRouter.get(
   "/seller-summary",
   isAuth,
@@ -196,9 +330,9 @@ orderRouter.get(
 
     try {
       const last10DaysEarnings = await Order.aggregate([
-        // Match orders for the specific seller
+        // Match orders for the specific seller that are paid (isPaid: true)
         {
-          $match: { seller: mongoose.Types.ObjectId(sellerId) },
+          $match: { seller: mongoose.Types.ObjectId(sellerId), isPaid: true },
         },
         // Group orders by date
         {
@@ -225,9 +359,9 @@ orderRouter.get(
       ]);
 
       const earningsPerDay = await Order.aggregate([
-        // Match orders for the specific seller
+        // Match orders for the specific seller that are paid (isPaid: true)
         {
-          $match: { seller: mongoose.Types.ObjectId(sellerId) },
+          $match: { seller: mongoose.Types.ObjectId(sellerId), isPaid: true },
         },
         // Group orders by date and limit to only one document to get earnings for each day
         {
@@ -251,7 +385,26 @@ orderRouter.get(
           },
         },
       ]);
-
+      // const totalOrders = await Order.aggregate([
+      //   // Match orders for the specific seller that are paid (isPaid: true)
+      //   {
+      //     $match: { seller: mongoose.Types.ObjectId(sellerId), isPaid: true },
+      //   },
+      //   // Group orders to get the total number of orders
+      //   {
+      //     $group: {
+      //       _id: null,
+      //       totalOrders: { $sum: 1 }, // Sum up total number of orders
+      //     },
+      //   },
+      //   // Project to show only the desired fields in the result
+      //   {
+      //     $project: {
+      //       _id: 0,
+      //       totalOrders: 1,
+      //     },
+      //   },
+      // ]);
       const totalOrders = await Order.aggregate([
         // Match orders for the specific seller
         {
@@ -274,9 +427,9 @@ orderRouter.get(
       ]);
 
       const grandTotalEarnings = await Order.aggregate([
-        // Match orders for the specific seller
+        // Match orders for the specific seller that are paid (isPaid: true)
         {
-          $match: { seller: mongoose.Types.ObjectId(sellerId) },
+          $match: { seller: mongoose.Types.ObjectId(sellerId), isPaid: true },
         },
         // Group orders to get the grand total earnings of all time
         {
@@ -325,6 +478,59 @@ orderRouter.get(
 //================================
 //SINGLE SELLER EARNINGS PER MONTH
 //================================
+// orderRouter.get(
+//   "/seller-summary/:id",
+//   isAuth,
+//   isSellerOrAdmin,
+//   expressAsyncHandler(async (req, res) => {
+//     const sellerId = req.params?.id;
+
+//     try {
+//       const sellerSummary = await Order.aggregate([
+//         // Match orders for the specific seller
+//         {
+//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
+//         },
+//         // Group orders by month
+//         {
+//           $group: {
+//             _id: {
+//               year: { $year: "$createdAt" },
+//               month: { $month: "$createdAt" },
+//             },
+//             totalEarningsPerMonth: { $sum: "$grandTotal" }, // Sum up total earnings per month
+//           },
+//         },
+//         // Sort by date in descending order to get the latest month's earnings first
+//         {
+//           $sort: { "_id.year": -1, "_id.month": -1 },
+//         },
+//         // Limit to only one document to get the latest month's earnings
+//         {
+//           $limit: 1,
+//         },
+//         // Project to show only the desired fields in the result
+//         {
+//           $project: {
+//             _id: 0,
+//             totalEarnings: "$totalEarningsPerMonth", // Rename the field to totalEarnings
+//           },
+//         },
+//       ]);
+
+//       if (sellerSummary.length > 0) {
+//         res.status(200).json(sellerSummary[0]);
+//       } else {
+//         // No data found for the seller
+//         res.status(404).json({ message: "Seller data not found" });
+//       }
+//     } catch (err) {
+//       res
+//         .status(500)
+//         .json({ message: "An error occurred while fetching seller summary" });
+//     }
+//   })
+// );
 orderRouter.get(
   "/seller-summary/:id",
   isAuth,
@@ -334,9 +540,9 @@ orderRouter.get(
 
     try {
       const sellerSummary = await Order.aggregate([
-        // Match orders for the specific seller
+        // Match orders for the specific seller that are paid (isPaid: true)
         {
-          $match: { seller: mongoose.Types.ObjectId(sellerId) },
+          $match: { seller: mongoose.Types.ObjectId(sellerId), isPaid: true },
         },
         // Group orders by month
         {
@@ -382,6 +588,111 @@ orderRouter.get(
 //===================
 //ADMIN ORDER SUMMARY
 //===================
+// orderRouter.get(
+//   "/order_summary",
+//   // isAuth,
+//   // isSellerOrAdmin,
+//   expressAsyncHandler(async (req, res) => {
+//     const productId = req?.query.id;
+//     const date = new Date();
+//     const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
+//     const previousMonth = new Date(
+//       new Date().setMonth(lastMonth.getMonth() - 1)
+//     );
+//     console.log(productId);
+
+//     // GET MONTHLY ORDERS
+//     const orders = await Order.aggregate([
+//       {
+//         $match: {
+//           createdAt: { $gte: previousMonth, $lt: lastMonth },
+//         },
+//       },
+//       {
+//         $group: {
+//           _id: null,
+//           numOrders: { $sum: 1 },
+//         },
+//       },
+//     ]);
+
+//     // GET MONTHLY USERS STATS
+//     const users = await User.aggregate([
+//       {
+//         $match: {
+//           createdAt: { $gte: previousMonth, $lt: lastMonth },
+//         },
+//       },
+//       {
+//         $group: {
+//           _id: null,
+//           numUsers: { $sum: 1 },
+//         },
+//       },
+//     ]);
+
+//     // GET MONTHLY INCOME
+//     const income = await Order.aggregate([
+//       {
+//         $match: {
+//           createdAt: { $gte: previousMonth, $lt: lastMonth },
+//         },
+//       },
+//       {
+//         $group: {
+//           _id: null,
+//           orders: { $sum: 1 },
+//           numOrders: { $sum: 1 },
+//           sales: { $sum: "$grandTotal" },
+//         },
+//       },
+//     ]);
+
+//     // GET DAILY ORDERS
+//     const dailyOrders = await Order.aggregate([
+//       {
+//         $group: {
+//           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+//           orders: { $sum: 1 },
+//           numOrders: { $sum: 1 },
+//           sales: { $sum: "$grandTotal" },
+//         },
+//       },
+//       {
+//         $match: {
+//           _id: {
+//             $gte: previousMonth.toISOString(),
+//             $lt: lastMonth.toISOString(),
+//           },
+//         },
+//       },
+//       { $sort: { _id: -1 } },
+//       { $limit: 10 },
+//     ]);
+
+//     // GET SALE PERFORMANCE
+//     const salePerformance = await Order.aggregate([
+//       {
+//         $group: {
+//           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+//           sales: { $sum: "$grandTotal" },
+//         },
+//       },
+//       {
+//         $match: {
+//           _id: {
+//             $gte: previousMonth.toISOString(),
+//             $lt: lastMonth.toISOString(),
+//           },
+//         },
+//       },
+//       { $sort: { _id: -1 } },
+//       { $limit: 2 },
+//     ]);
+
+//     res.send({ users, orders, income, dailyOrders, salePerformance });
+//   })
+// );
 orderRouter.get(
   "/summary",
   // isAuth,
@@ -394,7 +705,7 @@ orderRouter.get(
       new Date().setMonth(lastMonth.getMonth() - 1)
     );
 
-    //GET MONTLY ORDERS
+    //GET TOTAL NUMBER ORDERS
     const orders = await Order.aggregate([
       {
         $group: {
@@ -406,7 +717,7 @@ orderRouter.get(
       { $limit: 2 },
     ]);
 
-    //GET MONTHLY USERS STATS
+    //GET TOTAL USERS STATS
     const users = await User.aggregate([
       {
         $group: {
@@ -420,6 +731,10 @@ orderRouter.get(
 
     //GET DAILY INCOME
     const dailyOrders = await Order.aggregate([
+      // Match orders that are paid (isPaid: true)
+      {
+        $match: { isPaid: true },
+      },
       {
         $group: {
           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
@@ -435,6 +750,10 @@ orderRouter.get(
 
     //GET DAILY INCOME
     const income = await Order.aggregate([
+      // Match orders that are paid (isPaid: true)
+      {
+        $match: { isPaid: true },
+      },
       {
         $group: {
           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
@@ -450,6 +769,10 @@ orderRouter.get(
 
     //SALE PERFORMANCE
     const salePerformance = await Order.aggregate([
+      // Match orders that are paid (isPaid: true)
+      {
+        $match: { isPaid: true },
+      },
       {
         $group: {
           _id: 1,
@@ -464,111 +787,11 @@ orderRouter.get(
     res.send({ users, orders, income, dailyOrders, salePerformance });
   })
 );
-orderRouter.get(
-  "/order_summary",
-  // isAuth,
-  // isSellerOrAdmin,
-  expressAsyncHandler(async (req, res) => {
-    const productId = req?.query.id;
-    const date = new Date();
-    const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
-    const previousMonth = new Date(
-      new Date().setMonth(lastMonth.getMonth() - 1)
-    );
-    console.log(productId);
 
-    // GET MONTHLY ORDERS
-    const orders = await Order.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: previousMonth, $lt: lastMonth },
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          numOrders: { $sum: 1 },
-        },
-      },
-    ]);
 
-    // GET MONTHLY USERS STATS
-    const users = await User.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: previousMonth, $lt: lastMonth },
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          numUsers: { $sum: 1 },
-        },
-      },
-    ]);
 
-    // GET MONTHLY INCOME
-    const income = await Order.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: previousMonth, $lt: lastMonth },
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          orders: { $sum: 1 },
-          numOrders: { $sum: 1 },
-          sales: { $sum: "$grandTotal" },
-        },
-      },
-    ]);
 
-    // GET DAILY ORDERS
-    const dailyOrders = await Order.aggregate([
-      {
-        $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-          orders: { $sum: 1 },
-          numOrders: { $sum: 1 },
-          sales: { $sum: "$grandTotal" },
-        },
-      },
-      {
-        $match: {
-          _id: {
-            $gte: previousMonth.toISOString(),
-            $lt: lastMonth.toISOString(),
-          },
-        },
-      },
-      { $sort: { _id: -1 } },
-      { $limit: 10 },
-    ]);
 
-    // GET SALE PERFORMANCE
-    const salePerformance = await Order.aggregate([
-      {
-        $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-          sales: { $sum: "$grandTotal" },
-        },
-      },
-      {
-        $match: {
-          _id: {
-            $gte: previousMonth.toISOString(),
-            $lt: lastMonth.toISOString(),
-          },
-        },
-      },
-      { $sort: { _id: -1 } },
-      { $limit: 2 },
-    ]);
-
-    res.send({ users, orders, income, dailyOrders, salePerformance });
-  })
-);
 
 //======================
 //FETCH ALL INDIV. ORDER
