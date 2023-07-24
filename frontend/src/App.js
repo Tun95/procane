@@ -2,7 +2,6 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import "./theme style/dark.scss";
-import { FloatingWhatsApp } from "react-floating-whatsapp";
 import MessengerCustomerChat from "react-messenger-customer-chat";
 import Header from "./common/header/Header";
 import HomeScreen from "./screens/homescreen/HomeScreen";
@@ -74,9 +73,7 @@ import SellerRoute from "./components/utilities/protectedRoute/SellerRoute";
 import ProductlistScreen from "./admin/pages/list/product/main/ProductListScreen";
 import DashboardScreen from "./admin/pages/home/main/DashboardScreen";
 import Settings from "./admin/pages/single/settings/Settings";
-import procane from "../src/assets/procanes.png";
 import VendorScreen from "./screens/formscreens/vendorscreen/VendorScreen";
-import Success from "./screens/formscreens/vendorscreen/Succes";
 import Application from "./admin/pages/single/application detail/Application";
 import TrackScreen from "./screens/orderscreen/trackscreen/TrackScreen";
 import ReactGA from "react-ga4";
@@ -121,11 +118,11 @@ function App() {
   return (
     <div className={darkMode ? "app dark" : "app"}>
       <Router>
-        <ToastContainer />
-        <ScrollToTop />
-        <Header />
-
         <LoadingOverlayComponent>
+          <ToastContainer />
+          <ScrollToTop />
+          <Header />
+
           <Routes>
             <Route path="*" element={<NotFoundScreen />} />
             <Route path="/" exact element={<HomeScreen />}></Route>
@@ -505,17 +502,13 @@ function App() {
 
             {/* SELLER ROUTES */}
           </Routes>
+
+          <MessengerCustomerChat
+            pageId={messengerPageId}
+            appId={messengerAppId}
+          />
+          <Footer />
         </LoadingOverlayComponent>
-        {/* <FloatingWhatsApp
-          phoneNumber={whatsapp}
-          accountName={webname}
-          // avatar={procane}
-        /> */}
-        <MessengerCustomerChat
-          pageId={messengerPageId}
-          appId={messengerAppId}
-        />
-        <Footer />
       </Router>
     </div>
   );

@@ -11,7 +11,7 @@ const data = {
       password: bcrypt.hashSync("Akande95"),
       isAdmin: true,
       isBlocked: false,
-      isSeller: false,
+      isSeller: true,
       isAccountVerified: true,
     },
     {

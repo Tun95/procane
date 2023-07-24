@@ -8,8 +8,6 @@ import { I18nextProvider } from "react-i18next";
 import i18next from "./components/utilities/translate/i18n";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-const googleClientId =
-  "408401850346-97mfn7e1q7f698pn7in837hha576nleb.apps.googleusercontent.com";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

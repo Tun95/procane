@@ -27,7 +27,13 @@ seedRouter.get("/", async (req, res) => {
 
   // await Order.deleteMany({});
 
-  res.send({ createProducts, createUsers, createSettings, createCategory });
+  res.send({
+    createProducts,
+    createUsers,
+    createSettings,
+    createCategory,
+    createBanner,
+  });
 });
 
 export default seedRouter;
