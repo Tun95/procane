@@ -1,0 +1,82 @@
+.annocument {
+  .d_flex {
+    display: flex;
+  }
+
+  .img {
+    position: relative;
+  }
+
+  .img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .img .explore {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--color-white);
+    text-align: center;
+    flex-direction: column;
+    font-size: 2rem;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    height: 100%;
+    width: 100%;
+  }
+
+  .img::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: -1;
+  }
+  .img-1 {
+    width: 30%;
+    height: 340px;
+  }
+  .img-1 img {
+    border-radius: 10px;
+  }
+  .img-2 {
+    width: 68%;
+    height: 340px;
+    border-radius: 10px;
+  }
+  .img-2 img {
+    border-radius: 10px;
+  }
+  @media screen and (max-width: 970px) {
+    .img-1 {
+      display: none;
+    }
+    .img-2 {
+      width: 100%;
+    }
+  }
+  @media screen and (max-width: 600px) {
+    .img-1 {
+      width: 100%;
+      display: flex;
+    }
+    .img-2 {
+      display: none;
+    }
+  }
+  @media screen and (max-width: 550px) {
+    /* .annocument .img {
+    width: 100%;
+  }
+  .img-2 {
+    margin-top: 20px;
+  } */
+  }
+}
