@@ -55,6 +55,7 @@
     "sass": "^1.62.1",
     "shippo": "^1.7.1",
     "slick-carousel": "^1.8.1",
+    "typewriter-effect": "^2.20.1",
     "web-vitals": "^2.1.4",
     "yup": "^1.2.0"
   },

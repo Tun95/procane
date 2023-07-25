@@ -1,5 +1,6 @@
 import React from "react";
 import "./styles.css";
+import { Fade } from "react-awesome-reveal";
 
 function Wrapper() {
   const data = [
@@ -31,11 +32,13 @@ function Wrapper() {
           {data?.map((item, index) => {
             return (
               <div className="product" key={index}>
-                <div className="img icon-circle">
-                  <i>{item.cover}</i>
-                </div>
-                <h3>{item.title}</h3>
-                <p>{item.decs}</p>
+                <Fade cascade direction="down" triggerOnce damping={0.4}>
+                  <div className="img icon-circle">
+                    <i>{item.cover}</i>
+                  </div>
+                  <h3>{item.title}</h3>
+                  <p>{item.decs}</p>
+                </Fade>
               </div>
             );
           })}
