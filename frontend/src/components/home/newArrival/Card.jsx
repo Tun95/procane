@@ -1,52 +1,12 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Slider from "react-slick";
-import Ndata from "./Ndata";
 import "./styles.scss";
 import { Context } from "../../../context/Context";
-import axios from "axios";
-import { request } from "../../../base url/BaseUrl";
+
 import { Link } from "react-router-dom";
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "FETCH_REQUEST":
-      return { ...state, loading: true };
-    case "FETCH_SUCCESS":
-      return { ...state, loading: false, products: action.payload };
-    case "FETCH_FAIL":
-      return { ...state, loading: false, error: action.payload };
-    default:
-      return state;
-  }
-};
-function Card() {
+function Card({ products }) {
   const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
-  const { userInfo, settings } = state;
-
-  const [{ products }, dispatch] = useReducer(reducer, {
-    products: [],
-    loading: true,
-    error: "",
-  });
-
-  //==============
-  //FETCH PRODUCTS
-  //==============
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get(`${request}/api/products/new-arrival`);
-        dispatch({
-          type: "FETCH_SUCCESS",
-          payload: data,
-        });
-      } catch (err) {
-        dispatch({ type: "FETCH_FAIL" });
-      }
-    };
-
-    fetchData();
-  }, [userInfo]);
 
   //===========
   //REACT SLICK

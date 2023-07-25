@@ -1,39 +1,19 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/Context";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { getError } from "../../utilities/util/Utils";
 import Rating from "../../utilities/rating/Ratings";
 import { request } from "../../../base url/BaseUrl";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import { RWebShare } from "react-web-share";
 import ShareIcon from "@mui/icons-material/Share";
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "FETCH_REQUEST":
-      return { ...state, loading: true };
-    case "FETCH_SUCCESS":
-      return {
-        ...state,
-        products: action.payload,
-        loading: false,
-      };
-    case "FETCH_FAIL":
-      return { ...state, error: action.payload, loading: false };
-
-    default:
-      return state;
-  }
-};
-
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-function ShopCard() {
+function ShopCard({ products, dispatch }) {
   const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
   const {
-    settings,
     cart: { cartItems },
   } = state;
 
@@ -41,26 +21,6 @@ function ShopCard() {
   const increment = () => {
     setCount(count + 1);
   };
-
-  const [{ loading, error, products }, dispatch] = useReducer(reducer, {
-    products: [],
-    loading: true,
-    error: "",
-  });
-  //============
-  //PRODUCT FETCHING
-  //============
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await axios.get(`${request}/api/products`);
-        dispatch({ type: "FETCH_SUCCESS", payload: result.data });
-      } catch (err) {
-        dispatch({ type: "FETCH_FAIL", payload: getError(err) });
-      }
-    };
-    fetchData();
-  }, []);
 
   // const [count, setCount] = useState(0);
   // const increment = () => {
