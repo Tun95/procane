@@ -788,11 +788,6 @@ orderRouter.get(
   })
 );
 
-
-
-
-
-
 //======================
 //FETCH ALL INDIV. ORDER
 const USER_PAGE_SIZE = 15;
@@ -1950,8 +1945,8 @@ orderRouter.put(
         product.numSales += item.quantity;
         await product.save();
       }
-      // Convert the currency if needed
-      let convertedCurrencySign = order.currencySign;
+
+      // Convert the currency if neededy
       let convertedItemsPrice = order.itemsPrice;
       let convertedTaxPrice = order.taxPrice;
       let convertedShippingPrice = order.shippingPrice;
@@ -1975,10 +1970,9 @@ orderRouter.put(
             order.grandTotal,
             order.currencySign
           );
-          convertedCurrencySign = order.currencySign;
           const formatter = new Intl.NumberFormat("en-GB", {
             style: "currency",
-            currency: convertedCurrencySign,
+            currency: order.currencySign,
             currencyDisplay: "symbol", // Display the currency symbol instead of the currency code
           });
           // Format converted values
@@ -2055,9 +2049,9 @@ orderRouter.put(
       </tr>
     </thead>
     <tbody>
-      ${await Promise.all(
-        order.orderItems.map(async (item) => {
-          return `
+       ${await Promise.all(
+         order.orderItems.map(async (item) => {
+           return `
           <tr>
             <td>${item.name}</td>
             <td align="left">${item.keygen}</td>
@@ -2069,31 +2063,31 @@ orderRouter.put(
             <td align="right">${convertedItemsPrice}</td>
           </tr>
         `;
-        })
-      )}
+         })
+       )}
     </tbody>
     <tfoot>
-      <tr class="total">
-        <td colspan="2">Items Price:</td>
-        <td align="right">${convertedItemsPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2">Tax Price:</td>
-        <td align="right">${convertedTaxPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2">Shipping Price:</td>
-        <td align="right">${convertedShippingPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2"><strong>Total Price:</strong></td>
-        <td align="right"><strong>${convertedGrandTotal}</strong></td>
-      </tr>
-      <tr>
-        <td colspan="2">Payment Method:</td>
-        <td align="right">${order.paymentMethod}</td>
-      </tr>
-    </tfoot>
+    <tr class="total">
+      <td colspan="2">Items Price:</td>
+      <td align="right">${convertedItemsPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2">Tax Price:</td>
+      <td align="right">${convertedTaxPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2">Shipping Price:</td>
+      <td align="right">${convertedShippingPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2"><strong>Total Price:</strong></td>
+      <td align="right"><strong>${convertedGrandTotal}</strong></td>
+    </tr>
+    <tr>
+      <td colspan="2">Payment Method:</td>
+      <td align="right">${order.paymentMethod}</td>
+    </tr>
+  </tfoot>
   </table>
   <h2>Shipping address</h2>
   <p>

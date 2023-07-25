@@ -968,7 +968,7 @@ function Payment(props) {
                             </button>
                           </div>
                         )}
-                        {openPayTmModal && (
+                        {/* {openPayTmModal && (
                           <div className="paypal-details paystack_btn cash_btn_style">
                             <button
                               className="cash_btn l_flex"
@@ -986,7 +986,7 @@ function Payment(props) {
                               )}
                             </button>
                           </div>
-                        )}
+                        )} */}
                       </div>
                     ) : null}
                   </div>
