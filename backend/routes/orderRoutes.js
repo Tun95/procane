@@ -1004,6 +1004,24 @@ orderRouter.post(
             throw new Error("Failed to convert currency");
           }
         }
+        const convertPrice = async (price, toCurrency) => {
+          try {
+            const convertedPrice = await convertCurrency(
+              price,
+              order.currencySign,
+              toCurrency
+            );
+            const formattedPrice = new Intl.NumberFormat("en", {
+              style: "currency",
+              currency: toCurrency,
+            }).format(convertedPrice);
+            return `${formattedPrice}`;
+          } catch (error) {
+            console.log(error);
+            throw new Error("Failed to convert price");
+          }
+        };
+
         const payOrderEmailTemplate = `<!DOCTYPE html>
 <html>
 <head>
@@ -1067,9 +1085,16 @@ orderRouter.post(
       </tr>
     </thead>
     <tbody>
-      ${await Promise.all(
-        order.orderItems.map(async (item) => {
-          return `
+       ${await Promise.all(
+         order.orderItems.map(async (item) => {
+           let convertedPrice = "";
+           if (order.currencySign !== currency) {
+             convertedPrice = await convertPrice(
+               item.price.toFixed(2),
+               order.currencySign
+             );
+           }
+           return `
           <tr>
             <td>${item.name}</td>
             <td align="left">${item.keygen}</td>
@@ -1078,34 +1103,34 @@ orderRouter.post(
               item.color ? `<img src=${item.color} alt=""/>` : ""
             }</td>
             <td align="center">${item.quantity}</td>
-            <td align="right">${convertedItemsPrice}</td>
+            <td align="right">${convertedPrice}</td>
           </tr>
         `;
-        })
-      )}
+         })
+       )}
     </tbody>
     <tfoot>
-      <tr class="total">
-        <td colspan="2">Items Price:</td>
-        <td align="right">${convertedItemsPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2">Tax Price:</td>
-        <td align="right">${convertedTaxPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2">Shipping Price:</td>
-        <td align="right">${convertedShippingPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2"><strong>Total Price:</strong></td>
-        <td align="right"><strong>${convertedGrandTotal}</strong></td>
-      </tr>
-      <tr>
-        <td colspan="2">Payment Method:</td>
-        <td align="right">${order.paymentMethod}</td>
-      </tr>
-    </tfoot>
+    <tr class="total">
+      <td colspan="2">Items Price:</td>
+      <td align="right">${convertedItemsPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2">Tax Price:</td>
+      <td align="right">${convertedTaxPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2">Shipping Price:</td>
+      <td align="right">${convertedShippingPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2"><strong>Total Price:</strong></td>
+      <td align="right"><strong>${convertedGrandTotal}</strong></td>
+    </tr>
+    <tr>
+      <td colspan="2">Payment Method:</td>
+      <td align="right">${order.paymentMethod}</td>
+    </tr>
+  </tfoot>
   </table>
   <h2>Shipping address</h2>
   <p>
@@ -1358,6 +1383,24 @@ orderRouter.post(
         }
       }
 
+      const convertPrice = async (price, toCurrency) => {
+        try {
+          const convertedPrice = await convertCurrency(
+            price,
+            order.currencySign,
+            toCurrency
+          );
+          const formattedPrice = new Intl.NumberFormat("en", {
+            style: "currency",
+            currency: toCurrency,
+          }).format(convertedPrice);
+          return `${formattedPrice}`;
+        } catch (error) {
+          console.log(error);
+          throw new Error("Failed to convert price");
+        }
+      };
+
       const payOrderEmailTemplate = `<!DOCTYPE html>
 <html>
 <head>
@@ -1421,9 +1464,16 @@ orderRouter.post(
       </tr>
     </thead>
     <tbody>
-      ${await Promise.all(
-        order.orderItems.map(async (item) => {
-          return `
+       ${await Promise.all(
+         order.orderItems.map(async (item) => {
+           let convertedPrice = "";
+           if (order.currencySign !== currency) {
+             convertedPrice = await convertPrice(
+               item.price.toFixed(2),
+               order.currencySign
+             );
+           }
+           return `
           <tr>
             <td>${item.name}</td>
             <td align="left">${item.keygen}</td>
@@ -1432,34 +1482,34 @@ orderRouter.post(
               item.color ? `<img src=${item.color} alt=""/>` : ""
             }</td>
             <td align="center">${item.quantity}</td>
-            <td align="right">${convertedItemsPrice}</td>
+            <td align="right">${convertedPrice}</td>
           </tr>
         `;
-        })
-      )}
+         })
+       )}
     </tbody>
     <tfoot>
-      <tr class="total">
-        <td colspan="2">Items Price:</td>
-        <td align="right">${convertedItemsPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2">Tax Price:</td>
-        <td align="right">${convertedTaxPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2">Shipping Price:</td>
-        <td align="right">${convertedShippingPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2"><strong>Total Price:</strong></td>
-        <td align="right"><strong>${convertedGrandTotal}</strong></td>
-      </tr>
-      <tr>
-        <td colspan="2">Payment Method:</td>
-        <td align="right">${order.paymentMethod}</td>
-      </tr>
-    </tfoot>
+    <tr class="total">
+      <td colspan="2">Items Price:</td>
+      <td align="right">${convertedItemsPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2">Tax Price:</td>
+      <td align="right">${convertedTaxPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2">Shipping Price:</td>
+      <td align="right">${convertedShippingPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2"><strong>Total Price:</strong></td>
+      <td align="right"><strong>${convertedGrandTotal}</strong></td>
+    </tr>
+    <tr>
+      <td colspan="2">Payment Method:</td>
+      <td align="right">${order.paymentMethod}</td>
+    </tr>
+  </tfoot>
   </table>
   <h2>Shipping address</h2>
   <p>
@@ -1711,6 +1761,24 @@ orderRouter.post(
         }
       }
 
+      const convertPrice = async (price, toCurrency) => {
+        try {
+          const convertedPrice = await convertCurrency(
+            price,
+            order.currencySign,
+            toCurrency
+          );
+          const formattedPrice = new Intl.NumberFormat("en", {
+            style: "currency",
+            currency: toCurrency,
+          }).format(convertedPrice);
+          return `${formattedPrice}`;
+        } catch (error) {
+          console.log(error);
+          throw new Error("Failed to convert price");
+        }
+      };
+
       const payOrderEmailTemplate = `<!DOCTYPE html>
 <html>
 <head>
@@ -1774,9 +1842,16 @@ orderRouter.post(
       </tr>
     </thead>
     <tbody>
-      ${await Promise.all(
-        order.orderItems.map(async (item) => {
-          return `
+       ${await Promise.all(
+         order.orderItems.map(async (item) => {
+           let convertedPrice = "";
+           if (order.currencySign !== currency) {
+             convertedPrice = await convertPrice(
+               item.price.toFixed(2),
+               order.currencySign
+             );
+           }
+           return `
           <tr>
             <td>${item.name}</td>
             <td align="left">${item.keygen}</td>
@@ -1785,34 +1860,34 @@ orderRouter.post(
               item.color ? `<img src=${item.color} alt=""/>` : ""
             }</td>
             <td align="center">${item.quantity}</td>
-            <td align="right">${convertedItemsPrice}</td>
+            <td align="right">${convertedPrice}</td>
           </tr>
         `;
-        })
-      )}
+         })
+       )}
     </tbody>
     <tfoot>
-      <tr class="total">
-        <td colspan="2">Items Price:</td>
-        <td align="right">${convertedItemsPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2">Tax Price:</td>
-        <td align="right">${convertedTaxPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2">Shipping Price:</td>
-        <td align="right">${convertedShippingPrice}</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2"><strong>Total Price:</strong></td>
-        <td align="right"><strong>${convertedGrandTotal}</strong></td>
-      </tr>
-      <tr>
-        <td colspan="2">Payment Method:</td>
-        <td align="right">${order.paymentMethod}</td>
-      </tr>
-    </tfoot>
+    <tr class="total">
+      <td colspan="2">Items Price:</td>
+      <td align="right">${convertedItemsPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2">Tax Price:</td>
+      <td align="right">${convertedTaxPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2">Shipping Price:</td>
+      <td align="right">${convertedShippingPrice}</td>
+    </tr>
+    <tr class="total">
+      <td colspan="2"><strong>Total Price:</strong></td>
+      <td align="right"><strong>${convertedGrandTotal}</strong></td>
+    </tr>
+    <tr>
+      <td colspan="2">Payment Method:</td>
+      <td align="right">${order.paymentMethod}</td>
+    </tr>
+  </tfoot>
   </table>
   <h2>Shipping address</h2>
   <p>
@@ -1986,6 +2061,24 @@ orderRouter.put(
         }
       }
 
+      const convertPrice = async (price, toCurrency) => {
+        try {
+          const convertedPrice = await convertCurrency(
+            price,
+            order.currencySign,
+            toCurrency
+          );
+          const formattedPrice = new Intl.NumberFormat("en", {
+            style: "currency",
+            currency: toCurrency,
+          }).format(convertedPrice);
+          return `${formattedPrice}`;
+        } catch (error) {
+          console.log(error);
+          throw new Error("Failed to convert price");
+        }
+      };
+
       const payOrderEmailTemplate = `<!DOCTYPE html>
 <html>
 <head>
@@ -2051,6 +2144,13 @@ orderRouter.put(
     <tbody>
        ${await Promise.all(
          order.orderItems.map(async (item) => {
+           let convertedPrice = "";
+           if (order.currencySign !== currency) {
+             convertedPrice = await convertPrice(
+               item.price.toFixed(2),
+               order.currencySign
+             );
+           }
            return `
           <tr>
             <td>${item.name}</td>
@@ -2060,7 +2160,7 @@ orderRouter.put(
               item.color ? `<img src=${item.color} alt=""/>` : ""
             }</td>
             <td align="center">${item.quantity}</td>
-            <td align="right">${convertedItemsPrice}</td>
+            <td align="right">${convertedPrice}</td>
           </tr>
         `;
          })
