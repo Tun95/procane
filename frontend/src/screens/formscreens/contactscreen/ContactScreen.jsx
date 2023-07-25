@@ -26,6 +26,16 @@ const reducer = (state, action) => {
 function ContactScreen() {
   const { state, dispatch: ctxDispatch } = useContext(Context);
   const { settings } = state;
+  const { webname, messenger, whatsapp } =
+    (settings &&
+      settings
+        .map((s) => ({
+          webname: s.webname,
+          messenger: s.messenger,
+          whatsapp: s.whatsapp,
+        }))
+        .find(() => true)) ||
+    {};
 
   const [{ loading, error }, dispatch] = useReducer(reducer, {
     loading: true,
@@ -82,59 +92,59 @@ function ContactScreen() {
             <Form action="" onSubmit={handleSubmit}>
               <div className="inner-form">
                 <h2 className="form_header">Contact Us</h2>
-                {settings?.map((s, index) => (
-                  <div className="featured_box">
-                    <div className="featured">
-                      <div className="icon">
-                        <i className="fa-brands fa-facebook-messenger messenger"></i>
-                      </div>
-                      <div className="content">
-                        <span className="name">
-                          <label htmlFor="name">Store:</label>
-                          <div className="">ProCanes store</div>
-                        </span>
-                        <div className="via_contact">
-                          <label htmlFor="via">Via Messenger:</label>
-                          <div className="contact_btn_social">
-                            <a
-                              className="messenger"
-                              href={`https://m.me/${s.messenger}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <i className="fa-brands fa-facebook-messenger"></i>{" "}
-                              Messenger
-                            </a>
-                          </div>
-                        </div>
-                      </div>
+
+                <div className="featured_box">
+                  <div className="featured">
+                    <div className="icon">
+                      <i className="fa-brands fa-facebook-messenger messenger"></i>
                     </div>
-                    <div className="featured">
-                      <div className="icon">
-                        <i className="fa-brands fa-whatsapp whatsapp"></i>
-                      </div>
-                      <div className="content">
-                        <span className="name">
-                          <label htmlFor="name">Store:</label>
-                          <div className="">ProCanes Store</div>
-                        </span>
-                        <div className="via_contact">
-                          <label htmlFor="via">Via Whatsapp:</label>
-                          <div className="contact_btn_social">
-                            <a
-                              className="whatsapp"
-                              href={`https://wa.me/${s.whatsapp}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <i className="fa-brands fa-whatsapp"></i> Whatsapp
-                            </a>
-                          </div>
+                    <div className="content">
+                      <span className="name">
+                        <label htmlFor="name">Store:</label>
+                        <div className="">{webname} store</div>
+                      </span>
+                      <div className="via_contact">
+                        <label htmlFor="via">Via Messenger:</label>
+                        <div className="contact_btn_social">
+                          <a
+                            className="messenger"
+                            href={`https://m.me/${messenger}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="fa-brands fa-facebook-messenger"></i>{" "}
+                            Messenger
+                          </a>
                         </div>
                       </div>
                     </div>
                   </div>
-                ))}
+                  <div className="featured">
+                    <div className="icon">
+                      <i className="fa-brands fa-whatsapp whatsapp"></i>
+                    </div>
+                    <div className="content">
+                      <span className="name">
+                        <label htmlFor="name">Store:</label>
+                        <div className="">{webname} Store</div>
+                      </span>
+                      <div className="via_contact">
+                        <label htmlFor="via">Via Whatsapp:</label>
+                        <div className="contact_btn_social">
+                          <a
+                            className="whatsapp"
+                            href={`https://wa.me/${whatsapp}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="fa-brands fa-whatsapp"></i> Whatsapp
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="contact_form_group">
                   <div className="form-group">
                     <label htmlFor="name">Name:</label>

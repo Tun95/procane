@@ -84,6 +84,14 @@ function Store() {
   };
   console.log(products);
 
+  // Scroll to the "Store Items" header when the pagination is clicked
+  const handlePaginationClick = (event, pageNumber) => {
+    const targetElement = document.getElementById("store-items");
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <>
       <section className="store background" id="store">
@@ -100,7 +108,7 @@ function Store() {
           />
 
           <div className="contentWidth">
-            <div className="heading ">
+            <div className="heading " id="store-items">
               <div className=" ">
                 <h2>Store Items</h2>
               </div>
@@ -131,6 +139,7 @@ function Store() {
                       component={Link}
                       to={`/store?page=${item.page}&query=${query}&category=${category}&color=${color}&size=${size}&price=${price}&brand=${brand}&order=${order}&discount=${discount}`}
                       {...item}
+                      onClick={(e) => handlePaginationClick(e, item.page)}
                     />
                   )}
                 />
