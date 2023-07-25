@@ -2157,7 +2157,7 @@ orderRouter.put(
             <td align="left">${item.keygen}</td>
             <td align="left">${item.size === "" ? "" : item.size}</td>
             <td align="center">${
-              item.color ? `<img src=${item.color} alt=""/>` : ""
+              item.color !== "" ? `<img src=${item.color} alt=""/>` : ""
             }</td>
             <td align="center">${item.quantity}</td>
             <td align="right">${convertedPrice}</td>
