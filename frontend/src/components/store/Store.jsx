@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import Filter from "./Filter";
 import Pagination from "@mui/material/Pagination";
 import PaginationItem from "@mui/material/PaginationItem";
@@ -92,6 +98,10 @@ function Store() {
     }
   };
 
+  //scroll
+  const storeItemsRef = useRef();
+  // Function to scroll to the "Store Items" section
+
   return (
     <>
       <section className="store background" id="store">
@@ -107,7 +117,7 @@ function Store() {
             getFilterUrl={getFilterUrl}
           />
 
-          <div className="contentWidth">
+          <div className="contentWidth" ref={storeItemsRef}>
             <div className="heading " id="store-items">
               <div className=" ">
                 <h2>Store Items</h2>

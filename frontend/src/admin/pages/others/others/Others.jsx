@@ -87,7 +87,7 @@ function OtherScreen() {
                 >
                   <Tab
                     className={value === 0 ? "activeTab" : "tab_sub"}
-                    label="Settings"
+                    label="General Settings"
                     {...a11yProps(0)}
                   />
                   <Tab

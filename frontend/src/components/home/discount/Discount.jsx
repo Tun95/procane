@@ -1,6 +1,6 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import DCard from "./DCard";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { request } from "../../../base url/BaseUrl";
 import { getError } from "../../utilities/util/Utils";
@@ -23,6 +23,7 @@ const reducer = (state, action) => {
   }
 };
 function Discount() {
+  const location = useLocation();
   const [{ loading, error, products }, dispatch] = useReducer(reducer, {
     products: [],
     loading: true,
@@ -43,6 +44,19 @@ function Discount() {
     fetchData();
   }, []);
 
+  //scroll
+  const storeItemsRef = useRef();
+  // Function to scroll to the "Store Items" section
+  const scrollToStoreItems = () => {
+    if (storeItemsRef.current) {
+      storeItemsRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  // Scroll to the "Store Items" section when the component mounts
+  useEffect(() => {
+    scrollToStoreItems();
+  }, []);
+
   return (
     <>
       <section className=" background newarrivals">
@@ -58,7 +72,15 @@ function Discount() {
                 <h2>Big Discount</h2>
               </div>
               <div className="heading-right row">
-                <Link to="/store?order=discount&discount=50">View all</Link>
+                <Link
+                  to={{
+                    pathname: "/store",
+                    search: `${location.search}&order=discount&discount=50`,
+                  }}
+                  onClick={() => scrollToStoreItems()}
+                >
+                  View all
+                </Link>
                 <i className="fa fa-caret-right"></i>
               </div>
             </div>
