@@ -250,7 +250,7 @@ function Payment(props) {
           type: "resetOptions",
           value: {
             "client-id": process.env.REACT_APP_PAYPAL_CLIENT_ID,
-            currency: toCurrency,
+            currency: toCurrency || "USD",
           },
         });
         paypalDispatch({ type: "setLoadingStatus", value: "pending" });

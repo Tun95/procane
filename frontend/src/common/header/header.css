@@ -51,10 +51,10 @@
 /*------search-----------*/
 .search {
   padding: 20px 0;
-  /* position: sticky;
+  position: sticky;
   top: 0px;
   z-index: 10000;
-  width: 100%; */
+  width: 100%;
 }
 .search_bar {
   /* top: 0;
