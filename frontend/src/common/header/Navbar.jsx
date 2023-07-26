@@ -86,33 +86,35 @@ function Navbar() {
         <div className="container d_flex">
           <div className="categories ">
             <div className="d_flex ctg_btn" onClick={handleClick}>
-              <FormatAlignLeftIcon className="align_left"/>
+              <FormatAlignLeftIcon className="align_left" />
               <h4>
                 Categories <i className="fa fa-chevron-down"></i>
               </h4>
             </div>
-            <StyledMenu
-              id="demo-customized-menu"
-              className="demo_customized_menu"
-              MenuListProps={{
-                "aria-labelledby": "demo-customized-button",
-              }}
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-            >
-              {categories?.map((c, index) => (
-                <MenuItem
-                  key={index}
-                  component={Link}
-                  to={`/store?category=${c.category}`}
-                  onClick={handleClose}
-                  disableRipple
-                >
-                  {c.category}
-                </MenuItem>
-              ))}
-            </StyledMenu>
+            {categories?.length > 0 ? (
+              <StyledMenu
+                id="demo-customized-menu"
+                className="demo_customized_menu"
+                MenuListProps={{
+                  "aria-labelledby": "demo-customized-button",
+                }}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+              >
+                {categories?.map((c, index) => (
+                  <MenuItem
+                    key={index}
+                    component={Link}
+                    to={`/store?category=${c.category}`}
+                    onClick={handleClose}
+                    disableRipple
+                  >
+                    {c.category}
+                  </MenuItem>
+                ))}
+              </StyledMenu>
+            ) : null}
           </div>
           <div className="navlink">
             <ul className="link f_flex capitalize">
