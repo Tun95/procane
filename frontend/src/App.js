@@ -1,8 +1,16 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, lazy, Suspense } from "react";
+import ReactGA from "react-ga4";
 import "./theme style/dark.scss";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en.json";
+import ru from "javascript-time-ago/locale/ru.json";
 import MessengerCustomerChat from "react-messenger-customer-chat";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import LoadingOverlayComponent from "./components/utilities/message loading/OverlayLoading";
+
 import Header from "./common/header/Header";
 import HomeScreen from "./screens/homescreen/HomeScreen";
 import Cart from "./common/cart/Cart";
@@ -29,9 +37,7 @@ import PrivacyScreen from "./screens/aboutscreen/privacyscreen/PrivacyScreen";
 import TermScreen from "./screens/aboutscreen/termscreen/TermScreen";
 import ScrollToTop from "./components/utilities/scroll to top/ScrollToTop";
 import { Context } from "./context/Context";
-// import MessengerCustomerChat from "react-messenger-customer-chat";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 import {
   Brand,
   Category,
@@ -41,10 +47,7 @@ import {
 } from "./admin/pages/new/filters/CreateFilters";
 import ProtectedRoute from "./components/utilities/protectedRoute/ProtectedRoute";
 import AdminRoute from "./components/utilities/protectedRoute/AdminRoute";
-import TimeAgo from "javascript-time-ago";
 
-import en from "javascript-time-ago/locale/en.json";
-import ru from "javascript-time-ago/locale/ru.json";
 import {
   BrandUpdate,
   CategoryUpdate,
@@ -76,8 +79,7 @@ import Settings from "./admin/pages/single/settings/Settings";
 import VendorScreen from "./screens/formscreens/vendorscreen/VendorScreen";
 import Application from "./admin/pages/single/application detail/Application";
 import TrackScreen from "./screens/orderscreen/trackscreen/TrackScreen";
-import ReactGA from "react-ga4";
-import LoadingOverlayComponent from "./components/utilities/message loading/OverlayLoading";
+
 import NotFoundScreen from "./components/utilities/404 error/PageNotFound";
 import ThemeFaqScreen from "./screens/aboutscreen/faqscreen/ThemeFaqScreen";
 import SellerProductEdit from "./seller/pages/edit/SellerProductEdit";
