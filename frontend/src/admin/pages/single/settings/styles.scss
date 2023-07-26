@@ -35,6 +35,14 @@
         .d_flex {
           gap: 10px;
         }
+        .logo_image {
+          .logo {
+            width: 32px;
+            height: 32px;
+            margin-right: 5px;
+            object-fit: contain;
+          }
+        }
         .flex_row {
           display: flex;
           flex-direction: column;

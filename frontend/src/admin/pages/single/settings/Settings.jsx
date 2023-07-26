@@ -87,6 +87,7 @@ function Settings() {
   const [webname, setWebname] = useState("");
   const [storeAddress, setStoreAddress] = useState("");
   const [logo, setLogo] = useState("");
+  const [faviconUrl, setFaviconUrl] = useState("");
   const [shortDesc, setShortDesc] = useState("");
   const [buyInfo, setBuyInfo] = useState("");
   const [bulk, setBulk] = useState("");
@@ -138,6 +139,7 @@ function Settings() {
         setWebname(data.webname);
         setStoreAddress(data.storeAddress);
         setLogo(data.logo);
+        setFaviconUrl(data.faviconUrl);
         setBuyInfo(data.buyInfo);
         setBulk(data.bulk);
         setCareers(data.careers);
@@ -196,10 +198,13 @@ function Settings() {
           playstore,
           whatsapp,
           appstore,
+
           webname,
           storeAddress,
           shortDesc,
           logo,
+          faviconUrl,
+
           buyInfo,
           bulk,
           careers,
@@ -224,7 +229,7 @@ function Settings() {
     }
   };
 
-  //BANNER BACKGROUND
+  //LOGO UPLOAD
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
     const bodyFormData = new FormData();
@@ -247,6 +252,31 @@ function Settings() {
       dispatch({ type: "UPLOAD_FAIL" });
     }
   };
+
+  //FAVICON UPLOAD
+  const uploadFavHandler = async (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+    try {
+      dispatch({ type: "UPLOAD_REQUEST" });
+      const { data } = await axios.post(`${request}/api/upload`, bodyFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          authorization: `Bearer ${userInfo.token}`,
+        },
+      });
+      dispatch({ type: "UPLOAD_SUCCESS" });
+      toast.success("Image uploaded successfully", {
+        position: "bottom-center",
+      });
+      setFaviconUrl(data.secure_url);
+    } catch (err) {
+      toast.error(getError(err), { position: "bottom-center" });
+      dispatch({ type: "UPLOAD_FAIL" });
+    }
+  };
+
   return (
     <div className="mtb">
       <Helmet>
@@ -685,6 +715,30 @@ function Settings() {
                           </div>
                           <div className="lower_group">
                             <h3>Your Store Info here:</h3>
+                            <div className="logo_image">
+                              <small>favicon:</small>
+                              <div className="a_flex">
+                                <img
+                                  src={faviconUrl}
+                                  alt="store logo"
+                                  className="logo"
+                                />
+                                <span>
+                                  <label htmlFor="file">
+                                    <PublishIcon
+                                      className="userUpdateIcon upload-btn"
+                                      onChange={uploadFavHandler}
+                                    />
+                                  </label>
+                                  <input
+                                    onChange={uploadFavHandler}
+                                    type="file"
+                                    id="file"
+                                    style={{ display: "none" }}
+                                  />
+                                </span>
+                              </div>
+                            </div>
                             <small>Your Store name here:</small>
                             <input
                               value={webname}

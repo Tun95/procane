@@ -95,15 +95,20 @@ TimeAgo.addLocale(ru);
 function App() {
   const { darkMode, state } = useContext(Context);
   const { settings } = state;
-  const { messengerAppId, messengerPageId } =
+  const { messengerAppId, messengerPageId, faviconUrl } =
     (settings &&
       settings
         .map((s) => ({
           messengerAppId: s.messengerAppId,
           messengerPageId: s.messengerPageId,
+          faviconUrl: s.faviconUrl,
         }))
         .find(() => true)) ||
     {};
+  useEffect(() => {
+    // Set the favicon URL on the window object
+    window.faviconUrl = faviconUrl;
+  }, [faviconUrl]);
 
   ReactGA.initialize(process.env.REACT_APP_GOOGLE_TRACKING, {
     debug: true,

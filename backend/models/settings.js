@@ -88,6 +88,11 @@ const settingsSchema = new mongoose.Schema(
       default:
         "https://res.cloudinary.com/dstj5eqcd/image/upload/v1673724164/banner2_l71yuh.png",
     },
+    faviconUrl: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/dstj5eqcd/image/upload/v1690409970/favicon_eoasre.png",
+    },
     buyInfo: {
       type: String,
       default: "How to buy",

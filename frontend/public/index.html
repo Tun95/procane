@@ -9,6 +9,7 @@
       name="description"
       content="Web site created using create-react-app"
     />
+
     <script src="https://www.paypal.com/sdk/js?client-id=%REACT_APP_PAYPAL_CLIENT_ID%"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
@@ -26,6 +27,12 @@
     <title>ProCanes</title>
   </head>
   <body>
+    <script>
+      var faviconUrl = window.faviconUrl || "%PUBLIC_URL%/favicon.png";
+      // Update the favicon link tag
+      document.querySelector("link[rel='icon']").href = faviconUrl;
+      
+    </script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
   </body>
