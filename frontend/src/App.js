@@ -1,6 +1,6 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useContext, useEffect, lazy, Suspense } from "react";
+import { useContext, useEffect } from "react";
 import ReactGA from "react-ga4";
 import "./theme style/dark.scss";
 import TimeAgo from "javascript-time-ago";
