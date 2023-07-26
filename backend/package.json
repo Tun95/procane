@@ -32,6 +32,7 @@
     "passport-facebook": "^3.0.0",
     "passport-google-oauth": "^2.0.0",
     "passport-google-oauth20": "^2.0.0",
+    "paypal-rest-sdk": "^1.8.1",
     "razorpay": "^2.9.0",
     "shippo": "^1.7.1",
     "socket.io": "^4.5.2",

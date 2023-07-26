@@ -1,5 +1,6 @@
 import express from "express";
 import Product from "../models/productModels.js";
+import mongoose from "mongoose";
 import expressAsyncHandler from "express-async-handler";
 import { isAdmin, isAuth, isSellerOrAdmin } from "../utils.js";
 
@@ -176,6 +177,49 @@ productRouter.delete(
   })
 );
 
+//===========================
+// SALE PERFORMANCE
+//===========================
+productRouter.get(
+  "/sales-performance/:id",
+  expressAsyncHandler(async (req, res) => {
+    const productId = req.params.id;
+
+    try {
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+      const salesPerformance = await Product.aggregate([
+        // Match the specific product by its ID and createdAt greater than or equal to three days ago
+        {
+          $match: {
+            _id: mongoose.Types.ObjectId(productId),
+            createdAt: { $gte: threeDaysAgo },
+          },
+        },
+        // Group by date in the specified format and sum up the numSales for each date
+        {
+          $group: {
+            _id: {
+              $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+            },
+            totalSales: { $sum: "$numSales" }, // Sum up the numSales for each date
+          },
+        },
+        // Sort the results by date in ascending order
+        { $sort: { _id: 1 } },
+      ]);
+
+      res.status(200).json(salesPerformance);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        message: "An error occurred while fetching sales performance",
+      });
+    }
+  })
+);
+
 //PRODUCT REVIEW
 productRouter.post(
   "/:id/reviews",
@@ -288,9 +332,7 @@ productRouter.get(
 
     //const sellerFilter = seller ? { seller } : {};
     const sellerFilter = seller && seller !== "all" ? { seller } : {};
-    const products = await Product.find({
-      
-    })
+    const products = await Product.find({})
       .populate(
         "seller",
         "seller.name seller.logo seller.rating seller.numReviews"
@@ -346,7 +388,7 @@ productRouter.get(
       category && category !== "all"
         ? { category: { $in: category.split(",") } }
         : {};
-    
+
     const sizeFilter =
       size && size !== "all" ? { size: { $in: size.split(",") } } : {};
     const colorFilter =
@@ -407,7 +449,7 @@ productRouter.get(
     const filters = {
       ...queryFilter,
       ...categoryFilter,
-      
+
       ...colorFilter,
       ...sizeFilter,
       ...brandFilter,
@@ -434,7 +476,6 @@ productRouter.get(
     console.log(discountFilter); // Check the discount filter object
   })
 );
-
 
 //TEST
 productRouter.get(

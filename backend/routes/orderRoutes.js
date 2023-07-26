@@ -321,6 +321,9 @@ orderRouter.get(
 //     }
 //   })
 // );
+function calculatePercentageChange(previousValue, currentValue) {
+  return ((currentValue - previousValue) / previousValue) * 100;
+}
 orderRouter.get(
   "/seller-summary",
   isAuth,
@@ -385,6 +388,22 @@ orderRouter.get(
           },
         },
       ]);
+
+      const earningsByMonth = await Order.aggregate([
+        // Match orders for the specific seller that are paid (isPaid: true)
+        {
+          $match: { seller: mongoose.Types.ObjectId(sellerId), isPaid: true },
+        },
+        // Group orders by year and month to calculate total earnings per month
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+            totalEarningsPerMonth: { $sum: "$grandTotal" },
+          },
+        },
+        // Sort by year and month to get the data in chronological order
+        { $sort: { _id: 1 } },
+      ]);
       // const totalOrders = await Order.aggregate([
       //   // Match orders for the specific seller that are paid (isPaid: true)
       //   {
@@ -448,6 +467,22 @@ orderRouter.get(
       ]);
 
       // Merge all the results into the final seller summary object
+      // Calculate the percentage change for each pair of consecutive months
+      const monthlyPercentageChanges = [];
+      for (let i = 1; i < earningsByMonth.length; i++) {
+        const previousEarnings = earningsByMonth[i - 1].totalEarningsPerMonth;
+        const currentEarnings = earningsByMonth[i].totalEarningsPerMonth;
+        const percentageChange = calculatePercentageChange(
+          previousEarnings,
+          currentEarnings
+        );
+        monthlyPercentageChanges.push({
+          month: earningsByMonth[i]._id,
+          percentageChange,
+        });
+      }
+
+      // Merge all the results into the final seller summary object
       const sellerSummary = {
         last10DaysEarnings,
         earningsPerDay,
@@ -456,6 +491,7 @@ orderRouter.get(
           grandTotalEarnings.length > 0
             ? grandTotalEarnings[0].grandTotalEarnings
             : 0,
+        monthlyPercentageChanges,
       };
 
       if (
@@ -468,6 +504,7 @@ orderRouter.get(
         res.status(404).json({ message: "Seller data not found" });
       }
     } catch (err) {
+      console.error(err);
       res
         .status(500)
         .json({ message: "An error occurred while fetching seller summary" });

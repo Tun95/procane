@@ -33,7 +33,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 function Details({ product, dispatch }) {
   const smallSettings = {
     dots: false,
-    infinite: true,
+    infinite: false,
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
