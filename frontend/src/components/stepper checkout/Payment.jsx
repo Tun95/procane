@@ -905,17 +905,11 @@ function Payment(props) {
                         {openPaypalModal && (
                           <div className="paypal-details">
                             <div className="paypal-btn">
-                              {toCurrency === "USD" ||
-                              toCurrency === "EUR" ||
-                              toCurrency === "GBP" ? (
-                                <PayPalButtons
-                                  createOrder={createOrder}
-                                  onApprove={onApprove}
-                                  onError={onError}
-                                ></PayPalButtons>
-                              ) : (
-                                ""
-                              )}
+                              <PayPalButtons
+                                createOrder={createOrder}
+                                onApprove={onApprove}
+                                onError={onError}
+                              ></PayPalButtons>
                             </div>
                           </div>
                         )}
