@@ -10,13 +10,15 @@ import Banners from "../../list/banner/Banners";
 import Category from "../../list/fiters/category/Category";
 import Brands from "../../list/fiters/brand/Brand";
 import Colors from "../../list/fiters/color/Colors";
-import Prices from "../../list/fiters/price/Prices";
 import Sizes from "../../list/fiters/size/Sizes";
-import Settings from "../../single/settings/Settings";
 import SettingsScreen from "../settings/SettingsScreen";
 import Subscribers from "../../single/subcribers/Subscribers";
 import Applicants from "../../list/applicants/Aplicants";
 import { Helmet } from "react-helmet-async";
+import { useMediaQuery, useTheme } from "@mui/material";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ShowRoom from "../../single/show room/ShowRoom";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,8 +56,27 @@ function OtherScreen() {
   // ==== TAB ===//
   const [value, setValue] = React.useState(0);
 
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const handleScrollLeft = () => {
+    const tabsWrapper = document.querySelector(".MuiTabs-scroller");
+    if (tabsWrapper) {
+      // You can customize the scroll distance as needed
+      tabsWrapper.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const handleScrollRight = () => {
+    const tabsWrapper = document.querySelector(".MuiTabs-scroller");
+    if (tabsWrapper) {
+      // You can customize the scroll distance as needed
+      tabsWrapper.scrollBy({ left: 200, behavior: "smooth" });
+    }
   };
 
   return (
@@ -78,8 +99,21 @@ function OtherScreen() {
                 <Tabs
                   value={value}
                   onChange={handleChange}
-                  variant="fullWidth"
-                  scrollButtons="auto"
+                  variant={isSmallScreen ? "scrollable" : "fullWidth"}
+                  ScrollButtonComponent={({ direction }) =>
+                    direction === "left" ? (
+                      <ChevronLeftIcon
+                        onClick={handleScrollLeft}
+                        className="chevron"
+                      />
+                    ) : (
+                      <ChevronRightIcon
+                        onClick={handleScrollRight}
+                        className="chevron"
+                      />
+                    )
+                  }
+                  className="customTabs"
                   TabIndicatorProps={{
                     className: "customTabIndicator", // Apply the custom class to the TabIndicator
                   }}
@@ -125,6 +159,11 @@ function OtherScreen() {
                     label="Applicants"
                     {...a11yProps(7)}
                   />
+                  <Tab
+                    className={value === 8 ? "activeTab" : "tab_sub"}
+                    label="Show Room"
+                    {...a11yProps(8)}
+                  />
                 </Tabs>
               </Box>
               <TabPanel value={value} index={0}>
@@ -150,6 +189,9 @@ function OtherScreen() {
               </TabPanel>
               <TabPanel value={value} index={7}>
                 <Applicants />
+              </TabPanel>
+              <TabPanel value={value} index={8}>
+                <ShowRoom />
               </TabPanel>
             </Box>
           </div>

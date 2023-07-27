@@ -25,6 +25,7 @@ import cartRoutes from "./routes/cartRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
 import passport from "passport";
 import session from "express-session";
+import showRoutes from "./routes/showroomRoutes.js";
 
 dotenv.config();
 
@@ -125,6 +126,7 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/checkout", stripeRouter);
 app.use("/api/apply", applicationRoutes);
+app.use("/api/showroom", showRoutes);
 
 const _dirname = path.resolve();
 app.use(express.static(path.join(_dirname, "/frontend/build")));

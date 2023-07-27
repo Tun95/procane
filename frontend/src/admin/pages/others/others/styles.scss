@@ -1,4 +1,9 @@
 .settings {
+  .chevron {
+    position: relative;
+    top: 12px;
+    cursor: pointer;
+  }
   .customTabIndicator {
     // background-color: var(--color-primary);
   }
