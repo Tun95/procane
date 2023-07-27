@@ -31,6 +31,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
+import WorkIcon from "@mui/icons-material/Work";
 
 function SideBar() {
   const { state: states, dispatch: ctxDispatch } = useContext(Context);
@@ -118,9 +119,14 @@ function SideBar() {
       to: userWishLink,
     },
     {
+      text: "Orders",
+      icon: <WorkIcon style={{ fill: "black" }} />,
+      to: "/track-order",
+    },
+    {
       text: "Track Orders",
       icon: <PlaceIcon style={{ fill: "black" }} />,
-      to: "/track-order",
+      to: "/track-shipment",
     },
   ];
   const adminItemList = [
