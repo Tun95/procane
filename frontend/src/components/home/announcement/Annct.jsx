@@ -6,6 +6,8 @@ import { Bounce } from "react-awesome-reveal";
 import { request } from "../../../base url/BaseUrl";
 import axios from "axios";
 import { getError } from "../../utilities/util/Utils";
+import MessageBox from "../../utilities/message loading/MessageBox";
+import LoadingBox from "../../utilities/message loading/LoadingBox";
 
 function typeWriterEffect(element, text, speed) {
   let i = 0;
@@ -77,12 +79,20 @@ function Annct() {
 
   // Check if the data is still loading
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <LoadingBox />
+      </div>
+    );
   }
 
   // Check for errors during data fetching
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div>
+        <MessageBox>{error}</MessageBox>
+      </div>
+    );
   }
 
   // Check if there are no showRooms data

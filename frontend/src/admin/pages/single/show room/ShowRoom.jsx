@@ -266,7 +266,7 @@ const ShowRoom = () => {
                   types={fileTypes}
                 />
                 <small className="image-size-info">
-                  Recommended size: [your recommended size for small image]
+                  Recommended size: 224x224
                 </small>
               </div>
               <div>
