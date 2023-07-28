@@ -184,13 +184,13 @@ function LoginScreen() {
         <span className="l_flex or">OR</span>
         <div>
           {/* Google sign-up button */}
-          <GoogleLogin
+          {/* <GoogleLogin
             // clientId=""
             buttonText="Login with Google"
             onSuccess={handleGoogleLoginSuccess}
             onFailure={handleGoogleLoginFailure}
             cookiePolicy={"single_host_origin"}
-          />
+          /> */}
 
           {/* Facebook sign-up button */}
           {/* <FacebookLogin
