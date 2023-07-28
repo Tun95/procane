@@ -35,17 +35,10 @@ const ShowRoom = () => {
   const { state } = useContext(Context);
   const { userInfo } = state;
 
-  const [{ loading, error, loadingUpdate, user }, dispatch] = useReducer(
-    reducer,
-    {
-      user: [],
-      loading: true,
-      error: "",
-    }
-  );
-
-  // State to hold the uploaded image URL
-  const [image, setImage] = useState("");
+  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
+    loading: true,
+    error: "",
+  });
 
   const [singleData, setSingleData] = useState({
     smallImage: "",
@@ -112,13 +105,6 @@ const ShowRoom = () => {
     }));
   };
 
-  const handleLargeImageChange = (file) => {
-    setSingleData((prevData) => ({
-      ...prevData,
-      largeImage: file,
-    }));
-  };
-
   const handleNewTextChange = (e) => {
     setNewText(e.target.value);
   };
@@ -182,7 +168,10 @@ const ShowRoom = () => {
       toast.success("Image uploaded successfully", {
         position: "bottom-center",
       });
-      setImage(data.secure_url);
+      setSingleData((prevData) => ({
+        ...prevData,
+        largeImage: data.secure_url, // Set the small image URL in the singleData state
+      }));
     } catch (err) {
       dispatch({ type: "UPLOAD_FAIL" });
       toast.error(getError(err), { position: "bottom-center" });
@@ -238,8 +227,6 @@ const ShowRoom = () => {
                 />
                 <FileUploader
                   handleChange={(file) => {
-                    // Call handleLargeImageChange for local state update
-                    handleLargeImageChange(URL.createObjectURL(file));
                     // Call uploadFileHandler to upload the image and set the URL
                     uploadFileHandler({ target: { files: [file] } });
                   }}

@@ -724,7 +724,7 @@ function Settings() {
                                   className="logo"
                                 />
                                 <span>
-                                  <label htmlFor="file">
+                                  <label htmlFor="favicon">
                                     <PublishIcon
                                       className="userUpdateIcon upload-btn"
                                       onChange={uploadFavHandler}
@@ -732,8 +732,8 @@ function Settings() {
                                   </label>
                                   <input
                                     onChange={uploadFavHandler}
-                                    type="file"
-                                    id="file"
+                                    type="favicon"
+                                    id="favicon"
                                     style={{ display: "none" }}
                                   />
                                 </span>
@@ -766,7 +766,6 @@ function Settings() {
                               className="about_store"
                               value={shortDesc}
                               onChange={(e) => setShortDesc(e.target.value)}
-                              maxLength={30}
                               placeholder="short store description..."
                             ></textarea>
                           </div>
