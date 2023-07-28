@@ -67,14 +67,20 @@ app.use((req, res, next) => {
   next();
 });
 
+//VERCEL ERROR
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//VERCEL ERROR
 app.get("/", (req, res) => {
-  res.render("index", { title: "My Website" });
+  const data = {
+    title: "My Website",
+    name: "John", // Replace 'John' with the actual name you want to display
+  };
+  res.render("index", data);
 });
 
 const paypalClientId = process.env.PAYPAL_CLIENT_ID || "sb";
