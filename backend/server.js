@@ -24,7 +24,6 @@ import colorRoutes from "./routes/colorRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
 import passport from "passport";
-import session from "express-session";
 import showRoutes from "./routes/showroomRoutes.js";
 
 dotenv.config();
@@ -45,33 +44,7 @@ if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
-// if (process.env.NODE_ENV === "production") {
-//   const path = require("path");
-//   app.use(express.static(path.resolve(__dirname, "frontend", "build")));
-//   app.get("*", (req, res) => {
-//     res.sendFile(
-//       path.resolve(__dirname, "frontend", "build", "index.html"),
-//       function (err) {
-//         if (err) {
-//           res.status(500).send(err);
-//         }
-//       }
-//     );
-//   });
-// }
-
-//Cookies section
-app.use(
-  session({
-    secret: "somethingsecretgoeshere",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }, // Set secure to false for local development
-  })
-);
-
 app.use(passport.initialize());
-app.use(passport.session());
 
 app.use(
   cors({

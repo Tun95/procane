@@ -79,17 +79,23 @@ userRouter.post(
     });
   })
 );
+
+//============
+//GOOGLE LOGIN
+//============
 userRouter.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
-
 userRouter.get(
-  "/google/callback",
+  "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    // Redirect or handle successful authentication
-    res.redirect("/"); // Example: Redirect to the homepage
+    // Generate the JWT token using the user object obtained from the authentication process
+    const token = generateToken(req.user);
+
+    // Redirect or send the token to the client (you may choose a different approach based on your application's design)
+    res.redirect(`/dashboard?token=${token}`);
   }
 );
 

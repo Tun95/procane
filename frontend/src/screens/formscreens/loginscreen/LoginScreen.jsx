@@ -13,6 +13,7 @@ import { Context } from "../../../context/Context";
 import { getError } from "../../../components/utilities/util/Utils";
 import { request } from "../../../base url/BaseUrl";
 import { Helmet } from "react-helmet-async";
+import { GoogleLogin } from "@react-oauth/google";
 
 function LoginScreen() {
   const { state, dispatch: ctxDispatch } = useContext(Context);
@@ -66,6 +67,40 @@ function LoginScreen() {
       actions.resetForm();
     }, 1000);
   };
+
+  //============
+  //GOOGLE LOGIN
+  //============
+  const handleGoogleLoginSuccess = (response) => {
+    // Send the Google access token to your backend for validation
+    // Here, you can use an API endpoint to handle the communication with your backend
+    fetch(`${request}/api/users/auth/google`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${response.accessToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        // Data returned from the backend (including JWT token)
+        console.log(data);
+
+        // Save the token to localStorage or handle it securely based on your needs
+        localStorage.setItem("userInfo", JSON.stringify(data.token));
+
+        // Redirect the user to the dashboard or any other protected route
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Error during Google login:", error);
+      });
+  };
+
+  const handleGoogleLoginFailure = (error) => {
+    console.log("Google login failed:", error);
+  };
+
   useEffect(() => {
     if (userInfo) {
       navigate(redirect);
@@ -142,18 +177,44 @@ function LoginScreen() {
                     Login
                   </button>
                 </div>
-                <div className="form-lower-text">
-                  <p className="forgot-password">
-                    <Link to="/forgot-password"> Forgot Password?</Link>
-                  </p>
-                  <span>
-                    <Link to="/register">Have an account</Link>
-                  </span>
-                </div>
               </div>
             </Form>
           )}
         </Formik>
+        <span className="l_flex or">OR</span>
+        <div>
+          {/* Google sign-up button */}
+          <GoogleLogin
+            // clientId=""
+            buttonText="Login with Google"
+            onSuccess={handleGoogleLoginSuccess}
+            onFailure={handleGoogleLoginFailure}
+            cookiePolicy={"single_host_origin"}
+          />
+
+          {/* Facebook sign-up button */}
+          {/* <FacebookLogin
+            appId="6222862251176447"
+            callback={handleFacebookSignUp}
+            onFailure={(error) => console.log("Facebook sign-up failed", error)}
+            render={(renderProps) => (
+              <button
+                onClick={renderProps.onClick}
+                className="facebook-login-button mt"
+              >
+                Sign up with Facebook
+              </button>
+            )}
+          /> */}
+          <div className="form-lower-text">
+            <p className="forgot-password">
+              <Link to="/forgot-password"> Forgot Password?</Link>
+            </p>
+            <span>
+              <Link to="/register">Have an account</Link>
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );

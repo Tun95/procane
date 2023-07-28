@@ -15,7 +15,7 @@ root.render(
       <ContextProvider>
         <I18nextProvider i18next={i18next}>
           <GoogleOAuthProvider
-            clientId={`408401850346-97mfn7e1q7f698pn7in837hha576nleb.apps.googleusercontent.com`}
+            clientId={`408401850346-l9a84d4637fd1f5g4c6kbvrf30kehg85.apps.googleusercontent.com`}
           >
             <PayPalScriptProvider
               deferLoading={true}
