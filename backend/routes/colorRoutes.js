@@ -26,6 +26,7 @@ colorRoutes.post(
   })
 );
 
+//=========
 //Fetch all
 colorRoutes.get(
   "/",
