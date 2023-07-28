@@ -28,6 +28,7 @@ colorRoutes.post(
 
 //=========
 //Fetch all
+//=========
 colorRoutes.get(
   "/",
   expressAsyncHandler(async (req, res) => {
