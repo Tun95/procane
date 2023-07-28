@@ -510,10 +510,10 @@ function App() {
             {/* SELLER ROUTES */}
           </Routes>
 
-          {/* <MessengerCustomerChat
+          <MessengerCustomerChat
             pageId={messengerPageId}
             appId={messengerAppId}
-          /> */}
+          />
           <Footer />
         </LoadingOverlayComponent>
       </Router>
