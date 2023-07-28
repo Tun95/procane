@@ -6,7 +6,9 @@ import { isAdmin, isAuth } from "../utils.js";
 
 const colorRoutes = express.Router();
 
+//======
 //create
+//======
 colorRoutes.post(
   "/",
   isAuth,
