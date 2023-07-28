@@ -1041,25 +1041,25 @@ orderRouter.post(
             throw new Error("Failed to convert currency");
           }
         }
-        const convertPrice = async (price, toCurrency) => {
-          try {
-            const convertedPrice = await convertCurrency(
-              price,
-              order.currencySign,
-              toCurrency
-            );
-            const formattedPrice = new Intl.NumberFormat("en", {
-              style: "currency",
-              currency: toCurrency,
-            }).format(convertedPrice);
-            return `${formattedPrice}`;
-          } catch (error) {
-            console.log(error);
-            throw new Error("Failed to convert price");
-          }
-        };
+       const convertPrice = async (price, toCurrency) => {
+         try {
+           const convertedPrice = await convertCurrency(
+             price,
+             order.currencySign,
+             toCurrency
+           );
+           const formattedPrice = new Intl.NumberFormat("en", {
+             style: "currency",
+             currency: toCurrency,
+           }).format(convertedPrice);
+           return `${formattedPrice}`;
+         } catch (error) {
+           console.log(error);
+           throw new Error("Failed to convert price");
+         }
+       };
 
-        const payOrderEmailTemplate = `<!DOCTYPE html>
+       const payOrderEmailTemplate = `<!DOCTYPE html>
 <html>
 <head>
   <style>
@@ -1108,8 +1108,8 @@ orderRouter.post(
   <p>Hello ${order.user.lastName} ${order.user.firstName},</p>
   <p>We have finished processing your order.</p>
   <h2>Order Tracking ID: ${order.trackingId} (${order.createdAt
-          .toString()
-          .substring(0, 10)})</h2>
+         .toString()
+         .substring(0, 10)})</h2>
   <table>
     <thead>
       <tr>
@@ -1125,7 +1125,7 @@ orderRouter.post(
        ${await Promise.all(
          order.orderItems.map(async (item) => {
            let convertedPrice = "";
-           if (order.currencySign !== currency) {
+           if (order.currencySign !== currencyStripe) {
              convertedPrice = await convertPrice(
                item.price.toFixed(2),
                order.currencySign
@@ -1137,7 +1137,7 @@ orderRouter.post(
             <td align="left">${item.keygen}</td>
             <td align="left">${item.size === "" ? "" : item.size}</td>
             <td align="center">${
-              item.color ? `<img src=${item.color} alt=""/>` : ""
+              item.color !== "" ? `<img src=${item.color} alt=""/>` : ""
             }</td>
             <td align="center">${item.quantity}</td>
             <td align="right">${convertedPrice}</td>
