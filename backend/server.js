@@ -67,8 +67,15 @@ app.use((req, res, next) => {
   next();
 });
 
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get("/", (req, res) => {
+  res.render("index", { title: "My Website" });
+});
 
 const paypalClientId = process.env.PAYPAL_CLIENT_ID || "sb";
 app.get("/", (req, res) => {
