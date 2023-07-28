@@ -181,7 +181,7 @@ function LoginScreen() {
             </Form>
           )}
         </Formik>
-        <span className="l_flex or">OR</span>
+        {/* <span className="l_flex or">OR</span> */}
         <div>
           {/* Google sign-up button */}
           {/* <GoogleLogin
