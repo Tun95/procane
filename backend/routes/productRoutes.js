@@ -575,9 +575,12 @@ productRouter.get(
   })
 );
 
+//=======================
 //PRODUCT DETAILS BY SLUG
+//=======================
 productRouter.get("/slug/:slug", async (req, res) => {
-  const product = await Product.findOne({ slug: req.params.slug }).populate(
+  const decodedSlug = decodeURIComponent(req.params.slug); // Decode the slug
+  const product = await Product.findOne({ slug: decodedSlug }).populate(
     "seller wish"
   );
   if (product) {
@@ -586,6 +589,17 @@ productRouter.get("/slug/:slug", async (req, res) => {
     res.status(404).send({ message: "Product Not Found" });
   }
 });
+// productRouter.get("/slug/:slug", async (req, res) => {
+//   const product = await Product.findOne({ slug: req.params.slug }).populate(
+//     "seller wish"
+//   );
+//   if (product) {
+//     res.send(product);
+//   } else {
+//     res.status(404).send({ message: "Product Not Found" });
+//   }
+// });
+
 
 //RELATED PRODUCT
 productRouter.get("/related/:id", async (req, res) => {
