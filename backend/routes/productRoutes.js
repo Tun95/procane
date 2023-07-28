@@ -589,24 +589,13 @@ productRouter.get("/slug/:slug", async (req, res) => {
     res.status(404).send({ message: "Product Not Found" });
   }
 });
-// productRouter.get("/slug/:slug", async (req, res) => {
-//   const product = await Product.findOne({ slug: req.params.slug }).populate(
-//     "seller wish"
-//   );
-//   if (product) {
-//     res.send(product);
-//   } else {
-//     res.status(404).send({ message: "Product Not Found" });
-//   }
-// });
-
 
 //RELATED PRODUCT
 productRouter.get("/related/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     const related = await Product.find({
-      _id: { $ne: product },
+      _id: { $ne: product._id }, // Use product._id instead of product
       category: product.category,
     })
       .limit(6)
@@ -618,6 +607,23 @@ productRouter.get("/related/:id", async (req, res) => {
     console.log(err);
   }
 });
+
+// productRouter.get("/related/:id", async (req, res) => {
+//   try {
+//     const product = await Product.findById(req.params.id);
+//     const related = await Product.find({
+//       _id: { $ne: product },
+//       category: product.category,
+//     })
+//       .limit(6)
+//       .populate("category", "name");
+
+//     console.log("RELATED PRODUCTS", related);
+//     res.json(related);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
 
 //PRODUCT DETAILS BY ID
 productRouter.get("/:id", async (req, res) => {

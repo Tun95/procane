@@ -25,7 +25,7 @@ const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
     seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    slug: { type: String, required: true },
+    slug: { type: String, required: true, unique: true },
     keygen: { type: String },
     category: [{ type: String }], // Updated to array type
     size: [{ type: String }], // Updated to array type
@@ -56,6 +56,15 @@ const productSchema = new mongoose.Schema(
     toObject: { virtuals: true }, // Enable virtuals to be included in toObject output
   }
 );
+
+// Create the slug before saving the product
+productSchema.pre("save", function (next) {
+  if (this.isNew || this.isModified("name")) {
+    // Replace spaces with hyphens in the name and convert to lowercase
+    this.slug = this.name.replace(/\s+/g, "-").toLowerCase();
+  }
+  next();
+});
 
 //Virtual method to populate created order
 productSchema.virtual("order", {
