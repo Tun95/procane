@@ -71,35 +71,35 @@ function LoginScreen() {
   //============
   //GOOGLE LOGIN
   //============
-  const handleGoogleLoginSuccess = (response) => {
-    // Send the Google access token to your backend for validation
-    // Here, you can use an API endpoint to handle the communication with your backend
-    fetch(`${request}/api/users/auth/google`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${response.accessToken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // Data returned from the backend (including JWT token)
-        console.log(data);
+  // const handleGoogleLoginSuccess = (response) => {
+  //   // Send the Google access token to your backend for validation
+  //   // Here, you can use an API endpoint to handle the communication with your backend
+  //   fetch(`${request}/api/users/auth/google`, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${response.accessToken}`,
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       // Data returned from the backend (including JWT token)
+  //       console.log(data);
 
-        // Save the token to localStorage or handle it securely based on your needs
-        localStorage.setItem("userInfo", JSON.stringify(data.token));
+  //       // Save the token to localStorage or handle it securely based on your needs
+  //       localStorage.setItem("userInfo", JSON.stringify(data.token));
 
-        // Redirect the user to the dashboard or any other protected route
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Error during Google login:", error);
-      });
-  };
+  //       // Redirect the user to the dashboard or any other protected route
+  //       navigate("/");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error during Google login:", error);
+  //     });
+  // };
 
-  const handleGoogleLoginFailure = (error) => {
-    console.log("Google login failed:", error);
-  };
+  // const handleGoogleLoginFailure = (error) => {
+  //   console.log("Google login failed:", error);
+  // };
 
   useEffect(() => {
     if (userInfo) {
