@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import Details from "../../components/productdetails/detail/Details";
 import ReviewDesc from "../../components/productdetails/review/ReviewDesc";
 import Related from "../../components/productdetails/related/Related";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { request } from "../../base url/BaseUrl";
 import axios from "axios";
 import { getError } from "../../components/utilities/util/Utils";
@@ -12,6 +12,17 @@ import "./styles.scss";
 import { Context } from "../../context/Context";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
+
+const initialState = {
+  products: [],
+  product: null,
+  loading: true,
+  error: "",
+  loadingCreateReview: false,
+  successCreate: false,
+  successDelete: false,
+  loadingDelete: false,
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -29,6 +40,8 @@ const reducer = (state, action) => {
     case "CREATE_SUCCESS":
       return { ...state, loadingCreateReview: false, successCreate: true };
     case "CREATE_FAIL":
+      return { ...state, loadingCreateReview: false, successCreate: false };
+    case "CREATE_RESET":
       return { ...state, loadingCreateReview: false, successCreate: false };
 
     case "FETCH_SIM_REQUEST":
@@ -51,54 +64,64 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
 function ProductDetailScreen({ productItems, onAdd }) {
   const params = useParams();
   const { slug } = params;
-  //Product Quantity
-  const [quantity, setQuantity] = useState(1);
-  //==========
-  //CONTEXT
-  //==========
-  const { state, dispatch: ctxDispatch } = useContext(Context);
+
+  const { state: cState, dispatch: ctxDispatch } = useContext(Context);
   const {
     cart: { cartItems },
     userInfo,
     settings,
-  } = state;
+  } = cState;
 
-  const [{ loading, error, products, product, successDelete }, dispatch] =
-    useReducer(reducer, {
-      products: [],
-      product: [],
-      loading: true,
-      error: "",
-    });
-  //=====================
-  //FETCH  PRODUCT
-  //=====================
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { loading, error, products, product, successDelete, successCreate } =
+    state;
+
+  const location = useLocation();
+
+  //=======================
+  // FETCH PRODUCT DETAILS
+  //=======================
   useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const affiliateCode = searchParams.get("affiliateCode");
+
     const fetchData = async () => {
-      dispatch({ type: "FETCH_REQUEST" });
       try {
-        const result = await axios.get(`${request}/api/products/slug/${slug}`);
+        const result = await axios.get(
+          `${request}/api/products/slug/${slug}${
+            affiliateCode ? `?affiliateCode=${affiliateCode}` : ""
+          }`
+        );
 
-        dispatch({ type: "FETCH_SUCCESS", payload: result.data });
-
+        if (result.data.product) {
+          dispatch({ type: "FETCH_SUCCESS", payload: result.data.product });
+        } else {
+          dispatch({ type: "FETCH_SUCCESS", payload: result.data });
+        }
         window.scrollTo(0, 0);
       } catch (error) {
-        dispatch({ type: "FETCH_FAIL", payload: getError(error) });
+        console.error("Error fetching product details:", error);
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: "Error fetching product details",
+        });
       }
     };
-    if (successDelete) {
+    if (successCreate || successDelete) {
+      dispatch({ type: "CREATE_RESET" });
       dispatch({ type: "DELETE_RESET" });
     } else {
       fetchData();
     }
-  }, [slug, successDelete]);
+  }, [slug, location.search, successDelete, successCreate]);
 
-  //=====================
-  //FETCH RELATED PRODUCTS
-  //=====================
+  //=======================
+  // FETCH RELATED PRODUCTS
+  //=======================
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -115,33 +138,38 @@ function ProductDetailScreen({ productItems, onAdd }) {
 
     fetchData();
   }, [product]);
-  console.log(products);
 
-  //==========
-  //ADD TO CART
-  //===========
+  //=======================
+  // ADD TO CART
+  //=======================
   const addToCartHandler = async () => {
-    const { data } = await axios.get(`${request}/api/products/${product._id}`);
+    try {
+      const { data } = await axios.get(
+        `${request}/api/products/${product._id}`
+      );
 
-    toast.success(`${product.name} is successfully added to cart`, {
-      position: "bottom-center",
-    });
+      toast.success(`${product.name} is successfully added to cart`, {
+        position: "bottom-center",
+      });
 
-    ctxDispatch({
-      type: "CART_ADD_ITEM",
-      payload: {
-        ...product,
-        seller: data.seller,
-        sellerName: product?.seller?.seller?.name,
-        category: product?.category,
-      },
-    });
-    localStorage.setItem("cartItems", JSON.stringify(state.cart.cartItems));
+      ctxDispatch({
+        type: "CART_ADD_ITEM",
+        payload: {
+          ...product,
+          seller: data.seller,
+          sellerName: product?.seller?.seller?.name,
+          category: product?.category,
+        },
+      });
+      localStorage.setItem("cartItems", JSON.stringify(state.cart.cartItems));
+    } catch (error) {
+      toast.error(getError(error), { position: "bottom-center" });
+    }
   };
 
-  //====================
-  //DELETE REVIEW
-  //====================
+  //=======================
+  // DELETE REVIEWS
+  //=======================
   const handleDelete = async (reviewId) => {
     try {
       dispatch({ type: "DELETE_REQUEST" });
@@ -153,15 +181,11 @@ function ProductDetailScreen({ productItems, onAdd }) {
       );
       dispatch({ type: "DELETE_SUCCESS" });
       if (response.status === 200) {
-        // Handle successful deletion
         toast.success("Review deleted successfully", {
           position: "bottom-center",
         });
-        // Perform additional actions, such as updating the UI or fetching updated data
-        // onDelete();
       }
     } catch (error) {
-      // Handle deletion error
       toast.error(getError(error), { position: "bottom-center" });
       dispatch({ type: "DELETE_FAIL" });
     }
@@ -184,6 +208,7 @@ function ProductDetailScreen({ productItems, onAdd }) {
               handleDelete={handleDelete}
               product={product}
               userInfo={userInfo}
+              dispatch={dispatch}
             />
             {products.length !== 0 ? (
               <Related

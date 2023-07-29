@@ -109,6 +109,45 @@ productRouter.post(
   })
 );
 
+//============================
+// AFFILIATE PRODUCTS APPROVAL
+//============================
+// Update product for affiliate promotion
+productRouter.patch(
+  "/affiliate/:id",
+  // isAuth,
+  // isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const productId = req.params.id;
+      const { affiliateEnabled, affiliateCommissionRate } = req.body;
+
+      // Find the product by ID
+      const product = await Product.findById(productId);
+
+      if (!product) {
+        res.status(404).json({ message: "Product not found" });
+        return;
+      }
+
+      // Update affiliate fields
+      product.affiliateEnabled = affiliateEnabled;
+      product.affiliateCommissionRate = affiliateCommissionRate;
+
+      // Save the updated product
+      const updatedProduct = await product.save();
+
+      res.json({
+        message: "Product updated for affiliate promotion",
+        product: updatedProduct,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  })
+);
+
 //=======================
 //SELLER'S PRODUCT CROSS CHECK
 //=======================
@@ -575,18 +614,33 @@ productRouter.get(
   })
 );
 
-//=======================
-//PRODUCT DETAILS BY SLUG
-//=======================
+// ===========================
+// PRODUCT DETAILS BY SLUG
+// ===========================
 productRouter.get("/slug/:slug", async (req, res) => {
   const decodedSlug = decodeURIComponent(req.params.slug); // Decode the slug
   const product = await Product.findOne({ slug: decodedSlug }).populate(
     "seller wish"
   );
-  if (product) {
-    res.send(product);
+
+  if (!product) {
+    return res.status(404).send({ message: "Product Not Found" });
+  }
+
+  if (req.query.affiliateCode) {
+    // If the request contains an affiliateCode, provide the affiliate link
+    const affiliateCode = req.query.affiliateCode;
+    const affiliateLink = `${
+      process.env.SUB_DOMAIN
+    }/product/${encodeURIComponent(
+      product.slug
+    )}?affiliateCode=${affiliateCode}`;
+
+    // Send the product details along with the affiliate link in the response
+    res.send({ product, affiliateLink });
   } else {
-    res.status(404).send({ message: "Product Not Found" });
+    // If no affiliateCode is provided, send only the product details
+    res.send(product);
   }
 });
 
@@ -610,26 +664,29 @@ productRouter.get("/related/:id", async (req, res) => {
   }
 });
 
-//===========================
-//AFFILIATE LINKS FOR PRODUCT
-//===========================
+// ===========================
+// AFFILIATE LINKS FOR PRODUCT
+// ===========================
 productRouter.get("/affiliate/:slug", async (req, res) => {
   try {
     const decodedSlug = decodeURIComponent(req.params.slug); // Decode the slug
-    const product = await Product.findOne({ slug: decodedSlug });
+    const product = await Product.findOne({ slug: decodedSlug }).populate(
+      "seller"
+    );
 
     if (!product) {
       return res.status(404).send({ message: "Product Not Found" });
     }
 
     const { affiliateCode } = req.query;
-    const affiliateLink = `${req.protocol}://${req.get(
-      "host"
-    )}/product/slug/${encodeURIComponent(
+    const affiliateLink = `${
+      process.env.SUB_DOMAIN
+    }/product/slug/${encodeURIComponent(
       product.slug
     )}?affiliateCode=${affiliateCode}`;
 
-    res.send({ affiliateLink });
+    // Send the product details along with the affiliate link in the response
+    res.send({ product, affiliateLink });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Internal server error" });

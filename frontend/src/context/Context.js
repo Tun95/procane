@@ -297,8 +297,16 @@ export function ContextProvider(props) {
   //==================
   //TEST FOR CONVERSION
   //==================
+  const { currency } =
+    (settings &&
+      settings
+        .map((s) => ({
+          currency: s.currency,
+        }))
+        .find(() => true)) ||
+    {};
   const [toCurrency, setToCurrency] = useState(
-    localStorage.getItem("toCurrency") || "USD"
+    localStorage.getItem("toCurrency") || currency
   );
   const [conversionRates, setConversionRates] = useState(null);
 
@@ -379,14 +387,7 @@ export function ContextProvider(props) {
       return Math.round(numericPrice); // Round to the nearest whole number
     }
   };
-  const { currency } =
-    (settings &&
-      settings
-        .map((s) => ({
-          currency: s.currency,
-        }))
-        .find(() => true)) ||
-    {};
+
   useEffect(() => {
     localStorage.setItem("toCurrency", toCurrency);
 
@@ -424,62 +425,6 @@ export function ContextProvider(props) {
 
     fetchCurrencies();
   }, []);
-
-  //==============
-  //ADD TO WISH LIST
-  //================
-  // const [checked, setChecked] = useState(false);
-  // const handleCheckboxSubmit = async (product) => {
-  //   if (!userInfo) {
-  //     toast.error("Please log in first", { position: "bottom-center" });
-  //   } else {
-  //     try {
-  //       const response = await axios.post(
-  //         `${request}/api/wishes/post`,
-  //         {
-  //           product: product._id,
-  //           name: product.name,
-  //           slug: product.slug,
-  //           image: product.image,
-  //           price: product.price,
-  //           rating: product.rating,
-  //           flashdeal: product.flashdeal,
-  //           discount: product.discount,
-  //           checked: !checked, // Toggle the checked state
-  //           // Add other wish details as needed
-  //         },
-  //         {
-  //           headers: { Authorization: `Bearer ${userInfo.token}` },
-  //         }
-  //       );
-  //       toast.success("Added to wish list successfully", {
-  //         position: "bottom-center",
-  //       });
-  //       setChecked(!checked); // Update the checked state
-  //       console.log(response.data); // Optional: Handle the response as needed
-  //     } catch (error) {
-  //       toast.error(getError(error), { position: "bottom-center" });
-  //       console.error(error);
-  //     }
-  //   }
-  // };
-  // useEffect(() => {
-  //   const checkProductInWishList = async (product) => {
-  //     if (!userInfo) return;
-  //     try {
-  //       const response = await axios.get(
-  //         `${request}/api/wishes/product/${product._id}`,
-  //         {
-  //           headers: { Authorization: `Bearer ${userInfo.token}` },
-  //         }
-  //       );
-  //       setChecked(response.data.exists); // Set the checked state based on the response
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-  //   checkProductInWishList();
-  // }, [userInfo]);
 
   const value = {
     state,

@@ -56,7 +56,7 @@ const StyledMenu = styled((props) => (
     },
   },
 }));
-function ReviewDesc({ product, userInfo, handleDelete }) {
+function ReviewDesc({ product, userInfo, handleDelete, dispatch }) {
   //=== Review ==//
   const [review, setReview] = useState(false);
   const closeReview = () => {
@@ -196,7 +196,7 @@ function ReviewDesc({ product, userInfo, handleDelete }) {
                   </div>
                 ))}
                 <div className="review-details">
-                  <ReviewBox product={product} />
+                  <ReviewBox product={product} dispatch={dispatch} />
                 </div>
               </>
             )}

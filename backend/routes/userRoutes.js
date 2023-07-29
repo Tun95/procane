@@ -38,6 +38,7 @@ userRouter.post(
         email: user.email,
         isAdmin: user.isAdmin,
         isSeller: user.isSeller,
+        isAffiliate: user.isAffiliate,
         isBlocked: user.isBlocked,
         isAccountVerified: user.isAccountVerified,
         token: generateToken(user),
@@ -73,6 +74,7 @@ userRouter.post(
       email: user.email,
       isAdmin: user.isAdmin,
       isSeller: user.isSeller,
+      isAffiliate: user.isAffiliate,
       isBlocked: user.isBlocked,
       isAccountVerified: user.isAccountVerified,
       token: generateToken(user),
@@ -124,7 +126,7 @@ userRouter.get(
 );
 
 //=============
-//FLASHDEAL FETCH
+//VENDORS FETCH
 //=============
 userRouter.get(
   "/sellers",
@@ -498,7 +500,9 @@ userRouter.put(
   })
 );
 
+//=================
 //ADMIN USER UPDATE
+//=================
 userRouter.put(
   "/:id",
   isAuth,
@@ -514,6 +518,7 @@ userRouter.put(
       user.image = req.body.image || user.image;
       user.isAdmin = Boolean(req.body.isAdmin);
       user.isSeller = Boolean(req.body.isSeller);
+      user.isAffiliate = Boolean(req.body.isAffiliate);
       user.isBlocked = Boolean(req.body.isBlocked);
       const updatedUser = await user.save();
       res.send({

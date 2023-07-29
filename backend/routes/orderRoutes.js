@@ -1138,18 +1138,28 @@ orderRouter.post(
             throw new Error("Failed to convert currency");
           }
         }
+
         const convertPrice = async (price, toCurrency) => {
           try {
-            const convertedPrice = await convertCurrency(
-              price,
-              order.currencySign,
-              toCurrency
-            );
-            const formattedPrice = new Intl.NumberFormat("en", {
-              style: "currency",
-              currency: toCurrency,
-            }).format(convertedPrice);
-            return `${formattedPrice}`;
+            if (order.currencySign !== toCurrency) {
+              const convertedPrice = await convertCurrency(
+                price,
+                order.currencySign,
+                toCurrency
+              );
+              const formatter = new Intl.NumberFormat("en", {
+                style: "currency",
+                currency: toCurrency,
+              });
+              return formatter.format(convertedPrice);
+            } else {
+              // If the currencies are the same, return the original price without conversion
+              const formatter = new Intl.NumberFormat("en", {
+                style: "currency",
+                currency: toCurrency,
+              });
+              return formatter.format(price);
+            }
           } catch (error) {
             console.log(error);
             throw new Error("Failed to convert price");
@@ -1222,7 +1232,7 @@ orderRouter.post(
        ${await Promise.all(
          order.orderItems.map(async (item) => {
            let convertedPrice = "";
-           if (order.currencySign !== currencyStripe) {
+           if (order.currencySign !== currency) {
              convertedPrice = await convertPrice(
                item.price.toFixed(2),
                order.currencySign
@@ -1237,7 +1247,11 @@ orderRouter.post(
               item.color !== "" ? `<img src=${item.color} alt=""/>` : ""
             }</td>
             <td align="center">${item.quantity}</td>
-            <td align="right">${convertedPrice}</td>
+            <td align="right">${
+              order.currencySign === currency
+                ? currency + " " + item.price.toFixed(2)
+                : convertedPrice
+            }</td>
           </tr>
         `;
          })
@@ -1246,19 +1260,35 @@ orderRouter.post(
     <tfoot>
     <tr class="total">
       <td colspan="2">Items Price:</td>
-      <td align="right">${convertedItemsPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedItemsPrice.toFixed(2)
+          : convertedItemsPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2">Tax Price:</td>
-      <td align="right">${convertedTaxPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedTaxPrice.toFixed(2)
+          : convertedTaxPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2">Shipping Price:</td>
-      <td align="right">${convertedShippingPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedShippingPrice.toFixed(2)
+          : convertedShippingPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2"><strong>Total Price:</strong></td>
-      <td align="right"><strong>${convertedGrandTotal}</strong></td>
+      <td align="right"><strong>${
+        order.currencySign === currency
+          ? currency + " " + convertedGrandTotal.toFixed(2)
+          : convertedGrandTotal
+      }</strong></td>
     </tr>
     <tr>
       <td colspan="2">Payment Method:</td>
@@ -1519,16 +1549,25 @@ orderRouter.post(
 
       const convertPrice = async (price, toCurrency) => {
         try {
-          const convertedPrice = await convertCurrency(
-            price,
-            order.currencySign,
-            toCurrency
-          );
-          const formattedPrice = new Intl.NumberFormat("en", {
-            style: "currency",
-            currency: toCurrency,
-          }).format(convertedPrice);
-          return `${formattedPrice}`;
+          if (order.currencySign !== toCurrency) {
+            const convertedPrice = await convertCurrency(
+              price,
+              order.currencySign,
+              toCurrency
+            );
+            const formatter = new Intl.NumberFormat("en", {
+              style: "currency",
+              currency: toCurrency,
+            });
+            return formatter.format(convertedPrice);
+          } else {
+            // If the currencies are the same, return the original price without conversion
+            const formatter = new Intl.NumberFormat("en", {
+              style: "currency",
+              currency: toCurrency,
+            });
+            return formatter.format(price);
+          }
         } catch (error) {
           console.log(error);
           throw new Error("Failed to convert price");
@@ -1613,10 +1652,14 @@ orderRouter.post(
             <td align="left">${item.keygen}</td>
             <td align="left">${item.size === "" ? "" : item.size}</td>
             <td align="center">${
-              item.color ? `<img src=${item.color} alt=""/>` : ""
+              item.color !== "" ? `<img src=${item.color} alt=""/>` : ""
             }</td>
             <td align="center">${item.quantity}</td>
-            <td align="right">${convertedPrice}</td>
+            <td align="right">${
+              order.currencySign === currency
+                ? currency + " " + item.price.toFixed(2)
+                : convertedPrice
+            }</td>
           </tr>
         `;
          })
@@ -1625,19 +1668,35 @@ orderRouter.post(
     <tfoot>
     <tr class="total">
       <td colspan="2">Items Price:</td>
-      <td align="right">${convertedItemsPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedItemsPrice.toFixed(2)
+          : convertedItemsPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2">Tax Price:</td>
-      <td align="right">${convertedTaxPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedTaxPrice.toFixed(2)
+          : convertedTaxPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2">Shipping Price:</td>
-      <td align="right">${convertedShippingPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedShippingPrice.toFixed(2)
+          : convertedShippingPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2"><strong>Total Price:</strong></td>
-      <td align="right"><strong>${convertedGrandTotal}</strong></td>
+      <td align="right"><strong>${
+        order.currencySign === currency
+          ? currency + " " + convertedGrandTotal.toFixed(2)
+          : convertedGrandTotal
+      }</strong></td>
     </tr>
     <tr>
       <td colspan="2">Payment Method:</td>
@@ -1897,16 +1956,25 @@ orderRouter.post(
 
       const convertPrice = async (price, toCurrency) => {
         try {
-          const convertedPrice = await convertCurrency(
-            price,
-            order.currencySign,
-            toCurrency
-          );
-          const formattedPrice = new Intl.NumberFormat("en", {
-            style: "currency",
-            currency: toCurrency,
-          }).format(convertedPrice);
-          return `${formattedPrice}`;
+          if (order.currencySign !== toCurrency) {
+            const convertedPrice = await convertCurrency(
+              price,
+              order.currencySign,
+              toCurrency
+            );
+            const formatter = new Intl.NumberFormat("en", {
+              style: "currency",
+              currency: toCurrency,
+            });
+            return formatter.format(convertedPrice);
+          } else {
+            // If the currencies are the same, return the original price without conversion
+            const formatter = new Intl.NumberFormat("en", {
+              style: "currency",
+              currency: toCurrency,
+            });
+            return formatter.format(price);
+          }
         } catch (error) {
           console.log(error);
           throw new Error("Failed to convert price");
@@ -1991,10 +2059,14 @@ orderRouter.post(
             <td align="left">${item.keygen}</td>
             <td align="left">${item.size === "" ? "" : item.size}</td>
             <td align="center">${
-              item.color ? `<img src=${item.color} alt=""/>` : ""
+              item.color !== "" ? `<img src=${item.color} alt=""/>` : ""
             }</td>
             <td align="center">${item.quantity}</td>
-            <td align="right">${convertedPrice}</td>
+            <td align="right">${
+              order.currencySign === currency
+                ? currency + " " + item.price.toFixed(2)
+                : convertedPrice
+            }</td>
           </tr>
         `;
          })
@@ -2003,19 +2075,35 @@ orderRouter.post(
     <tfoot>
     <tr class="total">
       <td colspan="2">Items Price:</td>
-      <td align="right">${convertedItemsPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedItemsPrice.toFixed(2)
+          : convertedItemsPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2">Tax Price:</td>
-      <td align="right">${convertedTaxPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedTaxPrice.toFixed(2)
+          : convertedTaxPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2">Shipping Price:</td>
-      <td align="right">${convertedShippingPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedShippingPrice.toFixed(2)
+          : convertedShippingPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2"><strong>Total Price:</strong></td>
-      <td align="right"><strong>${convertedGrandTotal}</strong></td>
+      <td align="right"><strong>${
+        order.currencySign === currency
+          ? currency + " " + convertedGrandTotal.toFixed(2)
+          : convertedGrandTotal
+      }</strong></td>
     </tr>
     <tr>
       <td colspan="2">Payment Method:</td>
@@ -2119,14 +2207,7 @@ orderRouter.put(
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const settings = await Settings.find({});
-    const { currency } =
-      (settings &&
-        settings
-          .map((s) => ({
-            currency: s.currency,
-          }))
-          .find(() => true)) ||
-      {};
+
     const order = await Order.findById(req.params.id).populate("user");
     if (order) {
       order.isPaid = true;
@@ -2160,6 +2241,14 @@ orderRouter.put(
       let convertedTaxPrice = order.taxPrice;
       let convertedShippingPrice = order.shippingPrice;
       let convertedGrandTotal = order.grandTotal;
+      const { currency } =
+        (settings &&
+          settings
+            .map((s) => ({
+              currency: s.currency,
+            }))
+            .find(() => true)) ||
+        {};
 
       if (order.currencySign !== currency) {
         try {
@@ -2179,7 +2268,7 @@ orderRouter.put(
             order.grandTotal,
             order.currencySign
           );
-          const formatter = new Intl.NumberFormat("en-GB", {
+          const formatter = new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: order.currencySign,
             currencyDisplay: "symbol", // Display the currency symbol instead of the currency code
@@ -2197,16 +2286,25 @@ orderRouter.put(
 
       const convertPrice = async (price, toCurrency) => {
         try {
-          const convertedPrice = await convertCurrency(
-            price,
-            order.currencySign,
-            toCurrency
-          );
-          const formattedPrice = new Intl.NumberFormat("en", {
-            style: "currency",
-            currency: toCurrency,
-          }).format(convertedPrice);
-          return `${formattedPrice}`;
+          if (order.currencySign !== toCurrency) {
+            const convertedPrice = await convertCurrency(
+              price,
+              order.currencySign,
+              toCurrency
+            );
+            const formatter = new Intl.NumberFormat("en", {
+              style: "currency",
+              currency: toCurrency,
+            });
+            return formatter.format(convertedPrice);
+          } else {
+            // If the currencies are the same, return the original price without conversion
+            const formatter = new Intl.NumberFormat("en", {
+              style: "currency",
+              currency: toCurrency,
+            });
+            return formatter.format(price);
+          }
         } catch (error) {
           console.log(error);
           throw new Error("Failed to convert price");
@@ -2294,7 +2392,11 @@ orderRouter.put(
               item.color !== "" ? `<img src=${item.color} alt=""/>` : ""
             }</td>
             <td align="center">${item.quantity}</td>
-            <td align="right">${convertedPrice}</td>
+            <td align="right">${
+              order.currencySign === currency
+                ? currency + " " + item.price.toFixed(2)
+                : convertedPrice
+            }</td>
           </tr>
         `;
          })
@@ -2303,19 +2405,35 @@ orderRouter.put(
     <tfoot>
     <tr class="total">
       <td colspan="2">Items Price:</td>
-      <td align="right">${convertedItemsPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedItemsPrice.toFixed(2)
+          : convertedItemsPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2">Tax Price:</td>
-      <td align="right">${convertedTaxPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedTaxPrice.toFixed(2)
+          : convertedTaxPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2">Shipping Price:</td>
-      <td align="right">${convertedShippingPrice}</td>
+      <td align="right">${
+        order.currencySign === currency
+          ? currency + " " + convertedShippingPrice.toFixed(2)
+          : convertedShippingPrice
+      }</td>
     </tr>
     <tr class="total">
       <td colspan="2"><strong>Total Price:</strong></td>
-      <td align="right"><strong>${convertedGrandTotal}</strong></td>
+      <td align="right"><strong>${
+        order.currencySign === currency
+          ? currency + " " + convertedGrandTotal.toFixed(2)
+          : convertedGrandTotal
+      }</strong></td>
     </tr>
     <tr>
       <td colspan="2">Payment Method:</td>

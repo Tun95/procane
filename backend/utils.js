@@ -10,6 +10,7 @@ export const generateToken = (user) => {
       email: user.email,
       isAdmin: user.isAdmin,
       isSeller: user.isSeller,
+      isAffiliate: user.isAffiliate,
       isBlocked: user.isBlocked,
       isAccountVerified: user.isAccountVerified,
     },
@@ -63,4 +64,3 @@ export const isSellerOrAdmin = (req, res, next) => {
     res.status(401).send({ message: "Invalid Admin/Seller Token" });
   }
 };
-

@@ -59,23 +59,6 @@ function Annct() {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   const pElement = document.getElementById("typewriter-p");
-  //   const statements = showRooms.length > 0 ? showRooms[0].normalText : [];
-  //   let currentStatementIndex = 0;
-
-  //   const typeNextStatement = () => {
-  //     const currentStatement = statements[currentStatementIndex];
-  //     pElement.textContent = ""; // Clear previous text before typing new statement
-  //     typeWriterEffect(pElement, currentStatement, 50);
-  //     currentStatementIndex = (currentStatementIndex + 1) % statements.length;
-  //   };
-
-  //   const typingInterval = setInterval(typeNextStatement, 3000);
-
-  //   // Clean up the interval when the component unmounts
-  //   return () => clearInterval(typingInterval);
-  // }, [showRooms]);
   useEffect(() => {
     const pElement = document.getElementById("typewriter-p");
     const statements = showRooms.length > 0 ? showRooms[0].normalText : [];

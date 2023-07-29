@@ -15,31 +15,12 @@ import { Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "REFRESH_PRODUCT":
-      return { ...state, product: action.payload, loading: true };
-    case "CREATE_REQUEST":
-      return { ...state, loadingCreateReview: true, successCreate: false };
-    case "CREATE_SUCCESS":
-      return { ...state, loadingCreateReview: false, successCreate: true };
-    case "CREATE_FAIL":
-      return { ...state, loadingCreateReview: false, successCreate: false };
-
-    default:
-      return state;
-  }
-};
-function ReviewBox({ product }) {
+function ReviewBox({ product, dispatch }) {
   const reviewSchema = Yup.object().shape({
     rating: Yup.number().required("Rating is required"),
     comment: Yup.string()
       .required("Comment is required")
       .min(50, "Your review must be at least 50 characters"),
-  });
-  const [{ loadingCreateReview }, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: "",
   });
 
   //==========
@@ -87,9 +68,9 @@ function ReviewBox({ product }) {
       });
 
       // Refresh the page after a short delay
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
     } catch (err) {
       toast.error(getError(err), { position: "bottom-center" });
       dispatch({ type: "CREATE_FAIL" });
