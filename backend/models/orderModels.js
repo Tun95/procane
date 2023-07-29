@@ -20,6 +20,8 @@ const orderSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
         },
+        affiliateCode: { type: String }, // Affiliate code of the user who referred the buyer (optional)
+        affiliateCommission: { type: Number, default: 0 },
       },
     ],
     trackingId: { type: String, unique: true, index: true },

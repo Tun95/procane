@@ -205,6 +205,15 @@ function Search() {
                         Users
                       </MenuItem>,
                       <MenuItem
+                        key="vendors"
+                        component={Link}
+                        to="/admin/vendors"
+                        onClick={handleClose}
+                        disableRipple
+                      >
+                        Vendors
+                      </MenuItem>,
+                      <MenuItem
                         key="admin-orders"
                         component={Link}
                         to="/admin/orders"

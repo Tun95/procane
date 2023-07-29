@@ -123,6 +123,77 @@ userRouter.get(
   })
 );
 
+//=============
+//FLASHDEAL FETCH
+//=============
+userRouter.get(
+  "/sellers",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const vendors = await User.find({ isSeller: true }).sort("-createdAt");
+      res.send(vendors);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to retrieve sellers" });
+    }
+  })
+);
+
+//=======================
+// AFFILIATE CODE
+//=======================
+userRouter.post("/generate-affiliate-code/:id", async (req, res) => {
+  try {
+    // Find the user by userId
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    // Generate a unique affiliate code using a combination of user's ID and a random string
+    const randomString = crypto.randomBytes(5).toString("hex"); // Generate a 10-character random string
+    const affiliateCode = `${user._id}${randomString}`; // Combine user's ID with the random string
+
+    // Save the affiliate code and isAffiliate status to the user document
+    user.affiliateCode = affiliateCode;
+    user.isAffiliate = true;
+    await user.save();
+
+    res.status(200).send({ affiliateCode });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+});
+
+//=======================
+// AFFILIATE COMMISSION
+//=======================
+userRouter.post("/calculate-affiliate-commission/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    const { amount } = req.body;
+
+    // Calculate the commission based on the user's commission rate and the given amount
+    const commission = user.affiliateCommissionRate * amount;
+
+    // Update the user's total earnings with the commission
+    user.totalEarnings += commission;
+    await user.save();
+
+    res.status(200).send({ commission });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+});
+
 //==========================
 // ADMIN USER INFO FETCHING
 //==========================

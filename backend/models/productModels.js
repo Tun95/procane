@@ -49,6 +49,10 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+
+    // Fields for affiliate functionality
+    affiliateEnabled: { type: Boolean, default: false }, // Indicates if the product supports affiliate program
+    affiliateCommissionRate: { type: Number, default: 0 },
   },
   {
     timestamps: true,

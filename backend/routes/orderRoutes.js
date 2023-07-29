@@ -94,26 +94,107 @@ function generateRandomString(length) {
 
   return result;
 }
+// orderRouter.post(
+//   "/",
+//   isAuth,
+//   expressAsyncHandler(async (req, res) => {
+//     const trackingId = "R" + generateRandomString(16);
+//     const newOrder = new Order({
+//       seller: req.body.orderItems[0].seller,
+//       orderItems: req.body.orderItems.map((x) => ({ ...x, product: x._id })),
+//       shippingAddress: req.body.shippingAddress,
+//       //paymentMethod: req.body.paymentMethod,
+//       itemsPrice: req.body.itemsPrice,
+//       shippingPrice: req.body.shippingPrice,
+//       taxPrice: req.body.taxPrice,
+//       grandTotal: req.body.grandTotal,
+//       trackingId: trackingId,
+//       user: req.user._id,
+//       product: req.body.orderItems.product,
+//     });
+//     const order = await newOrder.save();
+//     res.status(201).send({ message: "New Order Created", order });
+//   })
+// );
 orderRouter.post(
   "/",
   isAuth,
   expressAsyncHandler(async (req, res) => {
-    const trackingId = "R" + generateRandomString(16);
-    const newOrder = new Order({
-      seller: req.body.orderItems[0].seller,
-      orderItems: req.body.orderItems.map((x) => ({ ...x, product: x._id })),
-      shippingAddress: req.body.shippingAddress,
-      //paymentMethod: req.body.paymentMethod,
-      itemsPrice: req.body.itemsPrice,
-      shippingPrice: req.body.shippingPrice,
-      taxPrice: req.body.taxPrice,
-      grandTotal: req.body.grandTotal,
-      trackingId: trackingId,
-      user: req.user._id,
-      product: req.body.orderItems.product,
-    });
-    const order = await newOrder.save();
-    res.status(201).send({ message: "New Order Created", order });
+    try {
+      const {
+        orderItems,
+        shippingAddress,
+        itemsPrice,
+        shippingPrice,
+        taxPrice,
+        grandTotal,
+        affiliateCode,
+      } = req.body;
+
+      // Check if the affiliateCode is provided in the request
+      let affiliateUser = null;
+      if (affiliateCode) {
+        // If the affiliateCode is provided, find the user who has this affiliate code
+        affiliateUser = await User.findOne({ affiliateCode });
+      }
+
+      // Create an array to store order items with affiliate data
+      const orderItemsWithAffiliate = [];
+
+      // Loop through each order item and add affiliate data if applicable
+      for (const orderItem of orderItems) {
+        const product = await Product.findById(orderItem.product);
+
+        // Calculate affiliate commission for each order item based on the product's price and affiliate's commission rate (if available)
+        let affiliateCommission = 0;
+        if (
+          affiliateUser &&
+          product.seller.toString() !== affiliateUser._id.toString()
+        ) {
+          // If the product's seller is different from the affiliate, calculate the commission
+          affiliateCommission = affiliateUser.calculateAffiliateCommission(
+            product.price
+          );
+        }
+
+        // Add the affiliate data to the order item and push it to the orderItemsWithAffiliate array
+        orderItemsWithAffiliate.push({
+          ...orderItem,
+          affiliateCode: affiliateCode || null,
+          affiliateCommission,
+        });
+      }
+
+      // Generate a tracking ID for the order
+      const trackingId = "R" + generateRandomString(16);
+
+      // Create the order with the updated order items
+      const order = new Order({
+        seller: req.body.orderItems[0].seller,
+        orderItems: orderItemsWithAffiliate.map((x) => ({
+          ...x,
+          product: x._id,
+        })), // Use the updated orderItemsWithAffiliate
+        shippingAddress,
+        itemsPrice,
+        shippingPrice,
+        taxPrice,
+        grandTotal,
+        trackingId,
+        user: req.user._id,
+      });
+
+      // Save the order to the database
+      const createdOrder = await order.save();
+
+      // Return the created order as a response
+      res
+        .status(201)
+        .json({ message: "New Order Created", order: createdOrder });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   })
 );
 
@@ -977,8 +1058,24 @@ orderRouter.post(
           update_time: charge.created,
           email_address: charge.billing_details?.email,
         };
+
         order.paymentMethod = req.body.paymentMethod;
         order.currencySign = req.body.currencySign;
+
+        //AFFILIATE
+        const user = await User.findById(order.user._id);
+        if (user.isAffiliate && user.referredBy) {
+          const affiliateUser = await User.findById(user.referredBy);
+          if (affiliateUser) {
+            // Affiliate commission calculation
+            const affiliateCommission =
+              order.grandTotal * affiliateUser.affiliateCommissionRate;
+
+            // Update the affiliate user's total earnings with the commission
+            affiliateUser.totalEarnings += affiliateCommission;
+            await affiliateUser.save();
+          }
+        }
 
         for (const index in order.orderItems) {
           const item = order.orderItems[index];
@@ -1041,25 +1138,25 @@ orderRouter.post(
             throw new Error("Failed to convert currency");
           }
         }
-       const convertPrice = async (price, toCurrency) => {
-         try {
-           const convertedPrice = await convertCurrency(
-             price,
-             order.currencySign,
-             toCurrency
-           );
-           const formattedPrice = new Intl.NumberFormat("en", {
-             style: "currency",
-             currency: toCurrency,
-           }).format(convertedPrice);
-           return `${formattedPrice}`;
-         } catch (error) {
-           console.log(error);
-           throw new Error("Failed to convert price");
-         }
-       };
+        const convertPrice = async (price, toCurrency) => {
+          try {
+            const convertedPrice = await convertCurrency(
+              price,
+              order.currencySign,
+              toCurrency
+            );
+            const formattedPrice = new Intl.NumberFormat("en", {
+              style: "currency",
+              currency: toCurrency,
+            }).format(convertedPrice);
+            return `${formattedPrice}`;
+          } catch (error) {
+            console.log(error);
+            throw new Error("Failed to convert price");
+          }
+        };
 
-       const payOrderEmailTemplate = `<!DOCTYPE html>
+        const payOrderEmailTemplate = `<!DOCTYPE html>
 <html>
 <head>
   <style>
@@ -1108,8 +1205,8 @@ orderRouter.post(
   <p>Hello ${order.user.lastName} ${order.user.firstName},</p>
   <p>We have finished processing your order.</p>
   <h2>Order Tracking ID: ${order.trackingId} (${order.createdAt
-         .toString()
-         .substring(0, 10)})</h2>
+          .toString()
+          .substring(0, 10)})</h2>
   <table>
     <thead>
       <tr>

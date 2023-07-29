@@ -33,6 +33,15 @@ const userSchema = new mongoose.Schema(
     isAccountVerified: { type: Boolean, default: false },
     accountVerificationToken: { type: String },
     accountVerificationTokenExpires: { type: Date },
+
+    //Affiliate
+    isAffiliate: { type: Boolean, default: false }, // Indicates if the user is an affiliate
+    affiliateCode: { type: String, unique: true }, // Unique code for the affiliate user
+    referredBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Stores the ID of the user who referred this user (optional)
+
+     affiliateCommissionRate: { type: Number, default: 0.1 }, // Example: Commission rate for the affiliate
+     totalEarnings: { type: Number, default: 0 }, // Example: Total earnings for the affiliate
+    //  otherAffiliateData: { type: ... }, // Example: Any other data specific to the affiliate
   },
   {
     toJSON: {
@@ -44,6 +53,36 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+
+// Generate and save an affiliate code for the user
+userSchema.methods.generateAffiliateCode = async function () {
+  // Generate a unique affiliate code using a combination of user's ID and a random string
+  const randomString = crypto.randomBytes(5).toString("hex"); // Generate a 10-character random string
+  const affiliateCode = `${this._id}${randomString}`; // Combine user's ID with the random string
+
+  this.affiliateCode = affiliateCode;
+  this.isAffiliate = true;
+
+  // Save the user document
+  await this.save();
+
+  return affiliateCode;
+};
+
+// Optionally, you can add methods to track and calculate affiliate commissions and earnings
+userSchema.methods.calculateAffiliateCommission = async function (amount) {
+  // Calculate the commission based on the affiliate's commission rate and the given amount
+  const commission = this.affiliateCommissionRate * amount;
+
+  // Update the user's total earnings with the commission
+  this.totalEarnings += commission;
+
+  // Save the updated user document
+  await this.save();
+
+  return commission;
+};
 
 //Virtual method to populate created product
 userSchema.virtual("products", {

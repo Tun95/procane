@@ -590,7 +590,9 @@ productRouter.get("/slug/:slug", async (req, res) => {
   }
 });
 
+//===============
 //RELATED PRODUCT
+//===============
 productRouter.get("/related/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -608,22 +610,31 @@ productRouter.get("/related/:id", async (req, res) => {
   }
 });
 
-// productRouter.get("/related/:id", async (req, res) => {
-//   try {
-//     const product = await Product.findById(req.params.id);
-//     const related = await Product.find({
-//       _id: { $ne: product },
-//       category: product.category,
-//     })
-//       .limit(6)
-//       .populate("category", "name");
+//===========================
+//AFFILIATE LINKS FOR PRODUCT
+//===========================
+productRouter.get("/affiliate/:slug", async (req, res) => {
+  try {
+    const decodedSlug = decodeURIComponent(req.params.slug); // Decode the slug
+    const product = await Product.findOne({ slug: decodedSlug });
 
-//     console.log("RELATED PRODUCTS", related);
-//     res.json(related);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
+    if (!product) {
+      return res.status(404).send({ message: "Product Not Found" });
+    }
+
+    const { affiliateCode } = req.query;
+    const affiliateLink = `${req.protocol}://${req.get(
+      "host"
+    )}/product/slug/${encodeURIComponent(
+      product.slug
+    )}?affiliateCode=${affiliateCode}`;
+
+    res.send({ affiliateLink });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+});
 
 //PRODUCT DETAILS BY ID
 productRouter.get("/:id", async (req, res) => {
