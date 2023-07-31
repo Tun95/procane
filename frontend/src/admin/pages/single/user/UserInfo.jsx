@@ -207,7 +207,7 @@ function UserInfo() {
             CustomTooltip={CustomTooltip}
             grid
             dataKey="Total Sales"
-            title="User Spending (Last 5 Days)"
+            title="User Spending (Last 10 Days)"
           />
         </div>
       </div>
