@@ -178,7 +178,11 @@ function App() {
             ></Route>
             <Route
               path="/vendor-profile/:id"
-              element={<VendorProfileScreen />}
+              element={
+                <ProtectedRoute>
+                  <VendorProfileScreen />
+                </ProtectedRoute>
+              }
             ></Route>
             <Route
               path="/wish-list/:id"

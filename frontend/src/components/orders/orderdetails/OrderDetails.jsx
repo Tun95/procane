@@ -307,58 +307,6 @@ function OrderDetails() {
                                 </TableBody>
                               </Table>
                             </TableContainer>
-
-                            {/* <table className="order-table-data">
-                              <thead>
-                                <tr>
-                                  <td
-                                    className="t-header"
-                                    colSpan="2"
-                                    align="center"
-                                  >
-                                    <h2> Order Summary</h2>
-                                  </td>
-                                </tr>
-                              </thead>
-                              <tbody cellPadding="3">
-                                <tr>
-                                  <td className="items-p">Items Price</td>
-                                  <td className="items-d">
-                                    {convertCurrency(
-                                      order.itemsPrice.toFixed(2)
-                                    )}
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td className="items-p">Shipping Price</td>
-                                  <td className="items-d">
-                                    {convertCurrency(
-                                      order.shippingPrice.toFixed(2)
-                                    )}
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td className="items-p">Tax Price</td>
-                                  <td className="items-d">
-                                    {convertCurrency(order.taxPrice.toFixed(2))}
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <strong className="items-p grand">
-                                      Grand Total
-                                    </strong>
-                                  </td>
-                                  <td className="items-d grand">
-                                    <strong>
-                                      {convertCurrency(
-                                        order.grandTotal?.toFixed(2)
-                                      )}
-                                    </strong>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table> */}
                           </div>
                         </div>
                         <div className="sec-box">

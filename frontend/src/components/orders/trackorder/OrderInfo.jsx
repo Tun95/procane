@@ -179,6 +179,12 @@ function OrderInfo({ orderInfo }) {
                                     </span>
                                   )}
                                 </MessageBox>
+                              ) : userInfo._id ? (
+                                <div className="not-paid-btn">
+                                  <MessageBox variant="danger">
+                                    Not Paid
+                                  </MessageBox>
+                                </div>
                               ) : (
                                 ""
                               )}
