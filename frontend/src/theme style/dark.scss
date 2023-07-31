@@ -252,6 +252,11 @@
     box-shadow: none;
     background-color: rgb(43, 43, 43);
   }
+  .annocument {
+    .img .explore {
+      background: rgba(0, 0, 0, 0.6);
+    }
+  }
 
   /*---shop--*/
   .chead h1:nth-child(2) {
