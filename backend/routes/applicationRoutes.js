@@ -117,4 +117,26 @@ applicationRoutes.put(
   })
 );
 
+//======
+//DELETE
+//======
+applicationRoutes.delete(
+  "/:id",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+    try {
+      const application = await Apply.findByIdAndDelete(id);
+      if (!application) {
+        res.status(404).json({ message: "Application not found" });
+        return;
+      }
+      res.status(200).json(application);
+    } catch (error) {
+      res.status(500).json({ message: "Error Deleting application" });
+    }
+  })
+);
+
 export default applicationRoutes;

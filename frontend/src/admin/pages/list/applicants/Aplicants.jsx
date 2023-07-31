@@ -246,6 +246,25 @@ function Applicants() {
     }
   };
 
+  //=================
+  //DELETE APPLICANT
+  //=================
+  const deleteHandler = async (application) => {
+    try {
+      dispatch({ type: "DELETE_REQUEST" });
+      await axios.delete(`${request}/api/apply/${application.id}`, {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      toast.success("Deleted successfully", {
+        position: "bottom-center",
+      });
+      dispatch({ type: "DELETE_SUCCESS" });
+    } catch (err) {
+      toast.error(getError(err), { position: "bottom-center" });
+      dispatch({ type: "DELETE_FAIL" });
+    }
+  };
+
   console.log(applications);
 
   const actionColumn = [
@@ -275,6 +294,12 @@ function Applicants() {
                 Accept
               </div>
             )}
+            <div
+              className="deleteButton"
+              onClick={() => deleteHandler(params.row)}
+            >
+              Delete
+            </div>
           </div>
         );
       },

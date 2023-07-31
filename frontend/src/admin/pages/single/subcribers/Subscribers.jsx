@@ -161,12 +161,12 @@ function Subscribers() {
       field: "action",
       headerName: "Action",
       width: 220,
-      renderCell: (product) => {
+      renderCell: (subscriber) => {
         return (
           <div className="cellAction">
             <div
               className="deleteButton"
-              onClick={() => deleteHandler(product)}
+              onClick={() => deleteHandler(subscriber)}
             >
               Delete
             </div>
@@ -176,8 +176,7 @@ function Subscribers() {
     },
   ];
 
-
-	const customTranslations = {
+  const customTranslations = {
     noRowsLabel: "No subscriber found", // Customize the "No Rows" message here
   };
   return (
@@ -240,16 +239,11 @@ function Subscribers() {
                     <button className="sendButton setting-create">Send</button>
                   </div>
                 </div>
-                
               </form>
-              
             </div>
-            
           </div>
-          
         </>
       )}
-      
     </div>
   );
 }
