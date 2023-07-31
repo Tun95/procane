@@ -39,9 +39,13 @@ const userSchema = new mongoose.Schema(
     affiliateCode: { type: String, unique: true }, // Unique code for the affiliate user
     referredBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Stores the ID of the user who referred this user (optional)
 
-     affiliateCommissionRate: { type: Number, default: 0.1 }, // Example: Commission rate for the affiliate
-     totalEarnings: { type: Number, default: 0 }, // Example: Total earnings for the affiliate
-    //  otherAffiliateData: { type: ... }, // Example: Any other data specific to the affiliate
+    affiliateCommissionRate: { type: Number, default: 0.1 }, // Example: Commission rate for the affiliate
+    totalEarnings: [
+      {
+        value: { type: Number, default: 0 },
+        date: { type: Date, default: Date.now },
+      },
+    ], //  otherAffiliateData: { type: ... }, // Example: Any other data specific to the affiliate
   },
   {
     toJSON: {
@@ -53,7 +57,6 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
 
 // Generate and save an affiliate code for the user
 userSchema.methods.generateAffiliateCode = async function () {
@@ -71,18 +74,39 @@ userSchema.methods.generateAffiliateCode = async function () {
 };
 
 // Optionally, you can add methods to track and calculate affiliate commissions and earnings
+
+// Optionally, you can add methods to track and calculate affiliate commissions and earnings
 userSchema.methods.calculateAffiliateCommission = async function (amount) {
   // Calculate the commission based on the affiliate's commission rate and the given amount
   const commission = this.affiliateCommissionRate * amount;
 
-  // Update the user's total earnings with the commission
-  this.totalEarnings += commission;
+  // Push the new commission object with the current date to the totalEarnings array
+  this.totalEarnings.push({ value: commission, date: new Date() });
 
   // Save the updated user document
   await this.save();
 
   return commission;
 };
+
+// userSchema.methods.calculateAffiliateCommission = async function (amount) {
+//   // Calculate the commission based on the affiliate's commission rate and the given amount
+//   const commission = this.affiliateCommissionRate * amount;
+
+//   // Sum up the new commission with the existing totalEarnings array
+//   this.totalEarnings.push(commission);
+//   const totalEarningsSum = this.totalEarnings.reduce(
+//     (accumulator, currentValue) => accumulator + currentValue,
+//     0
+//   );
+//   // Save the updated total earnings in the user document
+//   this.totalEarnings = [totalEarningsSum]; // Store it as an array with a single value
+
+//   // Save the updated user document
+//   await this.save();
+
+//   return commission;
+// };
 
 //Virtual method to populate created product
 userSchema.virtual("products", {

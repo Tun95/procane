@@ -24,6 +24,11 @@ const orderSchema = new mongoose.Schema(
         affiliateCommission: { type: Number, default: 0 },
       },
     ],
+    affiliatorCommissionMap: {
+      type: Map,
+      of: Number,
+      default: {},
+    },
     trackingId: { type: String, unique: true, index: true },
     shippingAddress: {
       firstName: { type: String, required: true },

@@ -19,6 +19,7 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ShowRoom from "../../single/show room/ShowRoom";
+import Home from "../../single/home/Home";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -161,7 +162,7 @@ function OtherScreen() {
                   />
                   <Tab
                     className={value === 8 ? "activeTab" : "tab_sub"}
-                    label="Show Room"
+                    label="Home"
                     {...a11yProps(8)}
                   />
                 </Tabs>
@@ -191,7 +192,7 @@ function OtherScreen() {
                 <Applicants />
               </TabPanel>
               <TabPanel value={value} index={8}>
-                <ShowRoom />
+                <Home />
               </TabPanel>
             </Box>
           </div>

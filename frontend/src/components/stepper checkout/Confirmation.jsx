@@ -140,6 +140,9 @@ function Confirmation(props) {
     error: "",
   });
 
+  //===================
+  // PLACE ORDER
+  //===================
   const placeOrderHandler = async () => {
     dispatch({ type: "CREATE_REQUEST" });
     if (!userInfo.isAccountVerified) {
@@ -147,11 +150,26 @@ function Confirmation(props) {
         position: "bottom-center",
       });
     } else {
+      // Calculate the total affiliate commission for each affiliator
+      const totalAffiliateCommissionPerAffiliator = cartItems.reduce(
+        (acc, item) => {
+          if (item.affiliateCode !== "") {
+            // Check if the affiliateCode is not empty
+            // If the affiliateCode exists, add the affiliateCommission to the total
+            acc[item.affiliateCode] =
+              (acc[item.affiliateCode] || 0) + item.affiliateCommission;
+          }
+          return acc;
+        },
+        {}
+      );
+
       try {
         const { data } = await axios.post(
           `${request}/api/orders`,
           {
             orderItems: cartItems,
+            affiliatorCommissionMap: totalAffiliateCommissionPerAffiliator, // Pass the total affiliate commission map to the order
             shippingAddress,
             itemsPrice,
             shippingPrice: shippingPrice,

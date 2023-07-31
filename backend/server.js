@@ -25,6 +25,7 @@ import cartRoutes from "./routes/cartRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
 import passport from "passport";
 import showRoutes from "./routes/showroomRoutes.js";
+import wrapperRouter from "./routes/wrapperRoutes.js";
 
 dotenv.config();
 
@@ -100,6 +101,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/checkout", stripeRouter);
 app.use("/api/apply", applicationRoutes);
 app.use("/api/showroom", showRoutes);
+app.use("/api/wrappers", wrapperRouter);
 
 const _dirname = path.resolve();
 app.use(express.static(path.join(_dirname, "/frontend/build")));

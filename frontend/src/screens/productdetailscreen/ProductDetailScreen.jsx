@@ -81,6 +81,9 @@ function ProductDetailScreen({ productItems, onAdd }) {
     state;
 
   const location = useLocation();
+  const { search } = useLocation();
+  const searchParams = new URLSearchParams(search);
+  const affiliateCode = searchParams.get("affiliateCode");
 
   //=======================
   // FETCH PRODUCT DETAILS
@@ -142,28 +145,38 @@ function ProductDetailScreen({ productItems, onAdd }) {
   //=======================
   // ADD TO CART
   //=======================
-  const addToCartHandler = async () => {
-    try {
-      const { data } = await axios.get(
-        `${request}/api/products/${product._id}`
+  const addToCartHandler = async (item) => {
+    const { data } = await axios.get(`${request}/api/products/${item._id}`);
+    if (cartItems.length > 0 && data.seller._id !== cartItems[0].seller._id) {
+      dispatch({
+        type: "CART_ADD_ITEM_FAIL",
+        payload: `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
+      });
+      toast.error(
+        `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
+        {
+          position: "bottom-center",
+        }
       );
+    } else {
+      // Calculate the affiliate commission based on the product price and the affiliate commission rate
+      const affiliateCommission =
+        item.price * data.affiliateCommissionRate;
 
-      toast.success(`${product.name} is successfully added to cart`, {
+      toast.success(`${item.name} is successfully added to cart`, {
         position: "bottom-center",
       });
-
       ctxDispatch({
         type: "CART_ADD_ITEM",
         payload: {
-          ...product,
+          ...item,
+          discount: data.discount,
           seller: data.seller,
-          sellerName: product?.seller?.seller?.name,
-          category: product?.category,
+          sellerName: item?.seller?.seller?.name,
+          category: item?.category,
+          affiliateCommission,
         },
       });
-      localStorage.setItem("cartItems", JSON.stringify(state.cart.cartItems));
-    } catch (error) {
-      toast.error(getError(error), { position: "bottom-center" });
     }
   };
 
@@ -203,7 +216,11 @@ function ProductDetailScreen({ productItems, onAdd }) {
           <MessageBox variant="danger">{error}</MessageBox>
         ) : (
           <>
-            <Details product={product} dispatch={dispatch} />
+            <Details
+              product={product}
+              affiliateCode={affiliateCode}
+              dispatch={dispatch}
+            />
             <ReviewDesc
               handleDelete={handleDelete}
               product={product}

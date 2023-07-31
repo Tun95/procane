@@ -120,81 +120,33 @@ orderRouter.post(
   "/",
   isAuth,
   expressAsyncHandler(async (req, res) => {
-    try {
-      const {
-        orderItems,
-        shippingAddress,
-        itemsPrice,
-        shippingPrice,
-        taxPrice,
-        grandTotal,
-        affiliateCode,
-      } = req.body;
+    const trackingId = "R" + generateRandomString(16);
+    const {
+      orderItems,
+      shippingAddress,
+      itemsPrice,
+      shippingPrice,
+      taxPrice,
+      grandTotal,
+      affiliatorCommissionMap, // Include the affiliatorCommissionMap in the request body
+    } = req.body;
 
-      // Check if the affiliateCode is provided in the request
-      let affiliateUser = null;
-      if (affiliateCode) {
-        // If the affiliateCode is provided, find the user who has this affiliate code
-        affiliateUser = await User.findOne({ affiliateCode });
-      }
+    // Create the order with the received order items
+    const newOrder = new Order({
+      seller: orderItems[0].seller,
+      orderItems: orderItems.map((x) => ({ ...x, product: x._id })),
+      shippingAddress,
+      itemsPrice,
+      shippingPrice,
+      taxPrice,
+      grandTotal,
+      trackingId,
+      user: req.user._id,
+      affiliatorCommissionMap, // Include the affiliatorCommissionMap in the order
+    });
 
-      // Create an array to store order items with affiliate data
-      const orderItemsWithAffiliate = [];
-
-      // Loop through each order item and add affiliate data if applicable
-      for (const orderItem of orderItems) {
-        const product = await Product.findById(orderItem.product);
-
-        // Calculate affiliate commission for each order item based on the product's price and affiliate's commission rate (if available)
-        let affiliateCommission = 0;
-        if (
-          affiliateUser &&
-          product.seller.toString() !== affiliateUser._id.toString()
-        ) {
-          // If the product's seller is different from the affiliate, calculate the commission
-          affiliateCommission = affiliateUser.calculateAffiliateCommission(
-            product.price
-          );
-        }
-
-        // Add the affiliate data to the order item and push it to the orderItemsWithAffiliate array
-        orderItemsWithAffiliate.push({
-          ...orderItem,
-          affiliateCode: affiliateCode || null,
-          affiliateCommission,
-        });
-      }
-
-      // Generate a tracking ID for the order
-      const trackingId = "R" + generateRandomString(16);
-
-      // Create the order with the updated order items
-      const order = new Order({
-        seller: req.body.orderItems[0].seller,
-        orderItems: orderItemsWithAffiliate.map((x) => ({
-          ...x,
-          product: x._id,
-        })), // Use the updated orderItemsWithAffiliate
-        shippingAddress,
-        itemsPrice,
-        shippingPrice,
-        taxPrice,
-        grandTotal,
-        trackingId,
-        user: req.user._id,
-      });
-
-      // Save the order to the database
-      const createdOrder = await order.save();
-
-      // Return the created order as a response
-      res
-        .status(201)
-        .json({ message: "New Order Created", order: createdOrder });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
-    }
+    const order = await newOrder.save();
+    res.status(201).send({ message: "New Order Created", order });
   })
 );
 
@@ -1061,21 +1013,6 @@ orderRouter.post(
 
         order.paymentMethod = req.body.paymentMethod;
         order.currencySign = req.body.currencySign;
-
-        //AFFILIATE
-        const user = await User.findById(order.user._id);
-        if (user.isAffiliate && user.referredBy) {
-          const affiliateUser = await User.findById(user.referredBy);
-          if (affiliateUser) {
-            // Affiliate commission calculation
-            const affiliateCommission =
-              order.grandTotal * affiliateUser.affiliateCommissionRate;
-
-            // Update the affiliate user's total earnings with the commission
-            affiliateUser.totalEarnings += affiliateCommission;
-            await affiliateUser.save();
-          }
-        }
 
         for (const index in order.orderItems) {
           const item = order.orderItems[index];
@@ -2221,6 +2158,86 @@ orderRouter.put(
       order.paymentMethod = req.body.paymentMethod;
       order.currencySign = req.body.currencySign;
 
+      try {
+        // Use orderItems to retrieve the correct affiliateCode and product price
+        const affiliateCode = order.orderItems[0].affiliateCode;
+        const productPrice = order.orderItems[0].price;
+        const affiliateCommissionMap = order.affiliatorCommissionMap;
+
+        // Add these logs to inspect the content of the affiliateCommissionMap
+        console.log("Affiliate Code:", affiliateCode);
+        console.log("Affiliate Commission Map:", affiliateCommissionMap);
+        console.log(
+          "Is affiliateCode present in affiliateCommissionMap:",
+          affiliateCommissionMap.has(affiliateCode)
+        );
+
+        const affiliateCommission = affiliateCommissionMap.get(affiliateCode);
+
+        console.log("Affiliate Commission:", affiliateCommission);
+        console.log(
+          "Type of Affiliate Commission:",
+          typeof affiliateCommission
+        );
+
+        // Add this log to verify if the value is actually undefined
+        console.log(
+          "Is affiliateCommission undefined?",
+          affiliateCommission === undefined
+        );
+
+        // Check if the affiliateCommission is defined and not undefined
+        if (affiliateCommission !== undefined) {
+          // Convert the affiliateCommission to a number using parseFloat
+          const parsedAffiliateCommission = parseFloat(affiliateCommission);
+
+          // Check if the conversion is successful and not NaN
+          if (!isNaN(parsedAffiliateCommission)) {
+            // Retrieve the affiliate user based on the affiliateCode
+            const affiliateUser = await User.findOne({ affiliateCode });
+
+            console.log("Affiliate User:", affiliateUser);
+
+            if (affiliateUser) {
+              // Calculate the affiliate commission based on the commission rate and the product price
+              const affiliateCommission =
+                await affiliateUser.calculateAffiliateCommission(
+                  productPrice,
+                  order._id, // Use the order ID as the identifier
+                  affiliateCode
+                );
+
+              console.log("Affiliate Commission:", affiliateCommission);
+
+              // ... (rest of the code remains the same) ...
+
+              console.log("Before saving affiliateUser:", affiliateUser);
+              // Save the updated user document
+              await affiliateUser.save();
+              console.log("After saving affiliateUser:", affiliateUser);
+            }
+          } else {
+            console.log(
+              "Invalid affiliateCommission value:",
+              affiliateCommission
+            );
+            // Handle the case when the conversion fails or the value is NaN
+            throw new Error("Invalid affiliate commission value");
+          }
+        } else {
+          console.log(
+            "No affiliate commission found for affiliateCode:",
+            affiliateCode
+          );
+          // Handle the case when the affiliate commission is not defined
+          throw new Error("No affiliate commission found");
+        }
+      } catch (error) {
+        console.log(error);
+        // Handle any potential errors that might occur during the update process
+        throw new Error("Failed to update affiliate earnings");
+      }
+
       for (const index in order.orderItems) {
         const item = order.orderItems[index];
         const product = await Product.findById(item.product);
@@ -2522,6 +2539,7 @@ orderRouter.put(
         .catch(console.log);
 
       await order.save();
+
       res.json({ success: true, message: "Payment successful" });
     } else {
       res.json({ success: false, message: "Payment canceled or failed" });

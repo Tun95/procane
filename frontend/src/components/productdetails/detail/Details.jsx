@@ -30,7 +30,7 @@ import {
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-function Details({ product, dispatch }) {
+function Details({ product, dispatch, affiliateCode }) {
   const smallSettings = {
     dots: false,
     infinite: false,
@@ -106,24 +106,30 @@ function Details({ product, dispatch }) {
         }
       );
     } else {
-      if (data.countInStock < count) {
-        toast.error("Sorry, Product stock limit reached or out of stock", {
-          position: "bottom-center",
-        });
-        return;
-      } else {
-        toast.success(`${product.name} is successfully added to cart`, {
-          position: "bottom-center",
-        });
+      let totalAffiliateCommission = 0; // Declare the totalAffiliateCommission variable
+
+      if (affiliateCode !== "") {
+        // Calculate the affiliate commission based on the product price and the affiliate commission rate
+        const affiliateCommission =
+          product.price * data.affiliateCommissionRate;
+        console.log(affiliateCommission);
+
+        // Calculate the total affiliate commission for the user
+        totalAffiliateCommission += affiliateCommission;
       }
+      toast.success(`${product.name} is successfully added to cart`, {
+        position: "bottom-center",
+      });
 
       ctxDispatch({
         type: "CART_ADD_ITEM",
         payload: {
           ...product,
           seller: data.seller,
-          sellerName: product?.seller?.seller?.name,
+          sellerName: data.seller?.seller?.name,
           category: product?.category,
+          affiliateCommission: totalAffiliateCommission,
+          affiliateCode,
           quantity: count,
           size,
           color,
@@ -133,6 +139,11 @@ function Details({ product, dispatch }) {
     }
   };
 
+  const addToCart = () => {
+    addToCartHandler(); // No need to pass product and affiliateCode here
+  };
+
+  console.log(affiliateCode);
   console.log(product);
 
   //==============
@@ -355,10 +366,7 @@ function Details({ product, dispatch }) {
                     </button>
                   ) : (
                     <span>
-                      <button
-                        className="add-to-cart"
-                        onClick={addToCartHandler}
-                      >
+                      <button className="add-to-cart" onClick={addToCart}>
                         Add to cart
                       </button>
                     </span>

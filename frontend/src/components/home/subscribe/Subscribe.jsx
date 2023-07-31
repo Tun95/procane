@@ -100,7 +100,7 @@ function Subscribe() {
         </div>
         <span>
           <small className="text_small">
-            Subscribe to our newsletter today for furniture updates, exclusive
+            Subscribe to our newsletter today for product updates, exclusive
             offers, and design inspiration{" "}
           </small>
         </span>
