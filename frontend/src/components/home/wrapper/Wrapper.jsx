@@ -1,47 +1,66 @@
-import React from "react";
+import React, { useEffect, useReducer } from "react";
 import "./styles.css";
 import { Fade } from "react-awesome-reveal";
+import axios from "axios";
+import { request } from "../../../base url/BaseUrl";
+import { getError } from "../../utilities/util/Utils";
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true };
+    case "FETCH_SUCCESS":
+      return { ...state, loading: false, wrappers: action.payload };
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
 
 function Wrapper() {
-  const data = [
-    {
-      cover: <i className="fa-solid fa-truck-fast"></i>,
-      title: "Worldwide Delivery",
-      decs: "From parcels to packages, we connect the globe, bridging distances with swift and reliable shipping services, bringing the world closer together.",
-    },
-    {
-      cover: <i className="fa-solid fa-id-card"></i>,
-      title: "Safe Payment",
-      decs: "Protecting your transactions with advanced security measures, we ensure your financial information is safeguarded, providing peace of mind for worry-free transactions.",
-    },
-    {
-      cover: <i className="fa-solid fa-shield"></i>,
-      title: "Shop With Confidence ",
-      decs: "Explore a vast selection of trusted products, backed by reliable customer reviews and hassle-free returns, empowering you to make informed and satisfying purchasing decisions.",
-    },
-    {
-      cover: <i className="fa-solid fa-headset"></i>,
-      title: "24/7 Support ",
-      decs: "Our dedicated team is always available, around the clock, to assist you with any inquiries or concerns, providing timely and reliable assistance whenever you need it.",
-    },
-  ];
+  const [{ loading, error, wrappers }, dispatch] = useReducer(reducer, {
+    loading: true,
+    error: "",
+    wrappers: [],
+  });
+
+  //===============
+  //FETCH ALL BRANDS
+  //===============
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch({ type: "FETCH_REQUEST" });
+      try {
+        const { data } = await axios.get(`${request}/api/wrappers`);
+        dispatch({ type: "FETCH_SUCCESS", payload: data });
+      } catch (err) {
+        dispatch({ type: "FETCH_FAIL", payload: getError(err) });
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <>
       <section className="wrapper background">
         <div className="container wrapper-grid">
-          {data?.map((item, index) => {
-            return (
-              <div className="product" key={index}>
-                <Fade cascade direction="down" triggerOnce damping={0.4}>
-                  <div className="img icon-circle">
-                    <i>{item.cover}</i>
-                  </div>
-                  <h3>{item.title}</h3>
-                  <p>{item.decs}</p>
-                </Fade>
-              </div>
-            );
-          })}
+          {wrappers?.map((wrapperData) => (
+            <span key={wrapperData._id}>
+              {wrapperData.wrappers.map((wrapper, index) => (
+                <div className="product" key={index}>
+                  <Fade cascade direction="down" triggerOnce damping={0.4}>
+                    <div className="img icon-circle">
+                      <i className={wrapper.icon}></i>
+                    </div>
+                    <h3>{wrapper.header}</h3>
+                    <p>{wrapper.description}</p>
+                  </Fade>
+                </div>
+              ))}
+            </span>
+          ))}
         </div>
       </section>
     </>

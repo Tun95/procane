@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import "./styles.scss";
 import show from "../../../assets/show/show.png";
 import show1 from "../../../assets/show/show1.jpg";
@@ -9,11 +9,11 @@ import { getError } from "../../utilities/util/Utils";
 import MessageBox from "../../utilities/message loading/MessageBox";
 import LoadingBox from "../../utilities/message loading/LoadingBox";
 
-function typeWriterEffect(element, text, speed) {
+function typeWriterEffect(text, speed, onCharacterTyped) {
   let i = 0;
   const typeWriter = () => {
     if (i < text.length) {
-      element.textContent += text.charAt(i);
+      onCharacterTyped(text.charAt(i));
       i++;
       setTimeout(typeWriter, speed);
     }
@@ -29,7 +29,6 @@ const reducer = (state, action) => {
       return { ...state, loading: false, showRooms: action.payload };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
-
     default:
       return state;
   }
@@ -41,6 +40,8 @@ function Annct() {
     error: "",
     showRooms: [],
   });
+
+  const [typewriterText, setTypewriterText] = useState("");
 
   //===============
   //FETCH ALL BRANDS
@@ -60,21 +61,26 @@ function Annct() {
   }, []);
 
   useEffect(() => {
-    const pElement = document.getElementById("typewriter-p");
-    const statements = showRooms.length > 0 ? showRooms[0].normalText : [];
-    let currentStatementIndex = 0;
+    // Check if showRooms is not undefined and has data before using it
+    if (showRooms?.length > 0) {
+      const statements = showRooms[0].normalText;
+      let currentStatementIndex = 0;
 
-    const typeNextStatement = () => {
-      const currentStatement = statements[currentStatementIndex];
-      pElement.textContent = ""; // Clear previous text before typing new statement
-      typeWriterEffect(pElement, currentStatement, 50);
-      currentStatementIndex = (currentStatementIndex + 1) % statements.length;
-    };
+      const typeNextStatement = () => {
+        const currentStatement = statements[currentStatementIndex];
+        let typedText = "";
+        typeWriterEffect(currentStatement, 50, (character) => {
+          typedText += character;
+          setTypewriterText(typedText);
+        });
+        currentStatementIndex = (currentStatementIndex + 1) % statements.length;
+      };
 
-    const typingInterval = setInterval(typeNextStatement, 3000);
+      const typingInterval = setInterval(typeNextStatement, 3000);
 
-    // Clean up the interval when the component unmounts
-    return () => clearInterval(typingInterval);
+      // Clean up the interval when the component unmounts
+      return () => clearInterval(typingInterval);
+    }
   }, [showRooms]);
 
   // Check if the data is still loading
@@ -119,7 +125,7 @@ function Annct() {
           <div className="img img-2">
             <span className="explore l_flex">
               <h2>{titleTwo}</h2>
-              <p id="typewriter-p"></p>
+              <p>{typewriterText}</p>
             </span>
             {largeImage && (
               <img src={largeImage} width="100%" height="100%" alt="" />
