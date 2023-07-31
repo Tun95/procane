@@ -2158,85 +2158,85 @@ orderRouter.put(
       order.paymentMethod = req.body.paymentMethod;
       order.currencySign = req.body.currencySign;
 
-      try {
-        // Use orderItems to retrieve the correct affiliateCode and product price
-        const affiliateCode = order.orderItems[0].affiliateCode;
-        const productPrice = order.orderItems[0].price;
-        const affiliateCommissionMap = order.affiliatorCommissionMap;
+      // try {
+      //   // Use orderItems to retrieve the correct affiliateCode and product price
+      //   const affiliateCode = order.orderItems[0].affiliateCode;
+      //   const productPrice = order.orderItems[0].price;
+      //   const affiliateCommissionMap = order.affiliatorCommissionMap;
 
-        // Add these logs to inspect the content of the affiliateCommissionMap
-        console.log("Affiliate Code:", affiliateCode);
-        console.log("Affiliate Commission Map:", affiliateCommissionMap);
-        console.log(
-          "Is affiliateCode present in affiliateCommissionMap:",
-          affiliateCommissionMap.has(affiliateCode)
-        );
+      //   // Add these logs to inspect the content of the affiliateCommissionMap
+      //   console.log("Affiliate Code:", affiliateCode);
+      //   console.log("Affiliate Commission Map:", affiliateCommissionMap);
+      //   console.log(
+      //     "Is affiliateCode present in affiliateCommissionMap:",
+      //     affiliateCommissionMap.has(affiliateCode)
+      //   );
 
-        const affiliateCommission = affiliateCommissionMap.get(affiliateCode);
+      //   const affiliateCommission = affiliateCommissionMap.get(affiliateCode);
 
-        console.log("Affiliate Commission:", affiliateCommission);
-        console.log(
-          "Type of Affiliate Commission:",
-          typeof affiliateCommission
-        );
+      //   console.log("Affiliate Commission:", affiliateCommission);
+      //   console.log(
+      //     "Type of Affiliate Commission:",
+      //     typeof affiliateCommission
+      //   );
 
-        // Add this log to verify if the value is actually undefined
-        console.log(
-          "Is affiliateCommission undefined?",
-          affiliateCommission === undefined
-        );
+      //   // Add this log to verify if the value is actually undefined
+      //   console.log(
+      //     "Is affiliateCommission undefined?",
+      //     affiliateCommission === undefined
+      //   );
 
-        // Check if the affiliateCommission is defined and not undefined
-        if (affiliateCommission !== undefined) {
-          // Convert the affiliateCommission to a number using parseFloat
-          const parsedAffiliateCommission = parseFloat(affiliateCommission);
+      //   // Check if the affiliateCommission is defined and not undefined
+      //   if (affiliateCommission !== undefined) {
+      //     // Convert the affiliateCommission to a number using parseFloat
+      //     const parsedAffiliateCommission = parseFloat(affiliateCommission);
 
-          // Check if the conversion is successful and not NaN
-          if (!isNaN(parsedAffiliateCommission)) {
-            // Retrieve the affiliate user based on the affiliateCode
-            const affiliateUser = await User.findOne({ affiliateCode });
+      //     // Check if the conversion is successful and not NaN
+      //     if (!isNaN(parsedAffiliateCommission)) {
+      //       // Retrieve the affiliate user based on the affiliateCode
+      //       const affiliateUser = await User.findOne({ affiliateCode });
 
-            console.log("Affiliate User:", affiliateUser);
+      //       console.log("Affiliate User:", affiliateUser);
 
-            if (affiliateUser) {
-              // Calculate the affiliate commission based on the commission rate and the product price
-              const affiliateCommission =
-                await affiliateUser.calculateAffiliateCommission(
-                  productPrice,
-                  order._id, // Use the order ID as the identifier
-                  affiliateCode
-                );
+      //       if (affiliateUser) {
+      //         // Calculate the affiliate commission based on the commission rate and the product price
+      //         const affiliateCommission =
+      //           await affiliateUser.calculateAffiliateCommission(
+      //             productPrice,
+      //             order._id, // Use the order ID as the identifier
+      //             affiliateCode
+      //           );
 
-              console.log("Affiliate Commission:", affiliateCommission);
+      //         console.log("Affiliate Commission:", affiliateCommission);
 
-              // ... (rest of the code remains the same) ...
+      //         // ... (rest of the code remains the same) ...
 
-              console.log("Before saving affiliateUser:", affiliateUser);
-              // Save the updated user document
-              await affiliateUser.save();
-              console.log("After saving affiliateUser:", affiliateUser);
-            }
-          } else {
-            console.log(
-              "Invalid affiliateCommission value:",
-              affiliateCommission
-            );
-            // Handle the case when the conversion fails or the value is NaN
-            throw new Error("Invalid affiliate commission value");
-          }
-        } else {
-          console.log(
-            "No affiliate commission found for affiliateCode:",
-            affiliateCode
-          );
-          // Handle the case when the affiliate commission is not defined
-          throw new Error("No affiliate commission found");
-        }
-      } catch (error) {
-        console.log(error);
-        // Handle any potential errors that might occur during the update process
-        throw new Error("Failed to update affiliate earnings");
-      }
+      //         console.log("Before saving affiliateUser:", affiliateUser);
+      //         // Save the updated user document
+      //         await affiliateUser.save();
+      //         console.log("After saving affiliateUser:", affiliateUser);
+      //       }
+      //     } else {
+      //       console.log(
+      //         "Invalid affiliateCommission value:",
+      //         affiliateCommission
+      //       );
+      //       // Handle the case when the conversion fails or the value is NaN
+      //       throw new Error("Invalid affiliate commission value");
+      //     }
+      //   } else {
+      //     console.log(
+      //       "No affiliate commission found for affiliateCode:",
+      //       affiliateCode
+      //     );
+      //     // Handle the case when the affiliate commission is not defined
+      //     throw new Error("No affiliate commission found");
+      //   }
+      // } catch (error) {
+      //   console.log(error);
+      //   // Handle any potential errors that might occur during the update process
+      //   throw new Error("Failed to update affiliate earnings");
+      // }
 
       for (const index in order.orderItems) {
         const item = order.orderItems[index];
