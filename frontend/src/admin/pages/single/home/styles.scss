@@ -4,4 +4,10 @@
     gap: 10px;
     width: 100%;
   }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 1000px) {
+    .f_flex {
+      flex-direction: column;
+    }
+  }
 }
