@@ -95,10 +95,11 @@ TimeAgo.addLocale(ru);
 function App() {
   const { darkMode, state } = useContext(Context);
   const { settings } = state;
-  const { messengerAppId, messengerPageId, faviconUrl } =
+  const { messengerAppId, messengerPageId, faviconUrl, paypal } =
     (settings &&
       settings
         .map((s) => ({
+          paypal: s.paypal,
           messengerAppId: s.messengerAppId,
           messengerPageId: s.messengerPageId,
           faviconUrl: s.faviconUrl,
@@ -109,6 +110,11 @@ function App() {
     // Set the favicon URL on the window object
     window.faviconUrl = faviconUrl;
   }, [faviconUrl]);
+
+  // Set the PayPal client ID on the window object
+  useEffect(() => {
+    window.paypalClientId = paypal; // Replace this with the actual PayPal client ID
+  }, [paypal]);
 
   ReactGA.initialize(process.env.REACT_APP_GOOGLE_TRACKING, {
     debug: true,

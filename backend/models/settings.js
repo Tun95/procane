@@ -117,7 +117,11 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: "Our stores info here",
     },
-
+    paypal: {
+      type: String,
+      default:
+        "AVSqcwu8gCktEtMw2sSWrXdATPkiXfrfJIGPJvp7YJYqEcrwcXOhujirF6QEBIdigzqQzw6tSJ3_rgey",
+    },
     razorkeyid: {
       type: String,
       default: "rzp_test_yyI1vXw8dNpnfO",

@@ -64,6 +64,8 @@ function Settings() {
   const [returns, setReturns] = useState("");
   const [privacy, setPrivacy] = useState("");
   const [currency, setCurrency] = useState("");
+
+  const [paypal, setPaypal] = useState("");
   const [razorkeyid, setRazorKeyId] = useState("");
   const [razorsecret, setRazorSecret] = useState();
   const [paytmid, setPaytmId] = useState("");
@@ -116,6 +118,7 @@ function Settings() {
         setPrivacy(data.privacy);
         setShortDesc(data.shortDesc);
         setCurrency(data.currency);
+        setPaypal(data.paypal);
         setRazorKeyId(data.razorkeyid);
         setRazorSecret(data.razorsecret);
         setPaytmId(data.paytmid);
@@ -178,6 +181,7 @@ function Settings() {
           privacy,
 
           currency,
+          paypal,
           razorkeyid,
           razorsecret,
           paytmid,
@@ -565,6 +569,15 @@ function Settings() {
                                 />
                               </span>
                             </span>
+                          </div>
+                          <div className="lower_group">
+                            <small>PayPay API key:</small>
+                            <input
+                              value={paypal}
+                              onChange={(e) => setPaypal(e.target.value)}
+                              type="text"
+                              placeholder="api key"
+                            />
                           </div>
                           <div className="lower_group">
                             <small>PayStack API key:</small>
