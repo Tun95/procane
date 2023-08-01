@@ -19,6 +19,7 @@
 .wrapper .product {
   padding: 30px;
   margin: 0px;
+  height: 100%;
 }
 .wrapper .product h3 {
   font-weight: 500;

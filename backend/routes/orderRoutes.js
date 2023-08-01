@@ -862,50 +862,44 @@ orderRouter.post(
 //======================================
 //ADMIN APPROVAL/DECLINE OF A WITHDRAWAL
 //======================================
-orderRouter.patch(
-  "/withdraw/:withdrawalId",
+orderRouter.post(
+  "/withdraw",
   isAuth,
-  isAdmin,
+  isSellerOrAdmin,
   expressAsyncHandler(async (req, res) => {
-    const withdrawalId = req.params.withdrawalId;
-    const { status } = req.body;
+    const sellerId = req.user._id;
+    const { amount } = req.body;
 
     try {
-      // Find the withdrawal record in the user's document
-      const seller = await User.findOne({ "withdrawals._id": withdrawalId });
+      // Fetch the seller's document from the database
+      const seller = await User.findById(sellerId);
 
-      if (!seller) {
-        return res.status(404).json({ message: "Withdrawal record not found" });
+      // Check if the seller has sufficient balance for the withdrawal
+      if (seller.grandTotalEarnings < amount) {
+        return res
+          .status(400)
+          .json({ message: "Insufficient balance for withdrawal" });
       }
 
-      // Find the specific withdrawal record within the seller's withdrawals array
-      const withdrawal = seller.withdrawals.find((w) =>
-        w._id.equals(withdrawalId)
-      );
+      // Create a new withdrawal record
+      const withdrawal = {
+        amount,
+        status: "pending", // Set the status to pending initially
+        requestedAt: new Date(),
+      };
 
-      if (!withdrawal) {
-        return res.status(404).json({ message: "Withdrawal record not found" });
-      }
+      // Add the new withdrawal record to the seller's document
+      seller.withdrawals.push(withdrawal);
 
-      // Ensure the withdrawal is still pending for approval/decline
-      if (withdrawal.status !== "pending") {
-        return res.status(400).json({ message: "Withdrawal is not pending" });
-      }
-
-      // Update the status of the withdrawal
-      withdrawal.status = status;
-
-      // If the withdrawal is approved, update the seller's grandTotalEarnings and deduct the amount
-      if (status === "approved") {
-        seller.grandTotalEarnings -= withdrawal.amount;
-      }
+      // Deduct the withdrawal amount from the seller's grandTotalEarnings
+      seller.grandTotalEarnings -= amount;
 
       // Save the updated seller document
       await seller.save();
 
       res
-        .status(200)
-        .json({ message: "Withdrawal request updated successfully" });
+        .status(201)
+        .json({ message: "Withdrawal request submitted successfully" });
     } catch (error) {
       console.error(error);
       res
