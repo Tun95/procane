@@ -516,6 +516,129 @@ productRouter.get(
   })
 );
 
+//=========================
+//SHOPFINITY PRODUCT FILTER
+//=========================
+const PAGE_PRODUCT_SIZE = 8;
+productRouter.get(
+  "/shop",
+  expressAsyncHandler(async (req, res) => {
+    const { query } = req;
+    const pageSize = query.pageSize || PAGE_PRODUCT_SIZE;
+    const page = query.page || 1;
+    const category = query.category || "";
+    const color = query.color || "";
+    const size = query.size || "";
+    const price = query.price || "";
+    const numSales = query.numSales || "";
+    const discount = query.discount || "";
+    const rating = query.rating || "";
+    const order = query.order || "";
+    const brand = query.brand || "";
+    const searchQuery = query.query || "";
+
+    const queryFilter =
+      searchQuery && searchQuery !== "all"
+        ? {
+            name: {
+              $regex: searchQuery,
+              $options: "i",
+            },
+          }
+        : {};
+    const categoryFilter =
+      category && category !== "all"
+        ? { category: { $in: category.split(",") } }
+        : {};
+
+    const sizeFilter =
+      size && size !== "all" ? { size: { $in: size.split(",") } } : {};
+    const colorFilter =
+      color && color !== "all" ? { color: { $in: color.split(",") } } : {};
+    const brandFilter =
+      brand && brand !== "all" ? { brand: { $in: brand.split(",") } } : {};
+    const ratingFilter =
+      rating && rating !== "all"
+        ? {
+            rating: {
+              $gte: Number(rating),
+            },
+          }
+        : {};
+    const numSalesFilter =
+      numSales && numSales !== "all"
+        ? {
+            numSales: {
+              $gte: Number(numSales),
+            },
+          }
+        : {};
+    const discountFilter =
+      discount && discount !== "all"
+        ? {
+            discount: {
+              $gte: 50,
+            },
+          }
+        : {};
+    const priceFilter =
+      price && price !== "all"
+        ? {
+            price: {
+              $gte: Number(price.split("-")[0]),
+              $lte: Number(price.split("-")[1]),
+            },
+          }
+        : {};
+
+    const sortOrder =
+      order === "featured"
+        ? { featured: -1 }
+        : order === "lowest"
+        ? { price: 1 }
+        : order === "highest"
+        ? { price: -1 }
+        : order === "toprated"
+        ? { rating: -1 }
+        : order === "numsales"
+        ? { numSales: -1 }
+        : order === "discount"
+        ? { discount: -1 }
+        : order === "newest"
+        ? { createdAt: -1 }
+        : { _id: -1 };
+
+    const filters = {
+      ...queryFilter,
+      ...categoryFilter,
+
+      ...colorFilter,
+      ...sizeFilter,
+      ...brandFilter,
+      ...priceFilter,
+      ...ratingFilter,
+      ...numSalesFilter,
+      ...discountFilter,
+    };
+
+    const products = await Product.find(filters)
+      .populate("seller wish")
+      .sort(sortOrder)
+      .skip(pageSize * (page - 1))
+      .limit(pageSize);
+
+    const countProducts = await Product.countDocuments(filters);
+
+    res.send({
+      products,
+      countProducts,
+      page,
+      pages: Math.ceil(countProducts / pageSize),
+    });
+    console.log(discountFilter); // Check the discount filter object
+  })
+);
+
 //TEST
 productRouter.get(
   "/filters",

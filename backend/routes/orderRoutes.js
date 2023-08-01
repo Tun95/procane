@@ -220,140 +220,6 @@ orderRouter.get(
 //====================
 //SELLER ORDER SUMMARY
 //====================
-// orderRouter.get(
-//   "/seller-summary",
-//   isAuth,
-//   isSellerOrAdmin,
-//   expressAsyncHandler(async (req, res) => {
-//     const sellerId = req.user._id; // Assuming the seller's ID is available in the request user object
-
-//     try {
-//       const last10DaysEarnings = await Order.aggregate([
-//         // Match orders for the specific seller
-//         {
-//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
-//         },
-//         // Group orders by date
-//         {
-//           $group: {
-//             _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-//             orders: { $sum: 1 }, // Count the number of orders per day
-//             totalEarningsPerDay: { $sum: "$grandTotal" }, // Sum up total earnings per day
-//           },
-//         },
-//         // Sort by date in descending order to get the last day's sales
-//         { $sort: { _id: -1 } },
-//         // Limit to only 10 documents to get the last 10 days' sales
-//         {
-//           $limit: 10,
-//         },
-//         // Project to show only the desired fields in the result
-//         {
-//           $project: {
-//             _id: 0,
-//             date: "$_id",
-//             totalEarningsPerDay: 1,
-//           },
-//         },
-//       ]);
-
-//       const earningsPerDay = await Order.aggregate([
-//         // Match orders for the specific seller
-//         {
-//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
-//         },
-//         // Group orders by date and limit to only one document to get earnings for each day
-//         {
-//           $group: {
-//             _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-//             totalEarningsPerDay: { $sum: "$grandTotal" }, // Sum up total earnings per day
-//           },
-//         },
-//         // Sort by date in descending order to get the last day's sales
-//         { $sort: { _id: -1 } },
-//         // Limit to only one document to get earnings for each day
-//         {
-//           $limit: 1,
-//         },
-//         // Project to show only the desired fields in the result
-//         {
-//           $project: {
-//             _id: 0,
-//             date: "$_id",
-//             totalEarningsPerDay: 1,
-//           },
-//         },
-//       ]);
-
-//       const totalOrders = await Order.aggregate([
-//         // Match orders for the specific seller
-//         {
-//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
-//         },
-//         // Group orders to get the total number of orders
-//         {
-//           $group: {
-//             _id: null,
-//             totalOrders: { $sum: 1 }, // Sum up total number of orders
-//           },
-//         },
-//         // Project to show only the desired fields in the result
-//         {
-//           $project: {
-//             _id: 0,
-//             totalOrders: 1,
-//           },
-//         },
-//       ]);
-
-//       const grandTotalEarnings = await Order.aggregate([
-//         // Match orders for the specific seller
-//         {
-//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
-//         },
-//         // Group orders to get the grand total earnings of all time
-//         {
-//           $group: {
-//             _id: null,
-//             grandTotalEarnings: { $sum: "$grandTotal" }, // Sum up grand total earnings
-//           },
-//         },
-//         // Project to show only the desired fields in the result
-//         {
-//           $project: {
-//             _id: 0,
-//             grandTotalEarnings: 1,
-//           },
-//         },
-//       ]);
-
-//       // Merge all the results into the final seller summary object
-//       const sellerSummary = {
-//         last10DaysEarnings,
-//         earningsPerDay,
-//         totalOrders: totalOrders.length > 0 ? totalOrders[0].totalOrders : 0,
-//         grandTotalEarnings:
-//           grandTotalEarnings.length > 0
-//             ? grandTotalEarnings[0].grandTotalEarnings
-//             : 0,
-//       };
-
-//       if (
-//         sellerSummary.last10DaysEarnings.length > 0 ||
-//         sellerSummary.earningsPerDay.length > 0
-//       ) {
-//         res.status(200).json(sellerSummary);
-//       } else {
-//         // No data found for the seller
-//         res.status(404).json({ message: "Seller data not found" });
-//       }
-//     } catch (err) {
-//       res
-//         .status(500)
-//         .json({ message: "An error occurred while fetching seller summary" });
-//     }
-//   })
-// );
 function calculatePercentageChange(previousValue, currentValue) {
   return ((currentValue - previousValue) / previousValue) * 100;
 }
@@ -943,32 +809,115 @@ orderRouter.put(
   })
 );
 
+//=========================
+//SELLER WITHDRAWAL REQUEST
+//=========================
+orderRouter.post(
+  "/withdraw",
+  isAuth,
+  isSellerOrAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const sellerId = req.user._id;
+    const { amount } = req.body;
+
+    try {
+      // Fetch the seller's document from the database
+      const seller = await User.findById(sellerId);
+
+      // Check if the seller has sufficient balance for the withdrawal
+      if (seller.grandTotalEarnings < amount) {
+        return res
+          .status(400)
+          .json({ message: "Insufficient balance for withdrawal" });
+      }
+
+      // Create a new withdrawal record
+      const withdrawal = {
+        amount,
+        status: "pending", // Set the status to pending initially
+        requestedAt: new Date(),
+      };
+
+      // Add the new withdrawal record to the seller's document
+      seller.withdrawals.push(withdrawal);
+
+      // Deduct the withdrawal amount from the seller's grandTotalEarnings
+      seller.grandTotalEarnings -= amount;
+
+      // Save the updated seller document
+      await seller.save();
+
+      res
+        .status(201)
+        .json({ message: "Withdrawal request submitted successfully" });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: "An error occurred while processing the request" });
+    }
+  })
+);
+
+//======================================
+//ADMIN APPROVAL/DECLINE OF A WITHDRAWAL
+//======================================
+orderRouter.patch(
+  "/withdraw/:withdrawalId",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const withdrawalId = req.params.withdrawalId;
+    const { status } = req.body;
+
+    try {
+      // Find the withdrawal record in the user's document
+      const seller = await User.findOne({ "withdrawals._id": withdrawalId });
+
+      if (!seller) {
+        return res.status(404).json({ message: "Withdrawal record not found" });
+      }
+
+      // Find the specific withdrawal record within the seller's withdrawals array
+      const withdrawal = seller.withdrawals.find((w) =>
+        w._id.equals(withdrawalId)
+      );
+
+      if (!withdrawal) {
+        return res.status(404).json({ message: "Withdrawal record not found" });
+      }
+
+      // Ensure the withdrawal is still pending for approval/decline
+      if (withdrawal.status !== "pending") {
+        return res.status(400).json({ message: "Withdrawal is not pending" });
+      }
+
+      // Update the status of the withdrawal
+      withdrawal.status = status;
+
+      // If the withdrawal is approved, update the seller's grandTotalEarnings and deduct the amount
+      if (status === "approved") {
+        seller.grandTotalEarnings -= withdrawal.amount;
+      }
+
+      // Save the updated seller document
+      await seller.save();
+
+      res
+        .status(200)
+        .json({ message: "Withdrawal request updated successfully" });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: "An error occurred while processing the request" });
+    }
+  })
+);
+
 //=============
 // EXHANGE RATE
 //=============
-// async function convertCurrency(amount, toCurrency) {
-//   const settings = await Settings.find({});
-//   const { exhangerate, currency } =
-//     (settings &&
-//       settings
-//         .map((s) => ({
-//           exhangerate: s.exhangerate,
-//           currency: s.currency,
-//         }))
-//         .find(() => true)) ||
-//     {};
-//   const apiKey = exhangerate;
-//   const apiUrl = `https://v6.exchangerate-api.com/v6/${apiKey}/pair/${currency}/${toCurrency}/${amount}`;
-
-//   try {
-//     const response = await axios.get(apiUrl);
-//     const convertedAmount = response.data.conversion_result;
-//     return convertedAmount;
-//   } catch (error) {
-//     console.log(error);
-//     throw new Error("Failed to convert currency");
-//   }
-// }
 async function convertCurrency(amount, toCurrency) {
   // Get the base currency from the database
   try {

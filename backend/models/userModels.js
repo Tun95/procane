@@ -46,6 +46,25 @@ const userSchema = new mongoose.Schema(
         date: { type: Date, default: Date.now },
       },
     ], //  otherAffiliateData: { type: ... }, // Example: Any other data specific to the affiliate
+
+    grandTotalEarnings: { type: Number, default: 0 },
+    availableBalance: { type: Number, default: 0 },
+    minimumWithdrawalAmount: { type: Number, default: 0 },
+    withdrawnAmount: { type: Number, default: 0 },
+    refundAmount: { type: Number, default: 0 },
+    // Withdrawal requests made by the seller
+    withdrawalRequests: [
+      {
+        amount: { type: Number, required: true },
+        status: {
+          type: String,
+          enum: ["pending", "approved", "declined"],
+          default: "pending",
+        },
+        requestDate: { type: Date, default: Date.now },
+        approvalDate: { type: Date },
+      },
+    ],
   },
   {
     toJSON: {
@@ -89,24 +108,89 @@ userSchema.methods.calculateAffiliateCommission = async function (amount) {
   return commission;
 };
 
-// userSchema.methods.calculateAffiliateCommission = async function (amount) {
-//   // Calculate the commission based on the affiliate's commission rate and the given amount
-//   const commission = this.affiliateCommissionRate * amount;
+// Method to process withdrawal requests
+userSchema.methods.processWithdrawal = async function (amount) {
+  // Validate if the withdrawal amount is greater than the minimum withdrawal amount
+  if (amount < this.minimumWithdrawalAmount) {
+    throw new Error("Withdrawal amount is less than the minimum allowed.");
+  }
 
-//   // Sum up the new commission with the existing totalEarnings array
-//   this.totalEarnings.push(commission);
-//   const totalEarningsSum = this.totalEarnings.reduce(
-//     (accumulator, currentValue) => accumulator + currentValue,
-//     0
-//   );
-//   // Save the updated total earnings in the user document
-//   this.totalEarnings = [totalEarningsSum]; // Store it as an array with a single value
+  // Validate if the withdrawal amount is not greater than the available balance
+  if (amount > this.availableBalance) {
+    throw new Error("Insufficient available balance for withdrawal.");
+  }
 
-//   // Save the updated user document
-//   await this.save();
+  // Deduct the withdrawal amount from the available balance and update withdrawnAmount
+  this.availableBalance -= amount;
+  this.withdrawnAmount += amount;
 
-//   return commission;
-// };
+  // Add the withdrawal request to the withdrawalRequests array
+  this.withdrawalRequests.push({
+    amount,
+    status: "pending",
+    requestDate: new Date(),
+  });
+
+  // Save the updated user document
+  await this.save();
+};
+
+
+// Method to calculate the grandTotalEarnings for a seller
+userSchema.methods.calculateGrandTotalEarnings = async function () {
+  try {
+    // Calculate the grandTotalEarnings by aggregating the grandTotal from orders
+    const orders = await Order.find({ seller: this._id, isPaid: true });
+    const grandTotalEarnings = orders.reduce((total, order) => total + order.grandTotal, 0);
+
+    // Update the grandTotalEarnings field in the user document
+    this.grandTotalEarnings = grandTotalEarnings;
+
+    // Save the updated user document
+    await this.save();
+
+    return grandTotalEarnings;
+  } catch (error) {
+    throw new Error("Failed to calculate grandTotalEarnings for the seller.");
+  }
+};
+
+// Method to handle admin approval or decline of withdrawal requests
+userSchema.methods.adminApproveOrDeclineWithdrawal = async function (
+  requestId,
+  status
+) {
+  const withdrawalRequest = this.withdrawalRequests.id(requestId);
+  if (!withdrawalRequest) {
+    throw new Error("Withdrawal request not found.");
+  }
+
+  if (withdrawalRequest.status === "pending") {
+    if (status === "approved") {
+      // Update the status and approval date
+      withdrawalRequest.status = "approved";
+      withdrawalRequest.approvalDate = new Date();
+
+      // Withdrawal approved, no further action needed
+    } else if (status === "declined") {
+      // Update the status and refund the amount to the available balance and grandTotalEarnings
+      withdrawalRequest.status = "declined";
+      this.availableBalance += withdrawalRequest.amount;
+      this.refundAmount += withdrawalRequest.amount;
+    } else {
+      throw new Error(
+        "Invalid status. Status should be 'approved' or 'declined'."
+      );
+    }
+
+    // Save the updated user document
+    await this.save();
+  } else {
+    throw new Error(
+      "Withdrawal request status cannot be modified once processed."
+    );
+  }
+};
 
 //Virtual method to populate created product
 userSchema.virtual("products", {
