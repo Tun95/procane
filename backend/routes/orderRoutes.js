@@ -381,6 +381,14 @@ orderRouter.get(
         });
       }
 
+      // Calculate and update the grandTotalEarnings for the seller
+      const seller = await User.findById(sellerId);
+      if (seller) {
+        const grandTotalEarnings = await seller.calculateGrandTotalEarnings();
+        seller.grandTotalEarnings = grandTotalEarnings; // Update the user's grandTotalEarnings field
+        await seller.save(); // Save the updated user document
+      }
+
       // Merge all the results into the final seller summary object
       const sellerSummary = {
         last10DaysEarnings,
@@ -2050,6 +2058,21 @@ orderRouter.put(
       order.paymentMethod = req.body.paymentMethod;
       order.currencySign = req.body.currencySign;
 
+      for (const index in order.orderItems) {
+        const item = order.orderItems[index];
+        const product = await Product.findById(item.product);
+
+        // Check if the item quantity is greater than the available countInStock
+        if (item.quantity > product.countInStock) {
+          throw new Error(`Insufficient stock for product: ${product.name}`);
+        }
+
+        // Decrease the countInStock and increase the numSales
+        product.countInStock -= item.quantity;
+        product.numSales += item.quantity;
+        await product.save();
+      }
+
       // try {
       //   // Use orderItems to retrieve the correct affiliateCode and product price
       //   const affiliateCode = order.orderItems[0].affiliateCode;
@@ -2129,21 +2152,6 @@ orderRouter.put(
       //   // Handle any potential errors that might occur during the update process
       //   throw new Error("Failed to update affiliate earnings");
       // }
-
-      for (const index in order.orderItems) {
-        const item = order.orderItems[index];
-        const product = await Product.findById(item.product);
-
-        // Check if the item quantity is greater than the available countInStock
-        if (item.quantity > product.countInStock) {
-          throw new Error(`Insufficient stock for product: ${product.name}`);
-        }
-
-        // Decrease the countInStock and increase the numSales
-        product.countInStock -= item.quantity;
-        product.numSales += item.quantity;
-        await product.save();
-      }
 
       // Convert the currency if neededy
       let convertedItemsPrice = order.itemsPrice;

@@ -2,7 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
 import User from "../models/userModels.js";
-import { generateToken, isAdmin, isAuth } from "../utils.js";
+import { generateToken, isAdmin, isAuth, isSellerOrAdmin } from "../utils.js";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import mongoose from "mongoose";
@@ -169,6 +169,56 @@ userRouter.post("/generate-affiliate-code/:id", async (req, res) => {
     res.status(500).send({ message: "Internal server error" });
   }
 });
+
+//=========================
+//SELLER WITHDRAWAL REQUEST
+//=========================
+userRouter.post(
+  "/withdraw",
+  // isAuth,
+  // isSellerOrAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const sellerId = req.user._id;
+    const { amount } = req.body;
+
+    try {
+      // Fetch the seller's document from the database
+      const seller = await User.findById(sellerId);
+
+      // Check if the seller has sufficient balance for the withdrawal
+      if (seller.grandTotalEarnings < amount) {
+        return res
+          .status(400)
+          .json({ message: "Insufficient balance for withdrawal" });
+      }
+
+      // Create a new withdrawal record
+      const withdrawal = {
+        amount,
+        status: "pending", // Set the status to pending initially
+        requestDate: new Date(),
+      };
+
+      // Add the new withdrawal record to the seller's document
+      seller.withdrawalRequests.push(withdrawal);
+
+      // Deduct the withdrawal amount from the seller's grandTotalEarnings
+      seller.grandTotalEarnings -= amount;
+
+      // Save the updated seller document
+      await seller.save();
+
+      res
+        .status(201)
+        .json({ message: "Withdrawal request submitted successfully" });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: "An error occurred while processing the request" });
+    }
+  })
+);
 
 //=======================
 // AFFILIATE COMMISSION

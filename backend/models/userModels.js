@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
+import Order from "./orderModels.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -135,13 +136,15 @@ userSchema.methods.processWithdrawal = async function (amount) {
   await this.save();
 };
 
-
 // Method to calculate the grandTotalEarnings for a seller
 userSchema.methods.calculateGrandTotalEarnings = async function () {
   try {
     // Calculate the grandTotalEarnings by aggregating the grandTotal from orders
     const orders = await Order.find({ seller: this._id, isPaid: true });
-    const grandTotalEarnings = orders.reduce((total, order) => total + order.grandTotal, 0);
+    const grandTotalEarnings = orders.reduce(
+      (total, order) => total + order.grandTotal,
+      0
+    );
 
     // Update the grandTotalEarnings field in the user document
     this.grandTotalEarnings = grandTotalEarnings;
