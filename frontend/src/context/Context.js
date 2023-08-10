@@ -314,7 +314,7 @@ export function ContextProvider(props) {
     const formatter = new Intl.NumberFormat("en-GB", {
       style: "currency",
       currency: toCurrency,
-      currencyDisplay: "symbol",
+      currencyDisplay: "narrowSymbol",
     });
 
     if (grandTotal) {
