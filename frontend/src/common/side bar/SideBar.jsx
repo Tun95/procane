@@ -339,11 +339,14 @@ function SideBar() {
             <Divider />
             <Divider />
             <div className="currency_state toogle_width a_flex">
-              {/* <label className="to">To:</label> */}
               <CurrencyExchangeIcon className="currencyExchangeIcon" />
               <select
                 value={toCurrency}
-                onChange={(e) => setToCurrency(e.target.value)}
+                onChange={(e) => {
+                  const selectedCurrency = e.target.value;
+                  localStorage.setItem("toCurrency", selectedCurrency);
+                  setToCurrency(selectedCurrency);
+                }}
               >
                 {currencies.map((currency) => (
                   <option key={currency.code} value={currency.code}>

@@ -305,16 +305,19 @@ export function ContextProvider(props) {
         }))
         .find(() => true)) ||
     {};
+
   const [toCurrency, setToCurrency] = useState(
-    localStorage.getItem("toCurrency") || currency
+    localStorage.getItem("toCurrency") || currency || "USD"
   );
+  console.log(`TO CURRENCY: ${toCurrency}`);
+  console.log(`CURRENCY: ${currency}`);
   const [conversionRates, setConversionRates] = useState(null);
 
   const formatPrice = (price, grandTotal) => {
     const formatter = new Intl.NumberFormat("en-GB", {
       style: "currency",
       currency: toCurrency,
-      currencyDisplay: "symbol",
+      currencyDisplay: "narrowSymbol",
     });
 
     if (grandTotal) {
@@ -389,9 +392,7 @@ export function ContextProvider(props) {
   };
 
   useEffect(() => {
-    localStorage.setItem("toCurrency", toCurrency);
-
-    const fetchConversionRates = async () => {
+    const fetchCurrencies = async () => {
       try {
         const response = await fetch(
           `https://api.exchangerate-api.com/v4/latest/${currency}`
@@ -404,8 +405,11 @@ export function ContextProvider(props) {
       }
     };
 
-    fetchConversionRates();
-  }, [currency, toCurrency]);
+    const storedCurrency =
+      localStorage.getItem("toCurrency") || currency || "USD";
+    setToCurrency(storedCurrency);
+    fetchCurrencies();
+  }, [currency]);
 
   //==========
   //CURRENCIES

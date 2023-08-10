@@ -118,7 +118,11 @@ function Head() {
               <select
                 className="currency_symbol"
                 value={toCurrency}
-                onChange={(e) => setToCurrency(e.target.value)}
+                onChange={(e) => {
+                  const selectedCurrency = e.target.value;
+                  localStorage.setItem("toCurrency", selectedCurrency);
+                  setToCurrency(selectedCurrency);
+                }}
               >
                 {currencies.map((currency) => (
                   <option
