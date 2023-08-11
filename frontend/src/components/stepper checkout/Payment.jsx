@@ -62,7 +62,7 @@ function Payment(props) {
     dispatch: ctxDispatch,
     convertCurrency,
     convertToNumeric,
-    toCurrency,
+    toCurrencies,
     darkMode,
   } = useContext(Context);
   const {
@@ -212,7 +212,7 @@ function Payment(props) {
   const params = useParams();
   const { id: orderId } = params;
 
-  const currencySign = toCurrency;
+  const currencySign = toCurrencies;
 
   const [{ loading, error, order, successPay, loadingPay }, dispatch] =
     useReducer(reducer, {
@@ -250,7 +250,7 @@ function Payment(props) {
           type: "resetOptions",
           value: {
             "client-id": process.env.REACT_APP_PAYPAL_CLIENT_ID,
-            currency: toCurrency || "USD",
+            currency: toCurrencies || "USD",
           },
         });
         paypalDispatch({ type: "setLoadingStatus", value: "pending" });
@@ -263,7 +263,7 @@ function Payment(props) {
     orderId,
     paypalDispatch,
     successPay,
-    toCurrency,
+    toCurrencies,
     userInfo,
   ]);
 
@@ -320,7 +320,7 @@ function Payment(props) {
     reference: new Date().getTime().toString(),
     email: userInfo.email,
     amount: payStackGrandTotal * 100, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
-    currency: toCurrency,
+    currency: toCurrencies,
     publicKey: paystackkey,
   };
   // you can call this function anything
@@ -416,9 +416,9 @@ function Payment(props) {
           },
           body: JSON.stringify({
             amount: razorGrandTotal,
-            currency: toCurrency,
+            currency: toCurrencies,
             paymentMethod: paymentMethodName,
-            currencySign: toCurrency, // Include the paymentMethod property
+            currencySign: toCurrencies, // Include the paymentMethod property
           }),
         }
       );
@@ -427,7 +427,7 @@ function Payment(props) {
       const options = {
         key: razorkeyid,
         amount: razorGrandTotal * 100,
-        currency: toCurrency,
+        currency: toCurrencies,
         name: webname,
         description: `Oder payment by ${userInfo.email}`,
         image: logo, // URL of your store's logo
@@ -500,9 +500,9 @@ function Payment(props) {
         },
         body: JSON.stringify({
           amount: paytmGrandTotal,
-          currency: toCurrency,
+          currency: toCurrencies,
           paymentMethod: paymentMethodName,
-          currencySign: toCurrency,
+          currencySign: toCurrencies,
         }),
       });
       const paytmOrder = await response.json();
@@ -582,10 +582,10 @@ function Payment(props) {
           },
           body: JSON.stringify({
             amount: stripeGrandTotal * 100,
-            currency: toCurrency,
+            currency: toCurrencies,
             tokenId: token.id,
             description: `Order payment by ${userInfo.email}`, // Update the token property to tokenId
-            currencySign: toCurrency,
+            currencySign: toCurrencies,
             paymentMethod: paymentMethodName,
           }),
         }
@@ -880,7 +880,7 @@ function Payment(props) {
                                 token={handleStripeToken}
                                 stripeKey={stripePublishableKey}
                                 amount={stripeGrandTotal * 100}
-                                currency={toCurrency}
+                                currency={toCurrencies}
                                 billingAddress
                                 shippingAddress
                                 name={webname}

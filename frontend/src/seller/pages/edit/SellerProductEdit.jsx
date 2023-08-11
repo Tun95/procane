@@ -64,7 +64,7 @@ function SellerProductEdit() {
   const params = useParams();
   const { id: productId } = params;
 
-  const { state, convertCurrency, toCurrency } = useContext(Context);
+  const { state, convertCurrency, toCurrencies } = useContext(Context);
   const { userInfo, colors, categories, brands, sizes } = state;
 
   const [{ loading, error, product, loadingUpload, summary }, dispatch] =
@@ -227,20 +227,20 @@ function SellerProductEdit() {
     };
     getStats();
   }, [summary.income]);
- const CustomTooltip = ({ active, payload, label }) => {
-   if (active && payload && payload.length) {
-     return (
-       <div className="custom_tooltip" style={{ padding: "10px" }}>
-         <p className="label">{`${label}`}</p>
-         <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
-           Total Sales: {`${convertCurrency(payload[0]?.value)}`}
-         </p>
-       </div>
-     );
-   }
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom_tooltip" style={{ padding: "10px" }}>
+          <p className="label">{`${label}`}</p>
+          <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
+            Total Sales: {`${convertCurrency(payload[0]?.value)}`}
+          </p>
+        </div>
+      );
+    }
 
-   return null;
- };
+    return null;
+  };
 
   //DELETE IMAGES
   const deleteFileHandler = async (fileName) => {

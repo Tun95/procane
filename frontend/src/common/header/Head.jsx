@@ -1,4 +1,4 @@
-import React, { useContext} from "react";
+import React, { useContext } from "react";
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -6,7 +6,7 @@ import { Context } from "../../context/Context";
 import { Link } from "react-router-dom";
 
 function Head() {
-  const { darkMode, state, toggle, currencies, toCurrency, setToCurrency } =
+  const { darkMode, state, toggle, currencies, toCurrencies, setToCurrencies } =
     useContext(Context);
   const { settings } = state;
 
@@ -103,8 +103,8 @@ function Head() {
             {/* <div className="currency_state">
               <label className="to">To:</label>
               <select
-                value={toCurrency}
-                onChange={(e) => setToCurrency(e.target.value)}
+                value={toCurrencies}
+                onChange={(e) => setToCurrencies(e.target.value)}
               >
                 <option value="USD">$ USD</option>
                 <option value="INR">₹ INR</option>
@@ -117,11 +117,11 @@ function Head() {
               <label className="to">To:</label>
               <select
                 className="currency_symbol"
-                value={toCurrency}
+                value={toCurrencies}
                 onChange={(e) => {
                   const selectedCurrency = e.target.value;
-                  localStorage.setItem("toCurrency", selectedCurrency);
-                  setToCurrency(selectedCurrency);
+                  localStorage.setItem("toCurrencies", selectedCurrency);
+                  setToCurrencies(selectedCurrency);
                 }}
               >
                 {currencies.map((currency) => (

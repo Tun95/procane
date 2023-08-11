@@ -920,7 +920,7 @@ orderRouter.post(
 //=============
 // EXHANGE RATE
 //=============
-async function convertCurrency(amount, toCurrency) {
+async function convertCurrency(amount, toCurrencies) {
   // Get the base currency from the database
   try {
     const settings = await Settings.findOne({});
@@ -933,7 +933,7 @@ async function convertCurrency(amount, toCurrency) {
 
     const response = await axios.get(apiUrl);
     const exchangeRates = response.data.rates;
-    const convertedAmount = amount * exchangeRates[toCurrency];
+    const convertedAmount = amount * exchangeRates[toCurrencies];
 
     return convertedAmount;
   } catch (error) {

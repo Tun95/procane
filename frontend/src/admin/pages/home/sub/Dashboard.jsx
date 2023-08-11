@@ -28,7 +28,7 @@ function reducer(state, action) {
 function Dashboard() {
   const navigate = useNavigate();
 
-  const { state, convertCurrency, toCurrency } = useContext(Context);
+  const { state, convertCurrency, toCurrencies } = useContext(Context);
   const { userInfo, settings } = state;
 
   const [{ loading, error, summary }, dispatch] = useReducer(reducer, {
@@ -73,7 +73,7 @@ function Dashboard() {
   // const CustomTooltip = ({ active, payload, label }) => {
   //   let TotalSales = new Intl.NumberFormat("en-GB", {
   //     style: "currency",
-  //     currency: toCurrency,
+  //     currency: toCurrencies,
   //   }).format(payload[0]?.value);
 
   //   //let TotalSales = numeral(payload[0]?.value).format("0,0a");

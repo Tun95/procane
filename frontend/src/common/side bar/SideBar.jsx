@@ -36,7 +36,7 @@ import WorkIcon from "@mui/icons-material/Work";
 function SideBar() {
   const { state: states, dispatch: ctxDispatch } = useContext(Context);
   const { cart, userInfo } = states;
-  const { darkMode, toggle, currencies, toCurrency, setToCurrency } =
+  const { darkMode, toggle, currencies, toCurrencies, setToCurrencies } =
     useContext(Context);
 
   const [state, setState] = React.useState({
@@ -341,11 +341,11 @@ function SideBar() {
             <div className="currency_state toogle_width a_flex">
               <CurrencyExchangeIcon className="currencyExchangeIcon" />
               <select
-                value={toCurrency}
+                value={toCurrencies}
                 onChange={(e) => {
                   const selectedCurrency = e.target.value;
-                  localStorage.setItem("toCurrency", selectedCurrency);
-                  setToCurrency(selectedCurrency);
+                  localStorage.setItem("toCurrencies", selectedCurrency);
+                  setToCurrencies(selectedCurrency);
                 }}
               >
                 {currencies.map((currency) => (

@@ -306,17 +306,17 @@ export function ContextProvider(props) {
         .find(() => true)) ||
     {};
 
-  const [toCurrency, setToCurrency] = useState(
-    localStorage.getItem("toCurrency") || currency || "USD"
+  const [toCurrencies, setToCurrencies] = useState(
+    localStorage.getItem("toCurrencies") || currency || "USD"
   );
-  console.log(`TO CURRENCY: ${toCurrency}`);
+  console.log(`TO CURRENCY: ${toCurrencies}`);
   console.log(`CURRENCY: ${currency}`);
   const [conversionRates, setConversionRates] = useState(null);
 
   const formatPrice = (price, grandTotal) => {
     const formatter = new Intl.NumberFormat("en-GB", {
       style: "currency",
-      currency: toCurrency,
+      currency: toCurrencies,
       currencyDisplay: "narrowSymbol",
     });
 
@@ -347,8 +347,8 @@ export function ContextProvider(props) {
         ? Number(price.replace(/[^0-9.-]+/g, ""))
         : price;
 
-    if (conversionRates && toCurrency in conversionRates) {
-      const conversionRate = conversionRates[toCurrency];
+    if (conversionRates && toCurrencies in conversionRates) {
+      const conversionRate = conversionRates[toCurrencies];
 
       const convertedPrice = numericPrice * conversionRate;
       const convertedItemsPrice = itemsPrice * conversionRate;
@@ -381,8 +381,8 @@ export function ContextProvider(props) {
         ? Number(price.replace(/[^0-9.-]+/g, ""))
         : price;
 
-    if (conversionRates && toCurrency in conversionRates) {
-      const conversionRate = conversionRates[toCurrency];
+    if (conversionRates && toCurrencies in conversionRates) {
+      const conversionRate = conversionRates[toCurrencies];
       const convertedPrice = numericPrice * conversionRate;
 
       return Math.round(convertedPrice); // Round to the nearest whole number
@@ -406,8 +406,8 @@ export function ContextProvider(props) {
     };
 
     const storedCurrency =
-      localStorage.getItem("toCurrency") || currency || "USD";
-    setToCurrency(storedCurrency);
+      localStorage.getItem("toCurrencies") || currency || "USD";
+    setToCurrencies(storedCurrency);
     fetchCurrencies();
   }, [currency]);
 
@@ -433,8 +433,8 @@ export function ContextProvider(props) {
   const value = {
     state,
     dispatch,
-    toCurrency,
-    setToCurrency,
+    toCurrencies,
+    setToCurrencies,
     convertCurrency,
     convertToNumeric,
     formatPrice,

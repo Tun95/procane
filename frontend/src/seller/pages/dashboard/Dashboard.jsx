@@ -27,7 +27,7 @@ function reducer(state, action) {
 function SellerDashboard() {
   const navigate = useNavigate();
 
-  const { state, convertCurrency, toCurrency } = useContext(Context);
+  const { state, convertCurrency, toCurrencies } = useContext(Context);
   const { userInfo, settings } = state;
 
   const [{ loading, error, summary }, dispatch] = useReducer(reducer, {

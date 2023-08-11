@@ -66,7 +66,7 @@ function ProductEdit() {
   const params = useParams();
   const { id: productId } = params;
 
-  const { state, convertCurrency, toCurrency } = useContext(Context);
+  const { state, convertCurrency, toCurrencies } = useContext(Context);
   const { userInfo, colors, categories, brands, sizes } = state;
 
   const [{ loading, error, product, loadingUpload, summary }, dispatch] =
