@@ -47,7 +47,7 @@ function Widget({
       break;
     case "order":
       data = {
-        title: "ODERS",
+        title: "ORDERS",
         isMoney: false,
         link: "All orders",
         icon: (
@@ -63,7 +63,7 @@ function Widget({
       break;
     case "income":
       data = {
-        title: "EARNINIGS",
+        title: "EARNINGS",
         isMoney: true,
         link: "Net earnings",
         icon: (
