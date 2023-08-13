@@ -220,24 +220,18 @@ function ProductEdit() {
 
   const [salesStats, setSalesStats] = useState([]);
 
-  useEffect(() => {
-    const getStats = async () => {
-      const formattedStats = product.sold?.map((item) => {
-        const formattedDate = new Date(item.date)
-          .toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          })
-          .replace(/\//g, "-"); // Replace slashes with hyphens
-
-        return { name: formattedDate, Sales: item.value };
-      });
-
-      setSalesStats(formattedStats || []); // Set the state once with the entire array
-    };
-    getStats();
-  }, [product.sold]);
+  // useEffect(() => {
+  //   const getStats = async () => {
+  //     product.sold?.map((item) =>
+  //       setSalesStats((prev) => [
+  //         ...prev,
+  //         { name: item.date, Sales: item.value },
+  //       ])
+  //     );
+  //   };
+  //   getStats();
+  // }, [product.sold]);
+  // console.log(summary);
   // const CustomTooltip = ({ active, payload, label }) => {
   //   if (active && payload && payload.length) {
   //     return (
@@ -252,6 +246,20 @@ function ProductEdit() {
 
   //   return null;
   // };
+  useEffect(() => {
+    const getStats = async () => {
+      const formattedStats = product.sold?.map((item) => ({
+        name: new Date(item.date)
+          .toISOString() // Keep the ISO date format for accurate comparison
+          .slice(0, 10), // Extract the YYYY-MM-DD part
+        Sales: item.value,
+      }));
+
+      setSalesStats(formattedStats || []); // Set the state once with the entire array
+    };
+    getStats();
+  }, [product.sold]);
+
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       const formattedDate = new Date(label)
@@ -260,7 +268,7 @@ function ProductEdit() {
           month: "2-digit",
           day: "2-digit",
         })
-        .replace(/\//g, "-"); // Replace slashes with hyphens
+        .replace(/\//g, "-");
 
       return (
         <div className="custom_tooltip" style={{ padding: "10px" }}>
