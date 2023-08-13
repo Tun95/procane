@@ -125,6 +125,7 @@ function ProductEdit() {
     };
     fetchData();
   }, [productId]);
+  console.log(product);
 
   //==============
   //PRODUCT UPDATE
@@ -221,24 +222,51 @@ function ProductEdit() {
 
   useEffect(() => {
     const getStats = async () => {
-      summary.income
-        ?.reverse()
-        ?.map((item) =>
-          setSalesStats((prev) => [
-            ...prev,
-            { name: item._id, Sales: item.sales },
-          ])
-        );
+      const formattedStats = product.sold?.map((item) => {
+        const formattedDate = new Date(item.date)
+          .toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          })
+          .replace(/\//g, "-"); // Replace slashes with hyphens
+
+        return { name: formattedDate, Sales: item.value };
+      });
+
+      setSalesStats(formattedStats || []); // Set the state once with the entire array
     };
     getStats();
-  }, [summary.income]);
+  }, [product.sold]);
+  // const CustomTooltip = ({ active, payload, label }) => {
+  //   if (active && payload && payload.length) {
+  //     return (
+  //       <div className="custom_tooltip" style={{ padding: "10px" }}>
+  //         <p className="label">{`${label}`}</p>
+  //         <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
+  //           Sales: {payload[0]?.value}
+  //         </p>
+  //       </div>
+  //     );
+  //   }
+
+  //   return null;
+  // };
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
+      const formattedDate = new Date(label)
+        .toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+        .replace(/\//g, "-"); // Replace slashes with hyphens
+
       return (
         <div className="custom_tooltip" style={{ padding: "10px" }}>
-          <p className="label">{`${label}`}</p>
+          <p className="label">Date: {formattedDate}</p>
           <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
-            Total Sales: {`${convertCurrency(payload[0]?.value)}`}
+            Sales: {payload[0]?.value}
           </p>
         </div>
       );

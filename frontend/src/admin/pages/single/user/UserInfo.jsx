@@ -61,7 +61,9 @@ function UserInfo() {
     summary: { salesData: [] },
   });
 
+  //========
   //FETCHING
+  //========
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,6 +82,9 @@ function UserInfo() {
   }, [userId, userInfo]);
   console.log(user);
 
+  //==================
+  // EARNINGS MONTHLY
+  //==================
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -100,15 +105,17 @@ function UserInfo() {
   }, [userId, userInfo]);
   console.log(user);
 
-  //STATS FETCHING
-  const [userSpending, setuUserSpending] = useState([]);
+  //==============
+  //SPENDING STATS 
+  //==============
+  const [userSpending, setUserSpending] = useState([]);
 
   useEffect(() => {
     const getStats = async () => {
       user.dailyOrders
         ?.reverse()
         ?.map((item) =>
-          setuUserSpending((prev) => [
+          setUserSpending((prev) => [
             ...prev,
             { name: item._id, "Total Sales": item.sales },
           ])

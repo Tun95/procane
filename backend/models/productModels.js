@@ -76,22 +76,49 @@ productSchema.pre("save", function (next) {
   next();
 });
 
+// // Middleware to update the 'sold' array based on 'numSales'
+// productSchema.pre("save", function (next) {
+//   if (this.isModified("numSales")) {
+//     const today = new Date().toISOString().slice(0, 10);
+
+//     // Find the sold entry for today
+//     const todaySold = this.sold.find(
+//       (entry) => entry.date.toISOString().slice(0, 10) === today
+//     );
+
+//     if (todaySold) {
+//       todaySold.value = this.numSales;
+//     } else {
+//       this.sold.push({ value: this.numSales, date: new Date(today) });
+//     }
+//   }
+//   next();
+// });
 // Middleware to update the 'sold' array based on 'numSales'
 productSchema.pre("save", function (next) {
   if (this.isModified("numSales")) {
-    const today = new Date().toISOString().slice(0, 10); // Get the current date in YYYY-MM-DD format
+    const currentDate = new Date();
+    const today = currentDate.toISOString().slice(0, 10);
+    const twoDaysAgo = new Date(currentDate.getTime() - 2 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10);
 
-    // Find the sold entry for today
-    const todaySold = this.sold.find(
-      (entry) => entry.date.toISOString().slice(0, 10) === today
+    // Filter the sold entries to include only those from the last two days
+    const lastTwoDaysSold = this.sold.filter(
+      (entry) =>
+        entry.date.toISOString().slice(0, 10) === today ||
+        entry.date.toISOString().slice(0, 10) === twoDaysAgo
     );
 
-    if (todaySold) {
-      // If entry for today exists, update the value
-      todaySold.value = this.numSales;
+    if (lastTwoDaysSold.length > 0) {
+      // Update the values of existing entries for the last two days
+      lastTwoDaysSold.forEach((entry) => {
+        entry.value = this.numSales;
+      });
     } else {
-      // If entry for today doesn't exist, create a new entry
-      this.sold.push({ value: this.numSales });
+      // If no entries for the last two days, create new entries
+      this.sold.push({ value: this.numSales, date: new Date(today) });
+      this.sold.push({ value: this.numSales, date: new Date(twoDaysAgo) });
     }
   }
   next();

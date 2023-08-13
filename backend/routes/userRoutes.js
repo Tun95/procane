@@ -14,9 +14,9 @@ import moment from "moment";
 const userRouter = express.Router();
 // userRouter.use(passport.initialize());
 
-//===========
-//USER SIGNIN
-//===========
+//============
+//USER SIGN IN
+//============
 userRouter.post(
   "/signin",
   expressAsyncHandler(async (req, res) => {
