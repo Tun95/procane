@@ -46,13 +46,6 @@ const reducer = (state, action) => {
     case "UPLOAD_FAIL":
       return { ...state, loadingUpload: false, errorUpload: action.payload };
 
-    case "FETCH_STATS_REQUEST":
-      return { ...state, loading: true, error: "" };
-    case "FETCH_STATS_SUCCESS":
-      return { ...state, loading: false, summary: action.payload, error: "" };
-    case "FETCH_STATS_FAIL":
-      return { ...state, loading: false, error: action.payload };
-
     default:
       return state;
   }
@@ -67,13 +60,15 @@ function SellerProductEdit() {
   const { state, convertCurrency, toCurrencies } = useContext(Context);
   const { userInfo, colors, categories, brands, sizes } = state;
 
-  const [{ loading, error, product, loadingUpload, summary }, dispatch] =
-    useReducer(reducer, {
+  const [{ loading, error, product, loadingUpload }, dispatch] = useReducer(
+    reducer,
+    {
       product: [],
       loading: true,
       summary: { salesData: [] },
       error: "",
-    });
+    }
+  );
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -193,47 +188,40 @@ function SellerProductEdit() {
     }
   };
 
-  //============
-  //PRODUCT STATS
-  //============
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch({ type: "FETCH_STATS_REQUEST" });
-        const { data } = await axios.get(`${request}/api/orders/summary`, {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
-        });
-        dispatch({ type: "FETCH_STATS_SUCCESS", payload: data });
-      } catch (err) {
-        dispatch({ type: "FETCH_STATS_FAIL", payload: getError(err) });
-        console.log(err);
-      }
-    };
-    fetchData();
-  }, [productId, userInfo]);
-
+  //===================
+  //PRODUCT SALES STATS
+  //===================
   const [salesStats, setSalesStats] = useState([]);
 
   useEffect(() => {
     const getStats = async () => {
-      summary.income
-        ?.reverse()
-        ?.map((item) =>
-          setSalesStats((prev) => [
-            ...prev,
-            { name: item._id, Sales: item.sales },
-          ])
-        );
+      const formattedStats = product.sold?.map((item) => ({
+        name: new Date(item.date)
+          .toISOString() // Keep the ISO date format for accurate comparison
+          .slice(0, 10), // Extract the YYYY-MM-DD part
+        Sales: item.value,
+      }));
+
+      setSalesStats(formattedStats || []); // Set the state once with the entire array
     };
     getStats();
-  }, [summary.income]);
+  }, [product.sold]);
+
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
+      const formattedDate = new Date(label)
+        .toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+        .replace(/\//g, "-");
+
       return (
         <div className="custom_tooltip" style={{ padding: "10px" }}>
-          <p className="label">{`${label}`}</p>
+          <p className="label">Date: {formattedDate}</p>
           <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
-            Total Sales: {`${convertCurrency(payload[0]?.value)}`}
+            Sales: {payload[0]?.value}
           </p>
         </div>
       );
