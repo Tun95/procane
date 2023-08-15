@@ -67,9 +67,9 @@ applicationRoutes.get(
   })
 );
 
-//==========
+//=========
 // DECLINED
-//==========
+//=========
 applicationRoutes.put(
   "/:id",
   isAuth,
