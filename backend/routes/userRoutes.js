@@ -3,7 +3,8 @@ import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
 import User from "../models/userModels.js";
 import { generateToken, isAdmin, isAuth, isSellerOrAdmin } from "../utils.js";
-import nodemailer from "nodemailer";
+import Sib from "sib-api-v3-sdk";
+
 import crypto from "crypto";
 import mongoose from "mongoose";
 import Order from "../models/orderModels.js";
@@ -638,35 +639,31 @@ userRouter.post(
         </body>
         </html>
       `;
+      const client = Sib.ApiClient.instance;
+      const apiKey = client.authentications["api-key"];
+      apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
 
-      // Create a nodemailer transport
-      const smtpTransport = nodemailer.createTransport({
-        service: process.env.MAIL_SERVICE,
-        auth: {
-          user: process.env.EMAIL_ADDRESS,
-          pass: process.env.GMAIL_PASS,
-        },
-      });
-
-      // Setup email data
-      const mailOptions = {
-        from: `${process.env.SHOP_NAME} ${process.env.EMAIL_ADDRESS}`,
-        to: `${user.email}`,
-        subject: "Verify your email address",
-        html: emailMessage,
+      const tranEmailApi = new Sib.TransactionalEmailsApi();
+      const sender = {
+        name: process.env.SHOP_NAME,
+        email: process.env.EMAIL_ADDRESS,
       };
+      const receivers = [{ email: user.email }];
+      tranEmailApi
+        .sendTransacEmail({
+          sender,
+          to: receivers,
+          subject: "Verify your email address",
+          htmlContent: emailMessage,
+          params: {
+            role: "Frontend",
+          },
+        })
+        .then(console.log)
+        .catch(console.log);
 
-      // Send the email
-      smtpTransport.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log(error);
-          res.status(500).json({ message: "Failed to send email" });
-        } else {
-          console.log("Email sent: " + info.response);
-          res
-            .status(200)
-            .json({ message: "Verification email sent successfully" });
-        }
+      res.send({
+        msg: "Verification email sent successfully",
       });
     } catch (error) {
       console.log(error);
@@ -729,27 +726,35 @@ userRouter.post(
         <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
         `;
 
-      const smtpTransport = nodemailer.createTransport({
-        service: process.env.MAIL_SERVICE,
-        auth: {
-          user: process.env.EMAIL_ADDRESS,
-          pass: process.env.GMAIL_PASS,
-        },
-      });
+      const client = Sib.ApiClient.instance;
+      const apiKey = client.authentications["api-key"];
+      apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
 
-      const mailOptions = {
-        from: `${process.env.SHOP_NAME} ${process.env.EMAIL_ADDRESS}`,
-        to: email,
-        subject: "Reset Password",
-        html: resetURL,
+      const tranEmailApi = new Sib.TransactionalEmailsApi();
+      const sender = {
+        name: process.env.SHOP_NAME,
+        email: process.env.EMAIL_ADDRESS,
       };
+      const receivers = [{ email: email }];
+      tranEmailApi
+        .sendTransacEmail({
+          sender,
+          to: receivers,
+          subject: "Reset Password",
+          htmlContent: resetURL,
+          params: {
+            role: "Frontend",
+          },
+        })
+        .then(console.log)
+        .catch(console.log);
 
-      smtpTransport.sendMail(mailOptions);
       res.send({
         msg: `A verification email has been successfully sent to ${user?.email}. Reset now within 10 minutes.`,
       });
     } catch (error) {
-      res.send(error);
+      console.error("Error:", error);
+      res.status(500).send({ error: "An error occurred." });
     }
   })
 );
