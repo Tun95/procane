@@ -68,7 +68,7 @@ applicationRoutes.get(
 );
 
 //==========
-// DELCINED
+// DECLINED
 //==========
 applicationRoutes.put(
   "/:id",
