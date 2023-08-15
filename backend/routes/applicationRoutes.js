@@ -117,9 +117,9 @@ applicationRoutes.put(
   })
 );
 
-//======
+//=======
 //DELETE
-//======
+//=======
 applicationRoutes.delete(
   "/:id",
   isAuth,
