@@ -77,7 +77,9 @@ sendEmailRouter.get(
   })
 );
 
+//=======
 //Delete
+//=======
 sendEmailRouter.delete(
   "/:id",
   // isAuth,
