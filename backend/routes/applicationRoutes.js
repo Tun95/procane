@@ -49,9 +49,9 @@ applicationRoutes.get(
   })
 );
 
-//=============
+//==============
 // FETCH SINGLE
-//=============
+//==============
 applicationRoutes.get(
   "/:id",
   isAuth,
