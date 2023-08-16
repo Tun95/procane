@@ -127,9 +127,9 @@ function Seller() {
   //PAGE URL
   const pageURL = process.env.REACT_APP_FRONTEND_URL;
   return (
-    <div className="mtb">
+    <div className="mtb seller_product">
       <div className="container ">
-        <div className="box_shadow seller_product">
+        <div className="box_shadow ">
           {loading ? (
             <LoadingBox></LoadingBox>
           ) : error ? (

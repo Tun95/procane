@@ -225,9 +225,9 @@ function Vendor() {
 
   console.log(user);
   return (
-    <div className="mtb">
+    <div className="mtb user_profile_page">
       <div className="container ">
-        <div className="profile user_profile_page box_shadow">
+        <div className="profile box_shadow">
           <Helmet>
             <title>Profile</title>
           </Helmet>

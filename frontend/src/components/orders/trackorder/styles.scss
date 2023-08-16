@@ -43,6 +43,16 @@
         }
       }
     }
+    @media screen and (max-width: 420px) {
+      padding: 0px;
+    }
+    @media screen and (max-width: 320px) {
+      .table_header {
+        h3 {
+          font-size: 16px;
+        }
+      }
+    }
   }
   .order_info {
     .items-box {
@@ -244,6 +254,7 @@
         margin-top: 15px;
       }
     }
+
     @media screen and (max-width: 387px) {
       .top-box .place-deliver {
         display: grid;

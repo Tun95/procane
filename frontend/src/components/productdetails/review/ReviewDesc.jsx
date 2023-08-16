@@ -97,7 +97,7 @@ function ReviewDesc({ product, userInfo, handleDelete, dispatch }) {
 
   return (
     <>
-      <section className=" background review-section ">
+      <section className="review-section ">
         <div className="rev ">
           <div className="rev-style">
             <div className="rev-head c_flex">

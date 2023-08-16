@@ -62,6 +62,7 @@
                 display: grid;
                 grid-template-columns: 1fr;
                 margin-top: -10px;
+
                 label {
                   font-weight: 600;
                   color: var(--color-gray);
@@ -195,6 +196,14 @@
             .profile_inner_form {
               padding: 8px;
               margin: 10px 0px;
+              width: 100%;
+              // overflow: hidden;
+              .profile_user_form {
+                width: 100%;
+                .profile_form_group {
+                  width: 100%;
+                }
+              }
             }
             .user_details {
               .user_detail_list {
@@ -207,6 +216,18 @@
           }
         }
       }
+    }
+  }
+  @media screen and (max-width: 350px) {
+    .box_shadow {
+      box-shadow: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
+  @media screen and (max-width: 290px) {
+    .phone_width {
+      max-width: 250px;
     }
   }
 }

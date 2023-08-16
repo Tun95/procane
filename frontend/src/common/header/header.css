@@ -147,6 +147,11 @@
 }
 /*------search-----------*/
 
+/*------Nav Link-----------*/
+.header {
+  padding: 10px 0px;
+  box-shadow: -1px 15px 17px -8px rgba(0, 0, 0, 0.1);
+}
 .ctg_btn {
   background-color: var(--color-background);
   height: 50px;
@@ -170,15 +175,13 @@
 .categories h4 i {
   margin-left: 10px;
 }
-.header {
-  height: 8vh;
-  box-shadow: -1px 15px 17px -8px rgba(0, 0, 0, 0.1);
-}
+
 .header .ctg_btn {
   cursor: pointer;
 }
 .header ul {
-  line-height: 8vh;
+  position: relative;
+  top: 20px;
 }
 .header ul li {
   margin-left: 30px;

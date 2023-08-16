@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import "./footer.css";
+import "./footer.scss";
 import { Link } from "react-router-dom";
 import { Context } from "../../context/Context";
 import { Fade } from "react-awesome-reveal";
@@ -60,6 +60,7 @@ function Footer() {
                 </Fade>
               </span>
             </div>
+            <hr className="horizontal"/>
           </div>
 
           <div className="box">

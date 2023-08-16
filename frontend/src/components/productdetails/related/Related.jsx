@@ -5,7 +5,7 @@ function Related({ products, addToCartHandler }) {
   return (
     <>
       <section className="flash background">
-        <div className="container">
+        <div className="">
           <div className="heading f_flex">
             <i className="fa fa-bolt"></i>
             <h1>Related Products</h1>

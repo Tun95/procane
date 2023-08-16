@@ -1,0 +1,9 @@
+.track_shipment {
+  @media screen and (max-width: 420px) {
+    .box_shadow {
+      box-shadow: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
+}

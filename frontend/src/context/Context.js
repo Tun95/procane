@@ -391,17 +391,42 @@ export function ContextProvider(props) {
     }
   };
 
+  //==========
+  //FETCH RATE
+  //==========
+  // useEffect(() => {
+  //   const fetchCurrencies = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `https://api.exchangerate-api.com/v4/latest/${currency}`
+  //       );
+  //       const data = await response.json();
+  //       setConversionRates(data.rates);
+  //       console.log("Exchange Rates:", data.rates);
+  //     } catch (error) {
+  //       console.log("Error fetching exchange rate data:", error);
+  //     }
+  //   };
+
+  //   const storedCurrency =
+  //     localStorage.getItem("toCurrencies") || currency || "USD";
+  //   setToCurrencies(storedCurrency);
+  //   fetchCurrencies();
+  // }, [currency]);
   useEffect(() => {
     const fetchCurrencies = async () => {
-      try {
-        const response = await fetch(
-          `https://api.exchangerate-api.com/v4/latest/${currency}`
-        );
-        const data = await response.json();
-        setConversionRates(data.rates);
-        console.log("Exchange Rates:", data.rates);
-      } catch (error) {
-        console.log("Error fetching exchange rate data:", error);
+      if (currency) {
+        // Only fetch if currency is available
+        try {
+          const response = await fetch(
+            `https://api.exchangerate-api.com/v4/latest/${currency}`
+          );
+          const data = await response.json();
+          setConversionRates(data.rates);
+          console.log("Exchange Rates:", data.rates);
+        } catch (error) {
+          console.log("Error fetching exchange rate data:", error);
+        }
       }
     };
 
