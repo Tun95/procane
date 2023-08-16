@@ -1230,7 +1230,7 @@ orderRouter.post(
   <hr/>
   <p class="thanks">Thanks for shopping with us.</p>
   <!-- This anchor tag will be displayed as a plain link without any additional styles -->
-  <p class="footer">Developed by <a href="https://my-portfolio-nine-nu-28.vercel.app/">Olatunji Akande</a></p>
+  
 </body>
 </html>
 `;
@@ -1614,7 +1614,7 @@ orderRouter.post(
   <hr/>
   <p class="thanks">Thanks for shopping with us.</p>
   <!-- This anchor tag will be displayed as a plain link without any additional styles -->
-  <p class="footer">Developed by <a href="https://my-portfolio-nine-nu-28.vercel.app/">Olatunji Akande</a></p>
+  
 </body>
 </html>
 `;
@@ -1997,7 +1997,7 @@ orderRouter.post(
   <hr/>
   <p class="thanks">Thanks for shopping with us.</p>
   <!-- This anchor tag will be displayed as a plain link without any additional styles -->
-  <p class="footer">Developed by <a href="https://my-portfolio-nine-nu-28.vercel.app/">Olatunji Akande</a></p>
+  
 </body>
 </html>
 `;
@@ -2375,7 +2375,7 @@ orderRouter.put(
   <hr/>
   <p class="thanks">Thanks for shopping with us.</p>
   <!-- This anchor tag will be displayed as a plain link without any additional styles -->
-  <p class="footer">Developed by <a href="https://my-portfolio-nine-nu-28.vercel.app/">Olatunji Akande</a></p>
+  
 </body>
 </html>
 `;

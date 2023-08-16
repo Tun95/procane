@@ -88,6 +88,7 @@ import SellerOrderListScreen from "./seller/pages/list/main/order/SellerOrderLis
 import SellerScreen from "./seller/pages/single/main/SellerScreen";
 import SellerProductListScreen from "./seller/pages/list/main/product/SellerProductListScreen";
 import SellerDashboard from "./seller/pages/dashboard/Dashboard";
+import UnSubscribeScreen from "./screens/formscreens/unsubscribescreen/UnsubcribeScreen";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -242,6 +243,7 @@ function App() {
                 </ProtectedRoute>
               }
             ></Route>
+            <Route path="/unsubscribe" element={<UnSubscribeScreen />}></Route>
 
             {/* VALIDATION */}
 
@@ -520,10 +522,10 @@ function App() {
             {/* SELLER ROUTES */}
           </Routes>
 
-          <MessengerCustomerChat
+          {/* <MessengerCustomerChat
             pageId={messengerPageId}
             appId={messengerAppId}
-          />
+          /> */}
           <Footer />
         </LoadingOverlayComponent>
       </Router>

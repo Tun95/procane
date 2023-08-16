@@ -634,7 +634,6 @@ userRouter.post(
           <p>Thank you,</p>
           <p>${process.env.SHOP_NAME} Team</p>
           <hr/>
-          <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
         </body>
         </html>
       `;
@@ -726,9 +725,7 @@ userRouter.post(
         <p>If you have any questions or need further assistance, please contact our support team at ${
           process.env.EMAIL_ADDRESS
         }.</p>
-        <p>Best regards,<br/>${process.env.SHOP_NAME} Team</p>
-        <hr/>
-        <small>Developed by <a href=${`https://my-portfolio-nine-nu-28.vercel.app/`}>Olatunji Akande</a><small/>
+        <p>Best regards,<br/>${process.env.SHOP_NAME} Team</p>     
         `;
 
       const smtpTransport = nodemailer.createTransport({

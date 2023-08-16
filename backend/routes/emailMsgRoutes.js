@@ -62,6 +62,22 @@ sendEmailRouter.post(
   })
 );
 
+// Unsubscribe from News Letter
+sendEmailRouter.post(
+  "/unsubscribe",
+  expressAsyncHandler(async (req, res) => {
+    const { email } = req.body;
+    const unsubscribedUser = await EmailMsg.findOneAndDelete({ email });
+    if (unsubscribedUser) {
+      return res
+        .status(200)
+        .send({ message: "You have successfully unsubscribed" });
+    } else {
+      return res.status(404).send({ message: "Email not found" });
+    }
+  })
+);
+
 //Fetch All
 sendEmailRouter.get(
   "/",
@@ -119,13 +135,76 @@ sendEmailRouter.post(
           pass: process.env.GMAIL_PASS,
         },
       });
+
+      // Add unsubscribe link to the end of the email message
+      const unsubscribeLink = `${process.env.SUB_DOMAIN}/unsubscribe`;
+      const shopName = process.env.SHOP_NAME;
+
+      const emailMessageWithUnsubscribe = `
+        <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+            }
+            .container {
+              background-color: #f4f4f4;
+              padding: 20px;
+            }
+            .header {
+              background-color: #007bff;
+              color: #ffffff;
+              padding: 10px;
+              text-align: center;
+            }
+            .content {
+              background-color: #ffffff;
+              padding: 20px;
+            }
+            .footer {
+              background-color: #f4f4f4;
+              padding: 10px;
+              text-align: center;
+            }
+            .unsubscribe {
+              margin-top: 20px;
+              text-align: center;
+            }
+            .unsubscribe a {
+              color: #007bff;
+              text-decoration: none;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>${shopName}</h1>
+            </div>
+            <div class="content">
+              ${message}
+            </div>
+            <div class="footer">
+              <p>If you wish to unsubscribe from our newsletter, <a href="${unsubscribeLink}">click here</a>.</p>
+            </div>
+            <div class="unsubscribe">
+              <p><a href="${unsubscribeLink}">Unsubscribe</a> from our newsletter</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
       const mailOptions = {
         to: [],
         bcc: mailList,
-        from: `${process.env.SHOP_NAME} ${process.env.EMAIL_ADDRESS}`,
+        from: `${shopName} ${process.env.EMAIL_ADDRESS}`,
         subject,
-        html: message,
+        html: emailMessageWithUnsubscribe,
       };
+
       smtpTransport.sendMail(mailOptions, function (err) {
         if (err) {
           console.log(err);
@@ -135,51 +214,10 @@ sendEmailRouter.post(
           );
           res.redirect("/");
         }
-        res.send("mail sent to " + mailList);
-        console.log("mail sent to " + mailList);
+        res.send("Mail sent to " + mailList);
+        console.log("Mail sent to " + mailList);
       });
     });
-
-    //    const client = Sib.ApiClient.instance;
-    //    const apiKey = client.authentications["api-key"];
-    //    apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
-
-    //    const { subject, message } = req.body;
-    //  EmailMsg.find({}, function (err, allUsers) {
-    //    if (err) {
-    //      console.log(err);
-    //    }
-    //    var mailList = [];
-    //    allUsers.forEach(function (users) {
-    //      mailList.push(users.email);
-    //      return mailList;
-    //    });
-
-    //    const tranEmailApi = new Sib.TransactionalEmailsApi();
-    //    const sender = {
-    //      email: process.env.EMAIL_ADDRESS,
-    //      name: process.env.SHOP_NAME,
-    //    };
-    //    const receivers = [
-    //      {
-    //        email: mailList,
-    //      },
-    //    ];
-    //    tranEmailApi
-    //      .sendTransacEmail({
-    //        sender,
-    //        to: receivers,
-    //        bcc: mailList,
-    //        subject,
-    //        textContent: message,
-    //        params: {
-    //          role: "Frontend",
-    //        },
-    //      })
-    //      .then(console.log)
-    //      .catch(console.log);
-    //    res.json("sent");
-    //  });
   })
 );
 

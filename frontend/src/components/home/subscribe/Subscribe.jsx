@@ -79,7 +79,7 @@ function Subscribe() {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         id="email"
-                        placeholder="Enter your email e.g tunji404@gmail.com"
+                        placeholder="Enter your email e.g info@example.com"
                       />
                     </div>
                     <ErrorMessage
