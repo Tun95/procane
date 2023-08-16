@@ -745,11 +745,22 @@ userRouter.post(
         subject: "Reset Password",
         html: resetURL,
       };
-
-      smtpTransport.sendMail(mailOptions);
-      res.send({
-        msg: `A verification email has been successfully sent to ${user?.email}. Reset now within 10 minutes.`,
+      // Send the email
+      smtpTransport.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log(error);
+          res.status(500).json({ message: "Failed to send email" });
+        } else {
+          console.log("Email sent: " + info.response);
+          res.status(200).json({
+            message: `A verification email has been successfully sent to ${user?.email}. Reset now within 10 minutes.`,
+          });
+        }
       });
+      // smtpTransport.sendMail(mailOptions);
+      // res.send({
+      //   msg: `A verification email has been successfully sent to ${user?.email}. Reset now within 10 minutes.`,
+      // });
     } catch (error) {
       res.send(error);
     }
