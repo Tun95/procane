@@ -7,6 +7,7 @@ import axios from "axios";
 import { request } from "../../../base url/BaseUrl";
 import { toast } from "react-toastify";
 import { getError } from "../../../components/utilities/util/Utils";
+import { Helmet } from "react-helmet-async";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -51,6 +52,9 @@ function PasswordEmailResetScreen() {
 
   return (
     <div className="form-box">
+      <Helmet>
+        <title>Password Reset</title>
+      </Helmet>
       <div className="form-box-content">
         <Formik
           initialValues={initialValues}

@@ -757,10 +757,6 @@ userRouter.post(
           });
         }
       });
-      // smtpTransport.sendMail(mailOptions);
-      // res.send({
-      //   msg: `A verification email has been successfully sent to ${user?.email}. Reset now within 10 minutes.`,
-      // });
     } catch (error) {
       res.send(error);
     }
