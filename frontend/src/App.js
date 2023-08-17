@@ -132,7 +132,7 @@ function App() {
   return (
     <div className={darkMode ? "app dark" : "app"}>
       <Router>
-        <LoadingOverlayComponent>
+        <LoadingOverlayComponent center>
           <ToastContainer />
           <ScrollToTop />
           <Header />
