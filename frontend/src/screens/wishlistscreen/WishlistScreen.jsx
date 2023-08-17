@@ -1,9 +1,9 @@
 import React from "react";
 import Wish from "../../components/wish list/Wish";
 import { Helmet } from "react-helmet-async";
+import "./styles.scss";
 
 function WishlistScreen() {
-  
   return (
     <div className="container wish_container">
       <Helmet>

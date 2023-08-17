@@ -1,0 +1,10 @@
+.wish_container {
+  @media screen and (max-width: 375px) {
+    margin-top: 20px;
+    .box_shadow {
+      box-shadow: none;
+      padding: 0px;
+      margin: 0px;
+    }
+  }
+}
