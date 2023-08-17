@@ -39,3 +39,13 @@
     }
   }
 }
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 420px) {
+  .banner_create_box {
+    .color_split_split {
+      .box_shadow {
+        width: 100%;
+      }
+    }
+  }
+}

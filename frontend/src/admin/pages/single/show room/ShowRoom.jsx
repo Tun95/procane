@@ -219,44 +219,50 @@ const ShowRoom = () => {
             <>
               <h2>Show Room</h2>
               <div>
-                <small className="image-size-info">Large:</small>
+                <small className="image-size-info">Large: </small>
+                <small className="image-size-info">
+                  Recommended size: 1110x350
+                </small>
                 <img
                   src={singleData.largeImage}
                   alt="Large"
                   className="largeImage"
                 />
-                <FileUploader
-                  handleChange={(file) => {
-                    // Call uploadFileHandler to upload the image and set the URL
-                    uploadFileHandler({ target: { files: [file] } });
-                  }}
-                  name="file"
-                  types={fileTypes}
-                  id="fileUploader"
-                />
-                <small className="image-size-info">
-                  Recommended size: 1110x350
-                </small>
+                <div className="fileUploader">
+                  <FileUploader
+                    handleChange={(file) => {
+                      // Call uploadFileHandler to upload the image and set the URL
+                      uploadFileHandler({ target: { files: [file] } });
+                    }}
+                    name="file"
+                    types={fileTypes}
+                    id="fileUploader"
+                  />
+                </div>
               </div>
               <div>
-                <small className="image-size-info">Small:</small>
+                <div className="d_block">
+                  <small className="image-size-info">Small: </small>
+                  <small className="image-size-info">
+                    Recommended size: 224x224
+                  </small>
+                </div>
                 <img
                   src={singleData.smallImage}
                   alt="Small"
                   className="smallImage"
                 />
-                <FileUploader
-                  handleChange={(file) => {
-                    // Call uploadSmallImageHandler to upload the image and set the URL
-                    uploadSmallImageHandler({ target: { files: [file] } });
-                  }}
-                  name="file"
-                  types={fileTypes}
-                  className="fileUploader"
-                />
-                <small className="image-size-info">
-                  Recommended size: 224x224
-                </small>
+                <div className="fileUploader">
+                  <FileUploader
+                    handleChange={(file) => {
+                      // Call uploadSmallImageHandler to upload the image and set the URL
+                      uploadSmallImageHandler({ target: { files: [file] } });
+                    }}
+                    name="file"
+                    types={fileTypes}
+                    id="fileUploader"
+                  />
+                </div>
               </div>
               <div>
                 {/* <h3>{singleData.titleOne}</h3>

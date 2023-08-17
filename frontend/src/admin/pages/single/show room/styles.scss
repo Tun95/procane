@@ -64,4 +64,23 @@
       box-shadow: none;
     }
   }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 450px) {
+    .form_box_content {
+      .fileUploader {
+        max-width: 300px !important;
+        position: relative;
+        right: 20px;
+      }
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 385px) {
+    .form_box_content {
+      .fileUploader {
+        font-size: 10px !important;
+        right: 34px;
+      }
+    }
+  }
 }
