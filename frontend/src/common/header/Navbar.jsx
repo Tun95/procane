@@ -21,16 +21,16 @@ const StyledMenu = styled((props) => (
     }}
     {...props}
   />
-))(({ theme }) => ({
+))(({ theme, darkMode }) => ({
   "& .MuiPaper-root": {
     borderRadius: 6,
     marginTop: theme.spacing(3),
-    with: "520px",
     height: "400px",
     color:
       theme.palette.mode === "light"
         ? "rgb(55, 65, 81)"
         : theme.palette.grey[300],
+    backgroundColor: darkMode ? "rgb(0,0,0,0.8)" : "",
     boxShadow:
       "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
     "& .MuiMenu-list": {
@@ -39,7 +39,7 @@ const StyledMenu = styled((props) => (
     },
     "& .MuiMenuItem-root": {
       margin: "5px 0px",
-      color: "#2e2e2e",
+      color: darkMode ? "#ffffff" : "#2e2e2e",
       padding: "5px 60px",
       fontWeight: "500",
       transition: "all 500ms ease",
@@ -48,11 +48,8 @@ const StyledMenu = styled((props) => (
         color: theme.palette.text.secondary,
         marginRight: theme.spacing(1.5),
       },
-      "&:active": {
-        backgroundColor: alpha(
-          theme.palette.primary.main,
-          theme.palette.action.selectedOpacity
-        ),
+      "&:hover": {
+        backgroundColor: darkMode ? "#2e2e2e" : "", // Change to the desired hover color
       },
     },
   },
@@ -60,7 +57,7 @@ const StyledMenu = styled((props) => (
 function Navbar() {
   const navigate = useNavigate();
 
-  const { state, dispatch: ctxDispatch } = useContext(Context);
+  const { state, dispatch: ctxDispatch, darkMode } = useContext(Context);
   const { userInfo, categories } = state;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -93,6 +90,7 @@ function Navbar() {
             </div>
             {categories?.length > 0 ? (
               <StyledMenu
+                darkMode={darkMode}
                 id="demo-customized-menu"
                 className="demo_customized_menu"
                 MenuListProps={{

@@ -23,7 +23,6 @@ import PeopleIcon from "@mui/icons-material/People";
 import BadgeIcon from "@mui/icons-material/Badge";
 import WarehouseIcon from "@mui/icons-material/Warehouse";
 import SettingsIcon from "@mui/icons-material/Settings";
-import logo from "../../assets/procane.png";
 import { Context } from "../../context/Context";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
@@ -32,12 +31,32 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import WorkIcon from "@mui/icons-material/Work";
+import { styled } from "@mui/material/styles";
+
+const StyledDivider = styled(Divider)(({ theme, darkMode }) => ({
+  backgroundColor: darkMode ? "#ffffff" : "", // Change colors accordingly
+}));
 
 function SideBar() {
-  const { state: states, dispatch: ctxDispatch } = useContext(Context);
-  const { cart, userInfo } = states;
-  const { darkMode, toggle, currencies, toCurrencies, setToCurrencies } =
-    useContext(Context);
+  const {
+    state: states,
+    dispatch: ctxDispatch,
+    darkMode,
+    toggle,
+    currencies,
+    toCurrencies,
+    setToCurrencies,
+  } = useContext(Context);
+  const { cart, userInfo, settings } = states;
+
+  const { logo } =
+    (settings &&
+      settings
+        .map((s) => ({
+          logo: s.logo,
+        }))
+        .find(() => true)) ||
+    {};
 
   const [state, setState] = React.useState({
     right: false,
@@ -69,28 +88,20 @@ function SideBar() {
 
   const webItemList = [
     {
-      text: "",
-      icon: <img src={logo} alt="logo" style={{ width: "220px" }} />,
-      to: "/", // <-- add link targets
-    },
-    {
       text: "Home",
-      icon: <HomeIcon style={{ fill: "black" }} />,
+      icon: <HomeIcon />,
       to: "/", // <-- add link targets
     },
     {
       text: "Store",
-      icon: <StoreIcon style={{ fill: "black" }} />,
+      icon: <StoreIcon />,
       to: "/store",
     },
     {
       text: "Cart",
       icon: (
         <span>
-          <ShoppingCartIcon
-            style={{ fill: "black" }}
-            className="cart_badge_icon"
-          />
+          <ShoppingCartIcon className="cart_badge_icon" />
           <span className="cart_badge_side l_flex">
             <span className="cart_badge">{cart.cartItems?.length}</span>
           </span>
@@ -100,7 +111,7 @@ function SideBar() {
     },
     {
       text: "Contact",
-      icon: <CallIcon style={{ fill: "black" }} />,
+      icon: <CallIcon />,
       to: "/contact",
     },
   ];
@@ -110,54 +121,54 @@ function SideBar() {
   const userItemList = [
     {
       text: "My Profile",
-      icon: <AccountCircleIcon style={{ fill: "black" }} />,
+      icon: <AccountCircleIcon />,
       to: userProfileLink, // <-- add link targets
     },
     {
       text: "Wish List",
-      icon: <FavoriteIcon style={{ fill: "black" }} />,
+      icon: <FavoriteIcon />,
       to: userWishLink,
     },
     {
       text: "Orders",
-      icon: <WorkIcon style={{ fill: "black" }} />,
+      icon: <WorkIcon />,
       to: "/track-order",
     },
     {
       text: "Track Orders",
-      icon: <PlaceIcon style={{ fill: "black" }} />,
+      icon: <PlaceIcon />,
       to: "/track-shipment",
     },
   ];
   const adminItemList = [
     {
       text: "Dashboard",
-      icon: <LineStyleIcon style={{ fill: "black" }} />,
+      icon: <LineStyleIcon />,
       to: "/admin/dashboard", // <-- add link targets
     },
     {
       text: "Products",
-      icon: <Inventory2Icon style={{ fill: "black" }} />,
+      icon: <Inventory2Icon />,
       to: "/admin/products",
     },
     {
       text: "Users",
-      icon: <PeopleIcon style={{ fill: "black" }} />,
+      icon: <PeopleIcon />,
       to: "/admin/users",
     },
     {
       text: "Vendors",
-      icon: <BadgeIcon style={{ fill: "black" }} />,
+      icon: <BadgeIcon />,
       to: "/admin/vendors",
     },
     {
       text: "Orders",
-      icon: <WarehouseIcon style={{ fill: "black" }} />,
+      icon: <WarehouseIcon />,
       to: "/admin/orders",
     },
     {
       text: "Settings",
-      icon: <SettingsIcon style={{ fill: "black" }} />,
+      icon: <SettingsIcon />,
       to: "/admin/settings",
     },
   ];
@@ -166,28 +177,31 @@ function SideBar() {
   const vendorItemlist = [
     {
       text: "Dashboard",
-      icon: <LineStyleIcon style={{ fill: "black" }} />,
+      icon: <LineStyleIcon />,
       to: "/vendor/dashboard", // <-- add link targets
     },
     {
       text: "Vendor Profile",
-      icon: <AccountCircleIcon style={{ fill: "black" }} />,
+      icon: <AccountCircleIcon />,
       to: vendorProfileLink, // <-- add link targets
     },
     {
       text: "Products",
-      icon: <Inventory2Icon style={{ fill: "black" }} />,
+      icon: <Inventory2Icon />,
       to: `/vendor/products`,
     },
     {
       text: "Orders",
-      icon: <WarehouseIcon style={{ fill: "black" }} />,
+      icon: <WarehouseIcon />,
       to: "/vendor/orders",
     },
   ];
   const list = (anchor) => (
     <Box
-      sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 250 }}
+      sx={{
+        width: anchor === "top" || anchor === "bottom" ? "auto" : 250,
+        backgroundColor: darkMode ? "rgb(0,0,0,0.8)" : "",
+      }}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
@@ -198,15 +212,28 @@ function SideBar() {
           return (
             <ListItem disablePadding component={Link} to={item.to} key={index}>
               <ListItemButton>
-                {icon && <ListItemIcon>{icon}</ListItemIcon>}
-                <ListItemText primary={text} />
+                {icon && (
+                  <ListItemIcon
+                    sx={{
+                      color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                    }}
+                  >
+                    {icon}
+                  </ListItemIcon>
+                )}
+                <ListItemText
+                  primary={text}
+                  sx={{
+                    color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                  }}
+                />
               </ListItemButton>
             </ListItem>
           );
         })}
       </List>
-      <Divider />
-      <Divider />
+      <StyledDivider darkMode={darkMode} />
+      <StyledDivider darkMode={darkMode} />
       {userInfo ? (
         <List>
           {userItemList?.map((item, index) => {
@@ -219,8 +246,21 @@ function SideBar() {
                 key={index}
               >
                 <ListItemButton>
-                  {icon && <ListItemIcon>{icon}</ListItemIcon>}
-                  <ListItemText primary={text} />
+                  {icon && (
+                    <ListItemIcon
+                      sx={{
+                        color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                      }}
+                    >
+                      {icon}
+                    </ListItemIcon>
+                  )}
+                  <ListItemText
+                    primary={text}
+                    sx={{
+                      color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                    }}
+                  />
                 </ListItemButton>
               </ListItem>
             );
@@ -230,18 +270,27 @@ function SideBar() {
         <List>
           <ListItem disablePadding component={Link} to={`/login`}>
             <ListItemButton>
-              <ListItemIcon>
+              <ListItemIcon
+                sx={{
+                  color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                }}
+              >
                 <LoginIcon />
               </ListItemIcon>
-              <ListItemText primary="Log in" />
+              <ListItemText
+                primary="Log in"
+                sx={{
+                  color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                }}
+              />
             </ListItemButton>
           </ListItem>
         </List>
       )}
       {userInfo && userInfo.isAdmin ? (
         <>
-          <Divider />
-          <Divider />
+          <StyledDivider darkMode={darkMode} />
+          <StyledDivider darkMode={darkMode} />
           <List>
             {adminItemList?.map((item, index) => {
               const { text, icon } = item;
@@ -253,8 +302,21 @@ function SideBar() {
                   key={index}
                 >
                   <ListItemButton>
-                    {icon && <ListItemIcon>{icon}</ListItemIcon>}
-                    <ListItemText primary={text} />
+                    {icon && (
+                      <ListItemIcon
+                        sx={{
+                          color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                        }}
+                      >
+                        {icon}
+                      </ListItemIcon>
+                    )}
+                    <ListItemText
+                      primary={text}
+                      sx={{
+                        color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                      }}
+                    />
                   </ListItemButton>
                 </ListItem>
               );
@@ -264,8 +326,8 @@ function SideBar() {
       ) : null}
       {userInfo && userInfo.isSeller ? (
         <>
-          <Divider />
-          <Divider />
+          <StyledDivider darkMode={darkMode} />
+          <StyledDivider darkMode={darkMode} />
           <List>
             {vendorItemlist?.map((item, index) => {
               const { text, icon } = item;
@@ -277,8 +339,21 @@ function SideBar() {
                   key={index}
                 >
                   <ListItemButton>
-                    {icon && <ListItemIcon>{icon}</ListItemIcon>}
-                    <ListItemText primary={text} />
+                    {icon && (
+                      <ListItemIcon
+                        sx={{
+                          color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                        }}
+                      >
+                        {icon}
+                      </ListItemIcon>
+                    )}
+                    <ListItemText
+                      primary={text}
+                      sx={{
+                        color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                      }}
+                    />
                   </ListItemButton>
                 </ListItem>
               );
@@ -288,15 +363,24 @@ function SideBar() {
       ) : null}
       {userInfo && (
         <>
-          <Divider />
-          <Divider />
+          <StyledDivider darkMode={darkMode} />
+          <StyledDivider darkMode={darkMode} />
           <List>
             <ListItem disablePadding onClick={signoutHandler}>
               <ListItemButton>
-                <ListItemIcon>
+                <ListItemIcon
+                  sx={{
+                    color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                  }}
+                >
                   <LogoutIcon />
                 </ListItemIcon>
-                <ListItemText primary="Log out" />
+                <ListItemText
+                  primary="Log out"
+                  sx={{
+                    color: darkMode ? "#ffffff" : "#2e2e2e", // Set text color based on darkMode
+                  }}
+                />
               </ListItemButton>
             </ListItem>
           </List>
@@ -321,40 +405,46 @@ function SideBar() {
             onClose={toggleDrawer(anchor, false)}
             className="side_bar_drawer"
           >
-            {list(anchor)}
-            <Divider />
-            <Divider />
-            <span className="toogle_width">
-              {darkMode === false && (
-                <Button className="toggle_btn" onClick={toggle}>
-                  <LightModeIcon /> Light
-                </Button>
-              )}
-              {darkMode === true && (
-                <Button className="toggle_btn" onClick={toggle}>
-                  <DarkModeIcon /> Dark
-                </Button>
-              )}
+            <span className="toggle_width">
+              <img src={logo} alt="logo" />
             </span>
-            <Divider />
-            <Divider />
-            <div className="currency_state toogle_width a_flex">
-              <CurrencyExchangeIcon className="currencyExchangeIcon" />
-              <select
-                value={toCurrencies}
-                onChange={(e) => {
-                  const selectedCurrency = e.target.value;
-                  localStorage.setItem("toCurrencies", selectedCurrency);
-                  setToCurrencies(selectedCurrency);
-                }}
-              >
-                {currencies.map((currency) => (
-                  <option key={currency.code} value={currency.code}>
-                    {currency.symbol} &#160;&#160; {currency.code}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {list(anchor)}
+            <StyledDivider darkMode={darkMode} />
+            <StyledDivider darkMode={darkMode} />
+            <span className={darkMode ? "dark_mode" : ""}>
+              <span className="toggle_width">
+                {darkMode === false && (
+                  <Button className="toggle_btn" onClick={toggle}>
+                    <LightModeIcon /> Light
+                  </Button>
+                )}
+                {darkMode === true && (
+                  <Button className="toggle_btn" onClick={toggle}>
+                    <DarkModeIcon /> Dark
+                  </Button>
+                )}
+              </span>
+              <StyledDivider darkMode={darkMode} />
+              <StyledDivider darkMode={darkMode} />
+              <div className="currency_state toggle_width a_flex">
+                <CurrencyExchangeIcon className="currencyExchangeIcon" />
+                <select
+                  className={darkMode ? "dark_mode" : ""}
+                  value={toCurrencies}
+                  onChange={(e) => {
+                    const selectedCurrency = e.target.value;
+                    localStorage.setItem("toCurrencies", selectedCurrency);
+                    setToCurrencies(selectedCurrency);
+                  }}
+                >
+                  {currencies.map((currency) => (
+                    <option key={currency.code} value={currency.code}>
+                      {currency.symbol} &#160;&#160; {currency.code}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </span>
           </Drawer>
         </React.Fragment>
       ))}

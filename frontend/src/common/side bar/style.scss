@@ -26,6 +26,10 @@
   ::-webkit-scrollbar {
     display: none;
   }
+  .dark_mode {
+    color: var(--color-white);
+    background-color: rgb(0, 0, 0, 0.8);
+  }
   .currency_state {
     .currencyExchangeIcon {
       position: relative;
@@ -37,11 +41,17 @@
       height: 30px;
     }
   }
-  .toogle_width {
+  .toggle_width {
     width: 100%;
     display: flex;
     justify-content: center;
     margin: 20px 0px;
+    img {
+      width: auto;
+      height: 40px;
+      padding: -10px 0px;
+      margin: -10px 0px;
+    }
     .toggle_btn {
       background-color: var(--color-primary);
       color: var(--color-white);

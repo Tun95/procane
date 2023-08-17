@@ -116,7 +116,9 @@ function Head() {
             <div className="currency_state">
               <label className="to">To:</label>
               <select
-                className="currency_symbol"
+                className={
+                  darkMode ? "dark_mode currency_symbol" : "currency_symbol"
+                }
                 value={toCurrencies}
                 onChange={(e) => {
                   const selectedCurrency = e.target.value;

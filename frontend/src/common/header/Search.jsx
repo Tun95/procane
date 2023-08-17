@@ -1,10 +1,8 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logoImg from "../../assets/procane.png";
-
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { styled, alpha } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import SideBar from "../side bar/SideBar";
 import { Context } from "../../context/Context";
 import { Divider } from "@mui/material";
@@ -22,40 +20,38 @@ const StyledMenu = styled((props) => (
     }}
     {...props}
   />
-))(({ theme }) => ({
+))(({ theme, darkMode }) => ({
   "& .MuiPaper-root": {
     borderRadius: 6,
     marginTop: theme.spacing(1),
-    with: "520px",
-    color:
-      theme.palette.mode === "light"
-        ? "rgb(55, 65, 81)"
-        : theme.palette.grey[300],
+    color: darkMode ? "#ffffff" : "#2e2e2e",
+    backgroundColor: darkMode ? "rgb(0,0,0,0.8)" : "", // Add this line
     boxShadow:
       "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
     "& .MuiMenu-list": {
       padding: "15px",
-      // margin: "0px 15px",
     },
     "& .MuiMenuItem-root": {
       margin: "5px 0px",
-      color: "#2e2e2e",
+      color: darkMode ? "#ffffff" : "#2e2e2e",
       padding: "5px 60px",
       fontWeight: "500",
       transition: "all 500ms ease",
+
       "& .MuiSvgIcon-root": {
         fontSize: 16,
         color: theme.palette.text.secondary,
         marginRight: theme.spacing(1.5),
       },
-      "&:active": {
-        // backgroundColor: alpha(
-        //   theme.palette.primary.main,
-        //   theme.palette.action.selectedOpacity
-        // ),
+      "&:hover": {
+        backgroundColor: darkMode ? "#2e2e2e" : "", // Change to the desired hover color
       },
     },
   },
+}));
+
+const StyledDivider = styled(Divider)(({ theme, darkMode }) => ({
+  backgroundColor: darkMode ? "#ffffff" : "", // Change colors accordingly
 }));
 
 function Search() {
@@ -64,7 +60,7 @@ function Search() {
   //   search.classList.toggle("active", window.scrollY > 100);
   // });
 
-  const { state, dispatch: ctxDispatch } = useContext(Context);
+  const { state, dispatch: ctxDispatch, darkMode } = useContext(Context);
   const { cart, userInfo, settings } = state;
 
   const { logo } =
@@ -134,6 +130,7 @@ function Search() {
             <div className="user_modal">
               <i className="fa fa-user icon-circle" onClick={handleClick}></i>
               <StyledMenu
+                darkMode={darkMode}
                 id="demo-customized-menu"
                 MenuListProps={{
                   "aria-labelledby": "demo-customized-button",
@@ -171,7 +168,7 @@ function Search() {
                       >
                         Wish List
                       </MenuItem>,
-                      <Divider />,
+                      <StyledDivider darkMode={darkMode} />,
                     ]
                   : null}
 
@@ -230,7 +227,7 @@ function Search() {
                       >
                         Settings
                       </MenuItem>,
-                      <Divider />,
+                      <StyledDivider darkMode={darkMode} />,
                     ]
                   : null}
 
@@ -263,7 +260,7 @@ function Search() {
                       >
                         Orders
                       </MenuItem>,
-                      <Divider />,
+                      <StyledDivider darkMode={darkMode} />,
                     ]
                   : null}
 

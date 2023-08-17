@@ -187,6 +187,13 @@
       }
     }
   }
+  @media screen and (max-width: 420px) {
+    .box_shadow {
+      box-shadow: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
   @media screen and (max-width: 390px) {
     .profile-styles {
       .profile_seller {
@@ -218,13 +225,7 @@
       }
     }
   }
-  @media screen and (max-width: 350px) {
-    .box_shadow {
-      box-shadow: none;
-      padding: 0;
-      margin: 0;
-    }
-  }
+
   @media screen and (max-width: 290px) {
     .phone_width {
       max-width: 250px;
