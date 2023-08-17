@@ -75,8 +75,8 @@ function Head() {
   return (
     <div>
       <section className="head">
-        <div className="container a_flex head-position">
-          <div className="left row ">
+        <div className="container c_flex head-position">
+          <div className="left">
             <span>
               <i className="fa fa-phone"></i>
               <label htmlFor="">
@@ -88,7 +88,7 @@ function Head() {
               </label>
             </span>
           </div>
-          <div className="right row RText topbar">
+          <div className="right topbar">
             <label htmlFor="" className="none_screen">
               <Link to="/theme-faq">Theme FAQ's</Link>
             </label>
@@ -137,10 +137,12 @@ function Head() {
                 ))}
               </select>
             </div>
-            <FormControlLabel
-              onClick={toggle}
-              control={<MaterialUISwitch sx={{ m: 1 }} checked={darkMode} />}
-            />
+            <div>
+              <FormControlLabel
+                onClick={toggle}
+                control={<MaterialUISwitch checked={darkMode} />}
+              />
+            </div>
           </div>
         </div>
       </section>

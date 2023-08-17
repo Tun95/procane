@@ -4,13 +4,11 @@
   height: 40px;
   color: var(--color-white);
 }
+
 .head a {
   color: var(--color-white);
 }
-.head .head-position {
-  position: relative;
-  bottom: 5px;
-}
+
 .head i {
   margin-right: 10px;
 }
@@ -27,12 +25,9 @@
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
+  margin-right: -28px;
 }
-.head .currency_symbol {
-  width: 80px;
-}
+
 .head .float_left {
   display: flex;
   float: left;
