@@ -30,6 +30,7 @@
 
     .item {
       display: flex;
+      flex-wrap: wrap;
       gap: 20px;
 
       .itemImg {
@@ -46,7 +47,8 @@
         .detailItem {
           margin-bottom: 10px;
           font-size: 14px;
-
+          display: flex;
+          flex-wrap: wrap;
           .itemKey {
             font-weight: bold;
             color: var(--color-gray);
@@ -81,5 +83,22 @@
 @media screen and (max-width: 900px) {
   .userInfotop {
     flex-direction: column;
+  }
+}
+@media screen and (max-width: 375px) {
+  .userInfotop {
+    .left {
+      .userInfo_widget {
+        .widget {
+          padding: 5px;
+          .counter {
+            font-size: 20px;
+          }
+          .icon {
+            display: none;
+          }
+        }
+      }
+    }
   }
 }
