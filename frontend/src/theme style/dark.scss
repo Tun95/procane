@@ -213,7 +213,6 @@
 
   /*---header--*/
   .header {
-   
     box-shadow: -1px 15px 17px -8px rgba(252, 252, 252, 0.24);
     ul li a {
       color: var(--color-light-gray);
@@ -404,6 +403,21 @@
     .form_box_content {
       -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
       box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 500px) {
+      .form_box_content {
+        box-shadow: none;
+      }
+    }
+  }
+  //====WRAPPER====//
+  .home_wrappers {
+    @media screen and (max-width: 500px) {
+      .light_shadow {
+        box-shadow: none;
+        padding: 0px;
+      }
     }
   }
 }

@@ -208,7 +208,7 @@ const ShowRoom = () => {
   };
 
   return (
-    <div className="container ">
+    <div className="">
       <div className="showroom p_flex">
         <div className="form_box_content">
           {loading ? (
@@ -232,6 +232,7 @@ const ShowRoom = () => {
                   }}
                   name="file"
                   types={fileTypes}
+                  id="fileUploader"
                 />
                 <small className="image-size-info">
                   Recommended size: 1110x350
@@ -251,6 +252,7 @@ const ShowRoom = () => {
                   }}
                   name="file"
                   types={fileTypes}
+                  className="fileUploader"
                 />
                 <small className="image-size-info">
                   Recommended size: 224x224
