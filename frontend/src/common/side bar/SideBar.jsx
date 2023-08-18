@@ -200,8 +200,6 @@ function SideBar() {
     <Box
       sx={{
         width: anchor === "top" || anchor === "bottom" ? "auto" : 250,
-        backgroundColor: darkMode ? "rgb(0,0,0,0.8)" : "",
-        height: "100%",
       }}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
@@ -405,14 +403,26 @@ function SideBar() {
             open={state[anchor]}
             onClose={toggleDrawer(anchor, false)}
             className="side_bar_drawer"
+            PaperProps={{
+              sx: {
+                backgroundColor: darkMode ? "rgb(0,0,0,0.8)" : "",
+                color: "red",
+              },
+            }}
           >
             <span className="toggle_width">
-              <img src={logo} alt="logo" />
+              <span className="logo_span l_flex">
+                <img src={logo} alt="logo" className="logo" />
+              </span>
             </span>
+            <StyledDivider darkMode={darkMode} />
+            <StyledDivider darkMode={darkMode} />
             {list(anchor)}
             <StyledDivider darkMode={darkMode} />
             <StyledDivider darkMode={darkMode} />
-            <span className={darkMode ? "dark_mode" : ""}>
+            <span
+              className={darkMode ? "dark_mode lower_drawer" : "lower_drawer"}
+            >
               <span className="toggle_width">
                 {darkMode === false && (
                   <Button className="toggle_btn" onClick={toggle}>
