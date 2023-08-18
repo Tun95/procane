@@ -56,7 +56,11 @@ function Subscribe() {
                 isSubmitting,
                 values,
               }) => (
-                <Form action="" onSubmit={handleSubmit} className="d_flex">
+                <Form
+                  action=""
+                  onSubmit={handleSubmit}
+                  className="d_flex subscribe_box_content"
+                >
                   <div className="content">
                     <div
                       className={

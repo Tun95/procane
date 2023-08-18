@@ -32,7 +32,6 @@
       input {
         background: transparent;
         width: 90%;
-        
       }
     }
     .search-box.input-error {
@@ -57,6 +56,22 @@
   @media screen and (max-width: 745px) {
     .container {
       width: 100%;
+    }
+  }
+  @media screen and (max-width: 320px) {
+    .container {
+      .subscribe_box_content {
+        flex-direction: column;
+        .btn {
+          margin-top: 8px;
+          width: 100%;
+          button {
+            width: 100%;
+            padding: 6px 20px;
+            font-size: 16px;
+          }
+        }
+      }
     }
   }
 }
