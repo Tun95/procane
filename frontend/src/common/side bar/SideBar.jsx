@@ -406,7 +406,6 @@ function SideBar() {
             PaperProps={{
               sx: {
                 backgroundColor: darkMode ? "rgb(0,0,0,0.8)" : "",
-                color: "red",
               },
             }}
           >
