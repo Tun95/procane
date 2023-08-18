@@ -201,6 +201,7 @@ function SideBar() {
       sx={{
         width: anchor === "top" || anchor === "bottom" ? "auto" : 250,
         backgroundColor: darkMode ? "rgb(0,0,0,0.8)" : "",
+        height: "100%",
       }}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
