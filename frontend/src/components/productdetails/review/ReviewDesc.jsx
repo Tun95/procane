@@ -179,6 +179,7 @@ function ReviewDesc({ product, userInfo, handleDelete, dispatch }) {
                         <ReactTimeAgo
                           date={Date.parse(review.createdAt)}
                           locale="en-US"
+                          className="date_time"
                         />
                       </div>
                     </div>

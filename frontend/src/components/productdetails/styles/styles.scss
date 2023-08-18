@@ -479,14 +479,57 @@
   @media screen and (max-width: 320px) {
     .details {
       .product-details {
-        // .size {
-        //   .formControl {
-        //     height: 10px !important;
-        //     .mui_simple_select {
-        //       height: 10px !important;
-        //     }
-        //   }
-        // }
+        .size {
+          .formControl {
+            width: 150px;
+          }
+        }
+      }
+    }
+    .review-section {
+      .review-details {
+        .rev-header {
+          .name-stars {
+            .rate {
+              flex-wrap: wrap;
+            }
+          }
+          .date {
+            .date_time {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+      .review_box {
+        #formControl {
+          width: 100%;
+          .select_mui {
+            width: 100%;
+          }
+        }
+        .submit_btn {
+          width: 100%;
+          button {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+  @media screen and (max-width: 280px) {
+    .review-section {
+      .review-details {
+        .rev-header {
+          .a_flex {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .date {
+            position: relative;
+            left: 20px;
+          }
+        }
       }
     }
   }
