@@ -205,6 +205,13 @@
           }
         }
       }
+      .product-content {
+        position: relative;
+        right: 10px;
+        .product {
+          margin: 0px;
+        }
+      }
     }
   }
 }
