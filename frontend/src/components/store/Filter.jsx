@@ -271,7 +271,7 @@ function Filter({
               </FormControl>
               <div className="value_number d_flex">
                 <span>{convertCurrency(value[0])}</span>
-                <span>{convertCurrency(value[1])}</span>
+                <span className="value_two">{convertCurrency(value[1])}</span>
               </div>
             </div>
           </div>

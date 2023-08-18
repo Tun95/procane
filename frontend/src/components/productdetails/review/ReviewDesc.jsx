@@ -166,12 +166,7 @@ function ReviewDesc({ product, userInfo, handleDelete, dispatch }) {
                               open={openUsr}
                               onClose={handleCloseUsr}
                             >
-                              {/* <MenuItem onClick={handleCloseUsr} disableRipple>
-                              <EditNoteIcon />
-                              Edit
-                            </MenuItem> */}
                               <MenuItem
-                                // onClick={() => handleCloseUsr}
                                 onClick={() => handleDelete(review._id)}
                                 disableRipple
                               >

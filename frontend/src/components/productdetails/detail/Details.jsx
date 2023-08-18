@@ -299,49 +299,57 @@ function Details({ product, dispatch, affiliateCode }) {
                   )}
                 </span>
               </div>
-              <div className="color">
-                <label htmlFor="">Color: </label>
-                <ul>
-                  {product.color?.map((c, index) => (
-                    <li
-                      key={index}
-                      onClick={() => setColor(c)}
-                      className={`${color === c ? "active" : ""}`}
-                    >
-                      <img src={c} alt={c} className="color_image_size" />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="size">
-                <label htmlFor="">Size: </label>
-                <FormControl
-                  variant="filled"
-                  size="small"
-                  className="formControl"
-                  id="formControl"
-                >
-                  <Select
-                    labelId="mui-simple-select-label"
-                    id="mui_simple_select"
-                    className="mui_simple_select"
-                    // multiple
-                    MenuProps={MenuProps}
-                    SelectDisplayProps={{
-                      style: { paddingTop: 8, paddingBottom: 8 },
-                    }}
-                    value={size}
-                    label={size}
-                    onChange={(e) => setSize(e.target.value)}
-                  >
-                    {product.size?.map((s, index) => (
-                      <MenuItem id="menu_item" key={index} value={s}>
-                        <small className="">{s}</small>
-                      </MenuItem>
+              {product.color.length !== 0 ? (
+                <div className="color">
+                  <label htmlFor="">Color: </label>
+                  <ul>
+                    {product.color?.map((c, index) => (
+                      <li
+                        key={index}
+                        onClick={() => setColor(c)}
+                        className={`${color === c ? "active" : ""}`}
+                      >
+                        <img src={c} alt={c} className="color_image_size" />
+                      </li>
                     ))}
-                  </Select>
-                </FormControl>
-              </div>
+                  </ul>
+                </div>
+              ) : (
+                ""
+              )}
+              {product.size.length !== 0 ? (
+                <div className="size">
+                  <label htmlFor="">Size: </label>
+                  <FormControl
+                    variant="filled"
+                    size="small"
+                    className="formControl"
+                    id="formControl"
+                  >
+                    <Select
+                      labelId="mui-simple-select-label"
+                      id="mui_simple_select"
+                      className="mui_simple_select"
+                      // multiple
+                      MenuProps={MenuProps}
+                      SelectDisplayProps={{
+                        style: { paddingTop: 8, paddingBottom: 8 },
+                      }}
+                      value={size}
+                      label={size}
+                      onChange={(e) => setSize(e.target.value)}
+                    >
+                      {product.size?.map((s, index) => (
+                        <MenuItem id="menu_item" key={index} value={s}>
+                          <small className="">{s}</small>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </div>
+              ) : (
+                ""
+              )}
               <div className="quantity .a_flex">
                 <label htmlFor="">Quantity: </label>
                 <div className="a_flex">

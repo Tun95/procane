@@ -160,8 +160,7 @@ function ProductDetailScreen({ productItems, onAdd }) {
       );
     } else {
       // Calculate the affiliate commission based on the product price and the affiliate commission rate
-      const affiliateCommission =
-        item.price * data.affiliateCommissionRate;
+      const affiliateCommission = item.price * data.affiliateCommissionRate;
 
       toast.success(`${item.name} is successfully added to cart`, {
         position: "bottom-center",
