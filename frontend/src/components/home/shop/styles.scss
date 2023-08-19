@@ -53,8 +53,11 @@
     }
   }
   @media screen and (max-width: 320px) {
-    .contentWidth {
-      width: 100%;
+    .product-content {
+      .product {
+        width: 100%;
+        margin-left: 0px;
+      }
     }
   }
 }

@@ -47,7 +47,7 @@ function FlashDeals() {
       <section className="flash background">
         {products.length > 0 ? (
           <div className="container">
-            <div className="heading f_flex">
+            <div className="heading a_flex">
               <i className="fa fa-bolt"></i>
               <h1>Flash Deals</h1>
             </div>
