@@ -281,7 +281,7 @@ function RegisterScreen() {
                 </div>
                 <div className="form-btn">
                   <button disabled={isSubmitting} className="form-submit-btn">
-                    Register
+                    {isSubmitting ? "Registering..." : "Register"}
                   </button>
                 </div>
               </div>

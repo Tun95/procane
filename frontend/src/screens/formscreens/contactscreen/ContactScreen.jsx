@@ -231,8 +231,11 @@ function ContactScreen() {
                   />
                 </div>
                 <div className="form-btn">
-                  <button disabled={isSubmitting} className="form_submit_btn contact_btn">
-                    Send
+                  <button
+                    disabled={isSubmitting}
+                    className="form_submit_btn contact_btn"
+                  >
+                    {isSubmitting ? "Sending..." : "Send"}
                   </button>
                 </div>
               </div>

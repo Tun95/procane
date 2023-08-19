@@ -174,7 +174,7 @@ function LoginScreen() {
                 </div>
                 <div className="form-btn">
                   <button className="form-submit-btn" disabled={isSubmitting}>
-                    Login
+                    {isSubmitting ? "Logging in..." : "Login"}
                   </button>
                 </div>
               </div>

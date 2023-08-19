@@ -191,6 +191,11 @@ button {
   outline: none;
   background-color: none;
 }
+
+button:disabled {
+  opacity: 0.35;
+}
+
 .main_btn {
   background-color: var(--color-primary);
   padding: 8px 10px;

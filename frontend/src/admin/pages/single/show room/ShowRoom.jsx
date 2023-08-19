@@ -239,6 +239,28 @@ const ShowRoom = () => {
                     id="fileUploader"
                   />
                 </div>
+                <div className="small_fileUploader">
+                  <label htmlFor="lg">
+                    <input
+                      type="file"
+                      id="lg"
+                      className="lg_file"
+                      style={{ display: "none" }} // Hide the file input
+                      onChange={(e) => {
+                        // Call uploadFileHandler to upload the image and set the URL
+                        uploadFileHandler(e);
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        // Trigger click event on the hidden file input
+                        document.getElementById("lg").click();
+                      }}
+                    >
+                      upload
+                    </button>
+                  </label>
+                </div>
               </div>
               <div>
                 <div className="d_block">
@@ -263,10 +285,30 @@ const ShowRoom = () => {
                     id="fileUploader"
                   />
                 </div>
+                <div className="small_fileUploader">
+                  <label htmlFor="sm">
+                    <input
+                      type="file"
+                      id="sm"
+                      className="lg_file"
+                      style={{ display: "none" }}
+                      onChange={(e) => {
+                        // Call uploadFileHandler to upload the image and set the URL
+                        uploadSmallImageHandler(e);
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        // Trigger click event on the hidden file input
+                        document.getElementById("sm").click();
+                      }}
+                    >
+                      upload
+                    </button>
+                  </label>
+                </div>
               </div>
               <div>
-                {/* <h3>{singleData.titleOne}</h3>
-                <h3>{singleData.titleTwo}</h3> */}
                 <small>Details:</small>
                 <ul>
                   {singleData?.normalText?.map((text, index) => (

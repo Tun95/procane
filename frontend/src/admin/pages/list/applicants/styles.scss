@@ -25,4 +25,11 @@
     padding: 5px;
     border-radius: 5px;
   }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 500px) {
+    .datatable {
+      padding: 0px;
+      box-shadow: none;
+    }
+  }
 }

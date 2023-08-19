@@ -41,6 +41,9 @@
     outline-color: #2451e6;
     background-color: none;
   }
+  .datagrid {
+    color: var(--color-light-gray);
+  }
   .datatable {
     .cellAction {
       .blockButton {
@@ -115,6 +118,7 @@
   }
   .light_shadow {
     background: var(--color-black);
+    color: var(--color-white);
     -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
     box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
   }
@@ -396,6 +400,17 @@
     }
     .activeTab {
       color: var(--color-tab);
+    }
+  }
+
+  //====SUBSCRIBER====//
+  .subscribers {
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 500px) {
+      .light_shadow {
+        box-shadow: none;
+        padding: 0px;
+      }
     }
   }
   //====SHOWROOM====//

@@ -96,7 +96,7 @@ function PasswordEmailResetScreen() {
                 </div>
                 <div className="form-btn">
                   <button className="form-submit-btn" disabled={isSubmitting}>
-                    Reset Password
+                    {isSubmitting ? "Sending..." : "Reset Password"}
                   </button>
                 </div>
               </div>

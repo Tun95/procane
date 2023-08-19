@@ -39,11 +39,11 @@ const reducer = (state, action) => {
       return { ...state, loadingDelete: false, successDelete: false };
 
     case "SEND_REQUEST":
-      return { ...state, loading: true };
+      return { ...state, loadingSend: true };
     case "SEND_SUCCESS":
-      return { ...state, loading: false };
+      return { ...state, loadingSend: false };
     case "SEND_FAIL":
-      return { ...state, loading: false };
+      return { ...state, loadingSend: false };
 
     default:
       return state;
@@ -77,14 +77,15 @@ function Subscribers() {
   const { state, dispatch: ctxDispatch } = useContext(Context);
   const { userInfo } = state;
 
-  const [{ loading, error, subscribers, successDelete }, dispatch] = useReducer(
-    reducer,
-    {
-      subscribers: [],
-      loading: true,
-      error: "",
-    }
-  );
+  const [
+    { loading, error, loadingSend, subscribers, successDelete },
+    dispatch,
+  ] = useReducer(reducer, {
+    subscribers: [],
+    loadingSend: false,
+    loading: true,
+    error: "",
+  });
 
   //=====================
   //FETCH ALL SUBSCRIBERS
@@ -142,7 +143,7 @@ function Subscribers() {
       });
       return;
     }
-
+    dispatch({ type: "SEND_REQUEST" });
     try {
       const { data } = await axios.post(`${request}/api/message/send`, {
         subject,
@@ -150,6 +151,10 @@ function Subscribers() {
       });
       dispatch({ type: "SEND_SUCCESS", payload: data });
       toast.success("Email sent successfully", { position: "bottom-center" });
+
+      // Clear form fields
+      setSubject("");
+      setMessage("");
     } catch (err) {
       dispatch({ type: "SEND_FAIL" });
       toast.error(getError(err), { position: "bottom-center" });
@@ -187,9 +192,9 @@ function Subscribers() {
         <MessageBox>{error}</MessageBox>
       ) : (
         <>
-          <div className="product">
+          <div className="light_shadow">
             <div className="list">
-              <h2>Subscribers</h2>
+              <h2 className="mb">Subscribers</h2>
               <DataGrid
                 className="datagrid"
                 rows={subscribers}
@@ -197,21 +202,11 @@ function Subscribers() {
                 getRowId={(row) => row._id}
                 columns={columns.concat(actionColumn)}
                 autoPageSize
-                components={{
-                  Pagination: ({ className, ...otherProps }) => (
-                    <Pagination
-                      className={`my-pagination ${className}`}
-                      {...otherProps}
-                      prevIcon={<ChevronLeftIcon id="my_chevron_left" />}
-                      nextIcon={<ChevronRightIcon id="my_chevron_right" />}
-                    />
-                  ),
-                }}
                 rowsPerPageOptions={[8]}
               />
             </div>
           </div>
-          <div className="product">
+          <div className="light_shadow">
             <div className="">
               <h2>Send New Letter</h2>
               <form action="" className="settingsForm" onSubmit={submitHandler}>
@@ -236,7 +231,12 @@ function Subscribers() {
                     />
                   </div>{" "}
                   <div className="settings-btn">
-                    <button className="sendButton setting-create">Send</button>
+                    <button
+                      className="sendButton setting-create"
+                      disabled={loadingSend}
+                    >
+                      {loadingSend ? "Sending..." : "Send"}
+                    </button>
                   </div>
                 </div>
               </form>

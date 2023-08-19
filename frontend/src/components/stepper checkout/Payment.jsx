@@ -298,18 +298,34 @@ function Payment(props) {
         }
       } catch (err) {
         dispatch({ type: "PAY_FAIL", payload: getError(err) });
-        toast.error(getError(err), { position: "bottom-center" });
+
+        // Extract PayPal error message from err object
+        const errorMessage = extractErrorMessage(err);
+
+        toast.error(errorMessage, { position: "bottom-center" });
       }
     });
   }
   function onError(err) {
-    toast.error(getError(err), { position: "bottom-center" });
+    // Extract PayPal error message from err object
+    const errorMessage = extractErrorMessage(err);
+
+    toast.error(errorMessage, { position: "bottom-center" });
+  }
+
+  // Helper function to extract error message
+  function extractErrorMessage(err) {
+    if (err.response && err.response.data && err.response.data.details) {
+      const firstDetail = err.response.data.details[0];
+      if (firstDetail && firstDetail.issue === "CURRENCY_NOT_SUPPORTED") {
+        return "Currency not supported";
+      }
+    }
+    return "Currency not supported";
   }
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // ctxDispatch({ type: "SAVE_PAYMENT_METHOD", payload: paymentMethodName });
-    // localStorage.setItem("paymentMethod", paymentMethodName);
   };
 
   //==========

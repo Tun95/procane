@@ -89,45 +89,6 @@ function VendorScreen() {
     }, 1000);
   };
 
-  // const handleSubmit = async (values, actions) => {
-  //   if (userInfo.isAccountVerified) {
-  //     toast.error("You need to be a verify user to apply as a merchant", {
-  //       position: "bottom-center",
-  //     });
-  //   } else {
-  //     if (userInfo.isSeller) {
-  //       toast.error("You account has been approved as a vendor already", {
-  //         position: "bottom-center",
-  //       });
-  //     } else {
-  //       dispatch({ type: "CREATE_REQUEST" });
-  //       try {
-  //         const { data } = await axios.post(
-  //           `${request}/api/apply`,
-  //           {
-  //             sellerName: values.sellerName,
-  //             storeAddress: values.storeAddress,
-  //             sellerDescription: values.sellerDescription,
-  //             status: true,
-  //           },
-  //           {
-  //             headers: { Authorization: `Bearer ${userInfo.token}` },
-  //           }
-  //         );
-  //         dispatch({ type: "CREATE_SUCCESS", payload: data });
-  //         toast.success("Application sent successfully", {
-  //           position: "bottom-center",
-  //         });
-  //       } catch (err) {
-  //         dispatch({ type: "CREATE_FAIL" });
-  //         toast.error(getError(err), { position: "bottom-center" });
-  //       }
-  //       setTimeout(() => {
-  //         actions.resetForm();
-  //       }, 1000);
-  //     }
-  //   }
-  // };
   return (
     <div className="form_container">
       <Helmet>
@@ -242,19 +203,6 @@ function VendorScreen() {
                   />
                 </div>
                 <div className="form-btn">
-                  {/* <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="form_submit_btn"
-                  >
-                    {loading ? (
-                      <React.Fragment>
-                        <LoadingBox></LoadingBox>
-                      </React.Fragment>
-                    ) : (
-                      <React.Fragment>Submit</React.Fragment>
-                    )}
-                  </button> */}
                   <button
                     type="submit"
                     disabled={isSubmitting}

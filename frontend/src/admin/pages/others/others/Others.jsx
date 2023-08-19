@@ -81,12 +81,12 @@ function OtherScreen() {
   };
 
   return (
-    <div className="mtb">
+    <div className="settings mtb">
       <Helmet>
         <title>All Settings</title>
       </Helmet>
       <div className="container">
-        <div className="settings box_shadow">
+        <div className="box_shadow">
           <div className="tab">
             {" "}
             <Box>

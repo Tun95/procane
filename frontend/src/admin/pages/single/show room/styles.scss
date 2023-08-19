@@ -9,6 +9,12 @@
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    .small_fileUploader {
+      display: none;
+      .lg_file {
+        display: none;
+      }
+    }
   }
   ul {
     li {
@@ -36,6 +42,9 @@
     object-fit: cover;
     border-radius: 5px;
     margin-bottom: 20px;
+  }
+  .smallImage {
+    width: 100%;
   }
 
   button {
@@ -82,5 +91,22 @@
         right: 34px;
       }
     }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 360px) {
+    .form_box_content {
+      .fileUploader {
+        display: none;
+      }
+      .small_fileUploader {
+        display: block;
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 360px) {
   }
 }

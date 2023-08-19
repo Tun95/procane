@@ -280,7 +280,9 @@ function SellerProductEdit() {
                 <div className="productInfoBottom">
                   <div className="productInfoItem">
                     <span className="productInfoKey top_right_label">id: </span>
-                    <span className="productInfoValue">&nbsp;{productId}</span>
+                    <span className="productInfoValue productInfoValueaId">
+                      &nbsp;{productId}
+                    </span>
                   </div>
                   <div className="productInfoItem">
                     <span className="productInfoKey top_right_label">
