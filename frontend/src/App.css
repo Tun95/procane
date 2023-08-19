@@ -44,7 +44,7 @@ body {
   background-color: var(--color-white);
 }
 .container {
-  max-width: var(--container-width-lg);
+  width: var(--container-width-lg);
   margin: auto;
 }
 
@@ -698,6 +698,9 @@ select.input-error {
   }
 }
 @media screen and (max-width: 320px) {
+  .container {
+    width: var(--container-width-md);
+  }
   .product-content .product .price .a_flex {
     flex-direction: column;
     align-items: flex-start;

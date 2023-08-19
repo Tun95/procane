@@ -35,3 +35,25 @@
     }
   }
 }
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 420px) {
+  .newarrivals {
+    .box {
+      img {
+        width: 100%;
+        height: 300px;
+      }
+    }
+  }
+}
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 320px) {
+  .newarrivals {
+    .box {
+      img {
+        width: 100%;
+        height: 200px;
+      }
+    }
+  }
+}
