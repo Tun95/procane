@@ -4,8 +4,6 @@
 
   .form-box-content {
     width: 400px;
-    // min-width: 60%;
-    // min-width: 60%;
     margin: 60px 0px;
     padding: 20px;
     background-color: var(--color-white);
@@ -197,6 +195,26 @@
     padding: 0px 10px;
     .form-box-content {
       width: 100%;
+    }
+  }
+}
+@media (max-width: 320px) {
+  .form_container {
+    .contact_btn {
+      width: 100%;
+      font-size: 16px;
+      height: 35px;
+    }
+  }
+}
+@media (max-width: 280px) {
+  .form_container {
+    .featured_box {
+      .featured {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+      }
     }
   }
 }

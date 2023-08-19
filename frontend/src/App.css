@@ -47,14 +47,19 @@ body {
   max-width: var(--container-width-lg);
   margin: auto;
 }
+
+.contentWidth {
+  width: 77%;
+}
+
 .background {
   background: var(--color-background);
   padding: 10px 0;
 }
- .dark_mode {
-    color: var(--color-white);
-    background-color: rgb(0, 0, 0, 0.8);
-  }
+.dark_mode {
+  color: var(--color-white);
+  background-color: rgb(0, 0, 0, 0.8);
+}
 
 .mtb {
   margin: 20px 0px;
@@ -293,9 +298,7 @@ textarea::placeholder {
 /*----- pagination -------*/
 
 /*---------category----------*/
-.contentWidth {
-  width: 77%;
-}
+
 .category {
   box-shadow: rgb(43 52 69 / 10%) 0px 4px 16px;
   background-color: var(--color-white);
@@ -692,5 +695,11 @@ select.input-error {
   }
   .store-pages {
     width: 100%;
+  }
+}
+@media screen and (max-width: 320px) {
+  .product-content .product .price .a_flex {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

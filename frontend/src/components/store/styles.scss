@@ -190,6 +190,23 @@
         }
       }
     }
+    .container {
+      width: 100%;
+
+      .store_grid {
+        .contentWidth {
+          width: 100%;
+
+          .product-content {
+            position: relative;
+            right: 10px;
+            .product {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
   }
 }
 @media screen and (max-width: 300px) {
@@ -206,9 +223,6 @@
         }
       }
       .product-content {
-        position: relative;
-        right: 17px;
-        width: 100%;
         .product {
           width: 100%;
         }

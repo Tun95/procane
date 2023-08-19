@@ -105,58 +105,60 @@ function Store() {
   return (
     <>
       <section className="store background" id="store">
-        <div className="container store_grid">
-          <Filter
-            products={products}
-            brand={brand}
-            color={color}
-            size={size}
-            category={category}
-            price={price}
-            countProducts={countProducts}
-            getFilterUrl={getFilterUrl}
-          />
+        <div className="container ">
+          <div className="store_grid">
+            <Filter
+              products={products}
+              brand={brand}
+              color={color}
+              size={size}
+              category={category}
+              price={price}
+              countProducts={countProducts}
+              getFilterUrl={getFilterUrl}
+            />
 
-          <div className="contentWidth" ref={storeItemsRef}>
-            <div className="heading " id="store-items">
-              <div className=" ">
-                <h2>Store Items</h2>
+            <div className="contentWidth" ref={storeItemsRef}>
+              <div className="heading " id="store-items">
+                <div className=" ">
+                  <h2>Store Items</h2>
+                </div>
               </div>
-            </div>
 
-            <div className="product-content">
-              <StoreItems
-                products={products}
-                loading={loading}
-                error={error}
-                dispatch={dispatch}
-              />
-            </div>
-            {countProducts > 6 ? (
-              <div className="pagination">
-                <Pagination
-                  page={page}
-                  count={pages}
-                  defaultPage={1}
-                  //classes={{ ul: classes.ul }}
-                  renderItem={(item) => (
-                    <PaginationItem
-                      className={`${
-                        item.page !== page
-                          ? "paginationItemStyle"
-                          : "paginationItemStyle active"
-                      }`}
-                      component={Link}
-                      to={`/store?page=${item.page}&query=${query}&category=${category}&color=${color}&size=${size}&price=${price}&brand=${brand}&order=${order}&discount=${discount}`}
-                      {...item}
-                      onClick={(e) => handlePaginationClick(e, item.page)}
-                    />
-                  )}
+              <div className="product-content">
+                <StoreItems
+                  products={products}
+                  loading={loading}
+                  error={error}
+                  dispatch={dispatch}
                 />
               </div>
-            ) : (
-              ""
-            )}
+              {countProducts > 6 ? (
+                <div className="pagination">
+                  <Pagination
+                    page={page}
+                    count={pages}
+                    defaultPage={1}
+                    //classes={{ ul: classes.ul }}
+                    renderItem={(item) => (
+                      <PaginationItem
+                        className={`${
+                          item.page !== page
+                            ? "paginationItemStyle"
+                            : "paginationItemStyle active"
+                        }`}
+                        component={Link}
+                        to={`/store?page=${item.page}&query=${query}&category=${category}&color=${color}&size=${size}&price=${price}&brand=${brand}&order=${order}&discount=${discount}`}
+                        {...item}
+                        onClick={(e) => handlePaginationClick(e, item.page)}
+                      />
+                    )}
+                  />
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
           </div>
         </div>
       </section>

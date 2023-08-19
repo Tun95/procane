@@ -231,7 +231,7 @@ function ContactScreen() {
                   />
                 </div>
                 <div className="form-btn">
-                  <button disabled={isSubmitting} className="form_submit_btn">
+                  <button disabled={isSubmitting} className="form_submit_btn contact_btn">
                     Send
                   </button>
                 </div>
