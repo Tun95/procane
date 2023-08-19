@@ -1,26 +1,29 @@
-.heading img {
-  width: 40px;
-  height: 40px;
-  margin-top: 5px;
-}
-.newarrivals h4 {
-  font-weight: 400;
-}
-.newarrivals span {
-  color: var(--color-primary);
-  font-size: 15px;
-  font-weight: 500;
-}
+.newarrivals {
+  .heading img {
+    width: 40px;
+    height: 40px;
+    margin-top: 5px;
+  }
+  h4 {
+    font-weight: 400;
+  }
+  span {
+    color: var(--color-primary);
+    font-size: 15px;
+    font-weight: 500;
+  }
 
-.newarrivals .box img {
-  width: 200px;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
-@media screen and (max-width: 555px) {
-  .newarrivals {
+  .box img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    .a_flex {
+      flex-wrap: wrap;
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 555px) {
     .box {
       .product {
         height: 100%;
@@ -34,10 +37,9 @@
       }
     }
   }
-}
-/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
-@media screen and (max-width: 420px) {
-  .newarrivals {
+
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 420px) {
     .box {
       img {
         width: 100%;
@@ -45,10 +47,9 @@
       }
     }
   }
-}
-/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
-@media screen and (max-width: 320px) {
-  .newarrivals {
+
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 320px) {
     .box {
       img {
         width: 100%;

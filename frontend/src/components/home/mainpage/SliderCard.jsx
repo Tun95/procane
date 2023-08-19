@@ -46,7 +46,7 @@ function SliderCard() {
                     onClick={() => navigate(`/store?category=${item.category}`)}
                     className="btn-primary"
                   >
-                    Visit Collections
+                    View Collections
                   </button>
                 </a>
               </Fade>
