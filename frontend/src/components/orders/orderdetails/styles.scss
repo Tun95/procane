@@ -159,7 +159,19 @@
     }
   }
   @media screen and (max-width: 330px) {
-    .sec-box .alert-danger {
+    .order-a-ship {
+      .order-top {
+        font-size: 15px;
+      }
+      .place-deliver {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        gap: 10px;
+      }
+    }
+    .sec-box .alert-danger,
+    .alert {
       width: 100%;
     }
     .order-screen .top-box .alert-danger {

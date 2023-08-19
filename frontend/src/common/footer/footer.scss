@@ -2,7 +2,10 @@ footer {
   background-color: var(--color-black);
   padding: 100px 0;
   color: var(--color-white);
-
+  .float {
+    position: relative;
+    right: 0;
+  }
   .horizontal {
     display: none;
   }
