@@ -43,9 +43,6 @@
     border-radius: 5px;
     margin-bottom: 20px;
   }
-  .smallImage {
-    width: 100%;
-  }
 
   button {
     padding: 8px 16px;
@@ -104,6 +101,9 @@
           width: 100%;
         }
       }
+    }
+    .smallImage {
+      width: 100%;
     }
   }
   /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
