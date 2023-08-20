@@ -224,7 +224,6 @@ function Payment(props) {
     });
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
-  const [paypalCurrency, setPaypalCurrency] = useState("USD");
   useEffect(() => {
     if (!userInfo) {
       return navigate("/login");
@@ -251,7 +250,7 @@ function Payment(props) {
           type: "resetOptions",
           value: {
             "client-id": process.env.REACT_APP_PAYPAL_CLIENT_ID,
-            currency: toCurrencies || "USD",
+            currency: toCurrencies,
           },
         });
         paypalDispatch({ type: "setLoadingStatus", value: "pending" });
@@ -271,10 +270,11 @@ function Payment(props) {
   //==========
   //PAYPAL
   //==========
+  const PayPalGrandTotal = Number(convertToNumeric(order.grandTotal));
   function createOrder(data, action) {
     return action.order
       .create({
-        purchase_units: [{ amount: { value: order.grandTotal } }],
+        purchase_units: [{ amount: { value: PayPalGrandTotal } }],
       })
       .then((orderID) => {
         return orderID;
@@ -313,6 +313,7 @@ function Payment(props) {
 
     toast.error(errorMessage, { position: "bottom-center" });
   }
+
   // Helper function to extract error message
   function extractErrorMessage(err) {
     if (err.response && err.response.data && err.response.data.details) {
