@@ -224,6 +224,7 @@ function Payment(props) {
     });
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
+  const [paypalCurrency, setPaypalCurrency] = useState("USD");
   useEffect(() => {
     if (!userInfo) {
       return navigate("/login");
@@ -312,7 +313,6 @@ function Payment(props) {
 
     toast.error(errorMessage, { position: "bottom-center" });
   }
-
   // Helper function to extract error message
   function extractErrorMessage(err) {
     if (err.response && err.response.data && err.response.data.details) {
@@ -409,9 +409,6 @@ function Payment(props) {
   //=========
   //RAZORPAY
   //=========
-  // const conversionRate = settings
-  //   ?.map((s) => Number(s.rate))
-  //   ?.find((rate) => !isNaN(rate));
   const razorGrandTotal = Number(convertToNumeric(order.grandTotal));
   const razorPaySubmitHandler = async () => {
     dispatch({ type: "PAY_REQUEST" });
@@ -434,60 +431,67 @@ function Payment(props) {
             amount: razorGrandTotal,
             currency: toCurrencies,
             paymentMethod: paymentMethodName,
-            currencySign: toCurrencies, // Include the paymentMethod property
+            currencySign: toCurrencies,
           }),
         }
       );
+
       const razororder = await response.json();
 
-      const options = {
-        key: razorkeyid,
-        amount: razorGrandTotal * 100,
-        currency: toCurrencies,
-        name: webname,
-        description: `Oder payment by ${userInfo.email}`,
-        image: logo, // URL of your store's logo
-        order_id: razororder.id,
-        handler: function (response) {
-          if (response.razorpay_payment_id) {
-            dispatch({ type: "PAY_REQUEST" });
-            toast.success(`${response.razorpay_payment_id} Order is paid`, {
-              position: "bottom-center",
-            });
-            fetch(`${request}/api/orders/${order._id}/razorpay/success`, {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${userInfo.token}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(response),
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                if (data.success) {
-                  dispatch({ type: "PAY_SUCCESS", payload: response });
-                } else {
-                  dispatch({ type: "PAY_FAIL", payload: data.message });
-                  toast.error(data.message, { position: "bottom-center" });
-                }
-              })
-              .catch((error) => {
-                dispatch({ type: "PAY_FAIL", payload: getError(error) });
-                toast.error(getError(error), { position: "bottom-center" });
+      // Dynamically load the Razorpay script
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => {
+        const options = {
+          key: razorkeyid,
+          amount: razorGrandTotal * 100,
+          currency: toCurrencies,
+          name: webname,
+          description: `Order payment by ${userInfo.email}`,
+          image: logo,
+          order_id: razororder.id,
+          handler: function (response) {
+            if (response.razorpay_payment_id) {
+              dispatch({ type: "PAY_REQUEST" });
+              toast.success(`${response.razorpay_payment_id} Order is paid`, {
+                position: "bottom-center",
               });
-          } else {
-            toast.error("Payment canceled or failed", {
-              position: "bottom-center",
-            });
-          }
-        },
-        prefill: {
-          name: `${userInfo.lastName} ${userInfo.firstName}`,
-          email: userInfo.email,
-        },
+              fetch(`${request}/api/orders/${order._id}/razorpay/success`, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${userInfo.token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(response),
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.success) {
+                    dispatch({ type: "PAY_SUCCESS", payload: response });
+                  } else {
+                    dispatch({ type: "PAY_FAIL", payload: data.message });
+                    toast.error(data.message, { position: "bottom-center" });
+                  }
+                })
+                .catch((error) => {
+                  dispatch({ type: "PAY_FAIL", payload: getError(error) });
+                  toast.error(getError(error), { position: "bottom-center" });
+                });
+            } else {
+              toast.error("Payment canceled or failed", {
+                position: "bottom-center",
+              });
+            }
+          },
+          prefill: {
+            name: `${userInfo.lastName} ${userInfo.firstName}`,
+            email: userInfo.email,
+          },
+        };
+        const rzp1 = new window.Razorpay(options);
+        rzp1.open();
       };
-      const rzp1 = new window.Razorpay(options);
-      rzp1.open();
+      document.body.appendChild(script);
     } catch (error) {
       dispatch({ type: "PAY_FAIL", payload: getError(error) });
       toast.error(getError(error), { position: "bottom-center" });
