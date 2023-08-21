@@ -108,8 +108,13 @@ function App() {
         .find(() => true)) ||
     {};
   useEffect(() => {
-    // Set the favicon URL on the window object
-    window.faviconUrl = faviconUrl;
+    // Update the favicon dynamically
+    const updateFavicon = () => {
+      document.querySelector("link[rel='icon']").href = faviconUrl;
+      document.querySelector("link[rel='apple-touch-icon']").href = faviconUrl;
+    };
+
+    updateFavicon(); // Call the function to update favicon
   }, [faviconUrl]);
 
   // Set the PayPal client ID on the window object

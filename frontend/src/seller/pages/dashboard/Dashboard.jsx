@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 import Chart from "../../components/chart/Chart";
 import { Helmet } from "react-helmet-async";
 import Widget from "../../components/widget/Widget";
-import { useNavigate } from "react-router-dom";
 import { Context } from "../../../context/Context";
 import axios from "axios";
 import { request } from "../../../base url/BaseUrl";
@@ -25,10 +24,8 @@ function reducer(state, action) {
   }
 }
 function SellerDashboard() {
-  const navigate = useNavigate();
-
-  const { state, convertCurrency, toCurrencies } = useContext(Context);
-  const { userInfo, settings } = state;
+  const { state, convertCurrency } = useContext(Context);
+  const { userInfo } = state;
 
   const [{ loading, error, summary }, dispatch] = useReducer(reducer, {
     loading: true,
