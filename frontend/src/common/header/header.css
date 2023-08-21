@@ -63,7 +63,7 @@
 }
 
 .search .logo img {
-  width: 60%;
+  min-width: 70%;
   height: 50px;
   object-fit: contain;
 }
@@ -71,7 +71,6 @@
 .search-box {
   min-width: 40%;
   position: relative;
-  right: 45px;
   display: flex;
   align-items: center;
   height: 40px;
