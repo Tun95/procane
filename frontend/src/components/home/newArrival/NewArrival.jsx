@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from "react";
 import Card from "./Card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { request } from "../../../base url/BaseUrl";
 
@@ -17,6 +17,7 @@ const reducer = (state, action) => {
   }
 };
 function NewArrival() {
+  const navigate = useNavigate();
   const [{ products }, dispatch] = useReducer(reducer, {
     products: [],
     loading: true,
@@ -56,8 +57,15 @@ function NewArrival() {
                 <h2>New Arrivals</h2>
               </div>
               <div className="heading-right row">
-                <Link to="/store">View all</Link>
-                <i className="fa fa-caret-right"></i>
+                <a href="#store">
+                  <button
+                    onClick={() => navigate(`/store`)}
+                    className="a_flex view_all"
+                  >
+                    <span>View all</span>
+                    <i className="fa fa-caret-right"></i>
+                  </button>
+                </a>
               </div>
             </div>
             <Card products={products} />

@@ -255,6 +255,18 @@
     box-shadow: none;
     background-color: rgb(43, 43, 43);
   }
+  .heading-right {
+    a {
+      button {
+        span {
+          color: var(--color-light-gray);
+        }
+        i {
+          color: var(--color-light-gray);
+        }
+      }
+    }
+  }
   .annocument {
     .img .explore {
       background: rgba(0, 0, 0, 0.6);

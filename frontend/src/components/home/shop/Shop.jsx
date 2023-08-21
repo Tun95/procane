@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import ShopCard from "./ShopCard";
 import "./styles.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { request } from "../../../base url/BaseUrl";
 import { getError } from "../../utilities/util/Utils";
@@ -24,6 +24,7 @@ const reducer = (state, action) => {
   }
 };
 function Shop() {
+  const navigate = useNavigate();
   const [{ loading, error, products }, dispatch] = useReducer(reducer, {
     products: [],
     loading: true,
@@ -53,9 +54,16 @@ function Shop() {
                 <div className="heading-left row  f_flex">
                   <h2>List of Products</h2>
                 </div>
-                <div className="heading-right row ">
-                  <Link to="/store">View all</Link>
-                  <i className="fa-solid fa-caret-right"></i>
+                <div className="heading-right row">
+                  <a href="#store">
+                    <button
+                      onClick={() => navigate(`/store`)}
+                      className="a_flex view_all"
+                    >
+                      <span>View all</span>
+                      <i className="fa fa-caret-right"></i>
+                    </button>
+                  </a>
                 </div>
               </div>
               <div className="product-content">

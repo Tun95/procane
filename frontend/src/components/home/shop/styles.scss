@@ -1,4 +1,18 @@
 .shop {
+  .heading-right {
+    a {
+      float: right;
+      cursor: pointer;
+      button {
+        background: transparent;
+        cursor: pointer;
+        padding: 0px;
+        span {
+          color: var(--color-gray);
+        }
+      }
+    }
+  }
   .product-content {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

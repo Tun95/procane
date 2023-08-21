@@ -4,6 +4,20 @@
     height: 40px;
     margin-top: 5px;
   }
+  .heading-right {
+    a {
+      float: right;
+      cursor: pointer;
+      button {
+        background: transparent;
+        cursor: pointer;
+        padding: 0px;
+        span {
+          color: var(--color-gray);
+        }
+      }
+    }
+  }
   h4 {
     font-weight: 400;
   }
