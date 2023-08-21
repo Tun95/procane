@@ -232,6 +232,11 @@
   }
 }
 @media (max-width: 600px) {
+  .search .logo img {
+    width: 60%;
+    height: 40px;
+    object-fit: contain;
+  }
   .search .cart,
   .user_modal {
     display: none;
