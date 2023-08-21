@@ -96,7 +96,7 @@ TimeAgo.addLocale(ru);
 function App() {
   const { darkMode, state } = useContext(Context);
   const { settings } = state;
-  const { messengerAppId, messengerPageId, faviconUrl, paypal } =
+  const { messengerAppId, messengerPageId, faviconUrl, webname, paypal } =
     (settings &&
       settings
         .map((s) => ({
@@ -104,6 +104,7 @@ function App() {
           messengerAppId: s.messengerAppId,
           messengerPageId: s.messengerPageId,
           faviconUrl: s.faviconUrl,
+          webname: s.webname,
         }))
         .find(() => true)) ||
     {};
@@ -115,7 +116,16 @@ function App() {
     };
 
     updateFavicon(); // Call the function to update favicon
-  }, [faviconUrl]);
+    // Update the title dynamically
+    document.title = webname || "ShopFinity";
+
+    // Set the webname in the script
+    const webnameValue = webname || "";
+    const dynamicTitleElement = document.getElementById("dynamicTitle");
+    if (dynamicTitleElement) {
+      dynamicTitleElement.innerText = webnameValue;
+    }
+  }, [faviconUrl, webname]);
 
   // Set the PayPal client ID on the window object
   useEffect(() => {
