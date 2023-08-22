@@ -94,49 +94,53 @@ function Details({ product, dispatch, affiliateCode }) {
   const addToCartHandler = async () => {
     const { data } = await axios.get(`${request}/api/products/${product._id}`);
 
-    if (cartItems.length > 0 && data.seller?._id !== cartItems[0].seller?._id) {
-      dispatch({
-        type: "CART_ADD_ITEM_FAIL",
-        payload: `Can't Add To Cart. Buy only from ${cartItems[0]?.seller?.seller?.name} in this order`,
-      });
-      toast.error(
-        `Can't Add To Cart. Buy only from ${cartItems[0]?.seller?.seller?.name} in this order`,
-        {
-          position: "bottom-center",
-        }
-      );
-    } else {
-      let totalAffiliateCommission = 0; // Declare the totalAffiliateCommission variable
+     if (
+       cartItems.length > 0 &&
+       data.seller &&
+       data.seller._id !== cartItems[0].seller.id
+     ) {
+       dispatch({
+         type: "CART_ADD_ITEM_FAIL",
+         payload: `Can't Add To Cart. Buy only from ${cartItems[0]?.seller?.seller?.name} in this order`,
+       });
+       toast.error(
+         `Can't Add To Cart. Buy only from ${cartItems[0]?.seller?.seller?.name} in this order`,
+         {
+           position: "bottom-center",
+         }
+       );
+     } else {
+       let totalAffiliateCommission = 0; // Declare the totalAffiliateCommission variable
 
-      if (affiliateCode !== "") {
-        // Calculate the affiliate commission based on the product price and the affiliate commission rate
-        const affiliateCommission =
-          product.price * data.affiliateCommissionRate;
-        console.log(affiliateCommission);
+       if (affiliateCode !== "") {
+         // Calculate the affiliate commission based on the product price and the affiliate commission rate
+         const affiliateCommission =
+           product.price * data.affiliateCommissionRate;
+         console.log(affiliateCommission);
 
-        // Calculate the total affiliate commission for the user
-        totalAffiliateCommission += affiliateCommission;
-      }
-      toast.success(`${product.name} is successfully added to cart`, {
-        position: "bottom-center",
-      });
+         // Calculate the total affiliate commission for the user
+         totalAffiliateCommission += affiliateCommission;
+       }
+       toast.success(`${product.name} is successfully added to cart`, {
+         position: "bottom-center",
+       });
 
-      ctxDispatch({
-        type: "CART_ADD_ITEM",
-        payload: {
-          ...product,
-          seller: data.seller,
-          sellerName: data.seller?.seller?.name,
-          category: product?.category,
-          affiliateCommission: totalAffiliateCommission,
-          affiliateCode,
-          quantity: count,
-          size,
-          color,
-        },
-      });
-      localStorage.setItem("cartItems", JSON.stringify(state.cart.cartItems));
-    }
+       ctxDispatch({
+         type: "CART_ADD_ITEM",
+         payload: {
+           ...product,
+           seller: data.seller,
+           sellerName: data.seller?.seller?.name,
+           category: product?.category,
+           affiliateCommission: totalAffiliateCommission,
+           affiliateCode,
+           quantity: count,
+           size,
+           color,
+         },
+       });
+       localStorage.setItem("cartItems", JSON.stringify(state.cart.cartItems));
+     }
   };
 
   const addToCart = () => {

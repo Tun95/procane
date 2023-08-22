@@ -70,11 +70,7 @@ function ProductDetailScreen({ productItems, onAdd }) {
   const { slug } = params;
 
   const { state: cState, dispatch: ctxDispatch } = useContext(Context);
-  const {
-    cart: { cartItems },
-    userInfo,
-    settings,
-  } = cState;
+  const { userInfo } = cState;
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const { loading, error, products, product, successDelete, successCreate } =
@@ -143,43 +139,6 @@ function ProductDetailScreen({ productItems, onAdd }) {
   }, [product]);
 
   //=======================
-  // ADD TO CART
-  //=======================
-  const addToCartHandler = async (item) => {
-    const { data } = await axios.get(`${request}/api/products/${item._id}`);
-    if (cartItems.length > 0 && data.seller._id !== cartItems[0].seller._id) {
-      dispatch({
-        type: "CART_ADD_ITEM_FAIL",
-        payload: `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
-      });
-      toast.error(
-        `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
-        {
-          position: "bottom-center",
-        }
-      );
-    } else {
-      // Calculate the affiliate commission based on the product price and the affiliate commission rate
-      const affiliateCommission = item.price * data.affiliateCommissionRate;
-
-      toast.success(`${item.name} is successfully added to cart`, {
-        position: "bottom-center",
-      });
-      ctxDispatch({
-        type: "CART_ADD_ITEM",
-        payload: {
-          ...item,
-          discount: data.discount,
-          seller: data.seller,
-          sellerName: item?.seller?.seller?.name,
-          category: item?.category,
-          affiliateCommission,
-        },
-      });
-    }
-  };
-
-  //=======================
   // DELETE REVIEWS
   //=======================
   const handleDelete = async (reviewId) => {
@@ -227,10 +186,7 @@ function ProductDetailScreen({ productItems, onAdd }) {
               dispatch={dispatch}
             />
             {products.length !== 0 ? (
-              <Related
-                products={products}
-                addToCartHandler={addToCartHandler}
-              />
+              <Related products={products} dispatch={dispatch} />
             ) : (
               ""
             )}

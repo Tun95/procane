@@ -32,7 +32,7 @@ const PrevArrow = (props) => {
   );
 };
 
-function RelatedCard({ products }) {
+function RelatedCard({ products, dispatch }) {
   const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
   const {
     cart: { cartItems },
@@ -94,10 +94,19 @@ function RelatedCard({ products }) {
 
   //Product Quantity
   const [quantity, setQuantity] = useState(1);
-  const addToCartHandler = async (product) => {
-    const { data } = await axios.get(`${request}/api/products/${product._id}`);
-    if (cartItems.length > 0 && data.seller._id !== cartItems[0].seller._id) {
-      ctxDispatch({
+
+  //===========
+  //ADD TO CART
+  //===========
+  const addToCartHandler = async (item) => {
+    const { data } = await axios.get(`${request}/api/products/${item._id}`);
+
+    if (
+      cartItems.length > 0 &&
+      data.seller &&
+      data.seller._id !== cartItems[0].seller.id
+    ) {
+      dispatch({
         type: "CART_ADD_ITEM_FAIL",
         payload: `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
       });
@@ -114,18 +123,19 @@ function RelatedCard({ products }) {
         });
         return;
       } else {
-        toast.success(`${product.name} is successfully added to cart`, {
+        toast.success(`${item.name} is successfully added to cart`, {
           position: "bottom-center",
         });
       }
+
       ctxDispatch({
         type: "CART_ADD_ITEM",
         payload: {
-          ...product,
+          ...item,
           discount: data.discount,
           seller: data.seller,
-          sellerName: product?.seller?.seller?.name,
-          category: product?.category,
+          sellerName: item?.seller?.seller?.name,
+          category: item?.category,
           quantity,
           size,
           color,

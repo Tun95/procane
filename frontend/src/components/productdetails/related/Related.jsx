@@ -1,7 +1,7 @@
 import React from "react";
 import RelatedCard from "./RelatedCard";
 import "../styles/styles.scss";
-function Related({ products, addToCartHandler }) {
+function Related({ products, dispatch }) {
   return (
     <>
       <section className="flash background">
@@ -11,10 +11,7 @@ function Related({ products, addToCartHandler }) {
             <h1>Related Products</h1>
           </div>
           <div className="related_product">
-            <RelatedCard
-              products={products}
-              addToCartHandler={addToCartHandler}
-            />
+            <RelatedCard products={products} dispatch={dispatch} />
           </div>
         </div>
       </section>

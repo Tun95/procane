@@ -70,7 +70,9 @@ productRouter.get("/new-arrival", async (req, res) => {
 //=============
 productRouter.get("/flashdeal", async (req, res) => {
   try {
-    const products = await Product.find({ flashdeal: true })
+    const seller = req.query.seller || ""; // Get the seller query parameter
+    const sellerFilter = seller ? { seller } : {}; // Create the seller filter object
+    const products = await Product.find({ flashdeal: true, ...sellerFilter })
       .populate("seller")
       .sort("-createdAt")
       .limit(10);
