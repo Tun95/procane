@@ -401,6 +401,7 @@ productRouter.get(
   "/store",
   expressAsyncHandler(async (req, res) => {
     const { query } = req;
+    const seller = query.seller || "";
     const pageSize = query.pageSize || PAGE_SIZE;
     const page = query.page || 1;
     const category = query.category || "";
@@ -414,6 +415,7 @@ productRouter.get(
     const brand = query.brand || "";
     const searchQuery = query.query || "";
 
+    const sellerFilter = seller ? { seller } : {};
     const queryFilter =
       searchQuery && searchQuery !== "all"
         ? {
@@ -488,7 +490,7 @@ productRouter.get(
     const filters = {
       ...queryFilter,
       ...categoryFilter,
-
+      ...sellerFilter,
       ...colorFilter,
       ...sizeFilter,
       ...brandFilter,
@@ -499,7 +501,7 @@ productRouter.get(
     };
 
     const products = await Product.find(filters)
-      .populate("seller wish")
+      .populate("seller")
       .sort(sortOrder)
       .skip(pageSize * (page - 1))
       .limit(pageSize);

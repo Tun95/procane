@@ -34,6 +34,9 @@ const PrevArrow = (props) => {
 
 function RelatedCard({ products }) {
   const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
+  const {
+    cart: { cartItems },
+  } = state;
 
   const [count, setCount] = useState(0);
   const increment = () => {
@@ -93,41 +96,42 @@ function RelatedCard({ products }) {
   const [quantity, setQuantity] = useState(1);
   const addToCartHandler = async (product) => {
     const { data } = await axios.get(`${request}/api/products/${product._id}`);
-    // if (cartItems.length > 0 && data.seller._id !== cartItems[0].seller._id) {
-    //   dispatch({
-    //     type: "CART_ADD_ITEM_FAIL",
-    //     payload: `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
-    //   });
-    //   toast.error(
-    //     `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
-    //     {
-    //       position: "bottom-center",
-    //     }
-    //   );
-    // } else {
-    if (data.countInStock < quantity) {
-      toast.error("Sorry, Product stock limit reached or out of stock", {
-        position: "bottom-center",
+    if (cartItems.length > 0 && data.seller._id !== cartItems[0].seller._id) {
+      ctxDispatch({
+        type: "CART_ADD_ITEM_FAIL",
+        payload: `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
       });
-      return;
+      toast.error(
+        `Can't Add To Cart. Buy only from ${cartItems[0].seller.seller.name} in this order`,
+        {
+          position: "bottom-center",
+        }
+      );
     } else {
-      toast.success(`${product.name} is successfully added to cart`, {
-        position: "bottom-center",
+      if (data.countInStock < quantity) {
+        toast.error("Sorry, Product stock limit reached or out of stock", {
+          position: "bottom-center",
+        });
+        return;
+      } else {
+        toast.success(`${product.name} is successfully added to cart`, {
+          position: "bottom-center",
+        });
+      }
+      ctxDispatch({
+        type: "CART_ADD_ITEM",
+        payload: {
+          ...product,
+          discount: data.discount,
+          seller: data.seller,
+          sellerName: product?.seller?.seller?.name,
+          category: product?.category,
+          quantity,
+          size,
+          color,
+        },
       });
     }
-    ctxDispatch({
-      type: "CART_ADD_ITEM",
-      payload: {
-        ...product,
-        discount: data.discount,
-        seller: data.seller,
-        sellerName: product?.seller?.seller?.name,
-        category: product?.category,
-        quantity,
-        size,
-        color,
-      },
-    });
   };
 
   //PAGE URL
@@ -137,7 +141,13 @@ function RelatedCard({ products }) {
       <Slider {...Slidersettings}>
         {products?.map((product, index) => (
           <div className="box" key={index}>
-            <div className="product mtop">
+            <div
+              className={
+                products.length === 1
+                  ? "product product_width mtop"
+                  : "product mtop"
+              }
+            >
               <div className="img">
                 {product.discount > 0 ? (
                   <span className="discount">{product.discount}% Off</span>

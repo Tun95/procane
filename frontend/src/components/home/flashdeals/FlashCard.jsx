@@ -33,7 +33,6 @@ const PrevArrow = (props) => {
   );
 };
 
-
 function FlashCard({ products, dispatch }) {
   const [count, setCount] = useState(0);
   const increment = () => {
@@ -90,13 +89,14 @@ function FlashCard({ products, dispatch }) {
   //Product Quantity
   const [quantity, setQuantity] = useState(1);
 
-  //===========
-  //ADD TO CART
-  //===========
+
   const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
   const {
     cart: { cartItems },
   } = state;
+  //===========
+  //ADD TO CART
+  //===========
   const addToCartHandler = async (item) => {
     const { data } = await axios.get(`${request}/api/products/${item._id}`);
     if (cartItems.length > 0 && data.seller._id !== cartItems[0].seller._id) {
@@ -121,22 +121,22 @@ function FlashCard({ products, dispatch }) {
           position: "bottom-center",
         });
       }
+      ctxDispatch({
+        type: "CART_ADD_ITEM",
+        payload: {
+          ...item,
+          discount: data.discount,
+          seller: data.seller,
+          sellerName: item?.seller?.seller?.name,
+          category: item?.category,
+          quantity,
+          size,
+          color,
+        },
+      });
     }
-    ctxDispatch({
-      type: "CART_ADD_ITEM",
-      payload: {
-        ...item,
-        discount: data.discount,
-        seller: data.seller,
-        sellerName: item?.seller?.seller?.name,
-        category: item?.category,
-        quantity,
-        size,
-        color,
-      },
-    });
   };
-
+  console.log(products);
   //PAGE URL
   const pageURL = process.env.REACT_APP_FRONTEND_URL;
   return (

@@ -354,9 +354,12 @@
     // overflow: hidden;
     .box {
       height: 400px;
+      .product_width {
+        width: 300px;
+      }
       .product {
         max-height: 380px;
-        // width: 300px;
+
         overflow: hidden;
         .img {
           img {
