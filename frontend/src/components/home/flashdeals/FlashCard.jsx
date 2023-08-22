@@ -89,7 +89,7 @@ function FlashCard({ products, dispatch }) {
   //Product Quantity
   const [quantity, setQuantity] = useState(1);
 
-
+  
   const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
   const {
     cart: { cartItems },
