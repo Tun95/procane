@@ -8,8 +8,6 @@ import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlin
 
 function Widget({
   type,
-  TotalUsers,
-  summary,
   TotalOrders,
   TotalSales,
   GrandTotalSales,

@@ -14,7 +14,6 @@ import crypto from "crypto";
 import shippo from "shippo";
 import mongoose from "mongoose";
 
-
 const orderRouter = express.Router();
 
 const ADMIN_PAGE_SIZE = 25;
@@ -95,28 +94,7 @@ function generateRandomString(length) {
 
   return result;
 }
-// orderRouter.post(
-//   "/",
-//   isAuth,
-//   expressAsyncHandler(async (req, res) => {
-//     const trackingId = "R" + generateRandomString(16);
-//     const newOrder = new Order({
-//       seller: req.body.orderItems[0].seller,
-//       orderItems: req.body.orderItems.map((x) => ({ ...x, product: x._id })),
-//       shippingAddress: req.body.shippingAddress,
-//       //paymentMethod: req.body.paymentMethod,
-//       itemsPrice: req.body.itemsPrice,
-//       shippingPrice: req.body.shippingPrice,
-//       taxPrice: req.body.taxPrice,
-//       grandTotal: req.body.grandTotal,
-//       trackingId: trackingId,
-//       user: req.user._id,
-//       product: req.body.orderItems.product,
-//     });
-//     const order = await newOrder.save();
-//     res.status(201).send({ message: "New Order Created", order });
-//   })
-// );
+
 orderRouter.post(
   "/",
   isAuth,
@@ -402,15 +380,7 @@ orderRouter.get(
         monthlyPercentageChanges,
       };
 
-      if (
-        sellerSummary.last10DaysEarnings.length > 0 ||
-        sellerSummary.earningsPerDay.length > 0
-      ) {
-        res.status(200).json(sellerSummary);
-      } else {
-        // No data found for the seller
-        res.status(404).json({ message: "Seller data not found" });
-      }
+      res.status(200).json(sellerSummary);
     } catch (err) {
       console.error(err);
       res
@@ -516,12 +486,7 @@ orderRouter.get(
         },
       ]);
 
-      if (sellerSummary.length > 0) {
-        res.status(200).json(sellerSummary[0]);
-      } else {
-        // No data found for the seller
-        res.status(404).json({ message: "Seller data not found" });
-      }
+      res.status(200).json(sellerSummary[0]);
     } catch (err) {
       res
         .status(500)
