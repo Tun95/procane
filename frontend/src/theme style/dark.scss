@@ -251,9 +251,20 @@
   }
 
   /*---home--*/
-  .home .category .box:hover {
-    box-shadow: none;
-    background-color: rgb(43, 43, 43);
+  .home {
+    .category {
+      .box:hover {
+        box-shadow: none;
+        background-color: rgb(43, 43, 43);
+      }
+    }
+  }
+  .category-filter {
+    a {
+      button {
+        color: var(--color-light-gray);
+      }
+    }
   }
   .heading-right {
     a {
