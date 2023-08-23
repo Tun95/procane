@@ -100,19 +100,6 @@ function Head() {
               EN
             </label>
             <span id="display-none">🏳️‍⚧️</span>
-            {/* <div className="currency_state">
-              <label className="to">To:</label>
-              <select
-                value={toCurrencies}
-                onChange={(e) => setToCurrencies(e.target.value)}
-              >
-                <option value="USD">$ USD</option>
-                <option value="INR">₹ INR</option>
-                <option value="NGN">₦ NGN</option>
-                <option value="GBP">£ GBP</option>
-                <option value="EUR">€ EUR</option>
-              </select>
-            </div> */}
             <div className="currency_state">
               <label className="to">To:</label>
               <select
