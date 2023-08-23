@@ -150,6 +150,7 @@
     -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
     box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
   }
+
   .whatsapp:hover {
     background-color: var(--color-black);
     color: #075e54;
@@ -397,7 +398,9 @@
     color: var(--color-light-gray);
     margin-top: 10px;
     box-shadow: -3px -15px 37px -20px rgba(252, 252, 252, 0.24);
-
+    .short_desc {
+      color: var(--color-light-gray) !important;
+    }
     ul {
       li {
         a {

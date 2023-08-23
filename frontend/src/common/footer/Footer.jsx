@@ -36,7 +36,7 @@ function Footer() {
           <div className="grid2 footer-wrap">
             <div className="box">
               <h1>{webname}</h1>
-              <p>{shortDesc}</p>
+              <p className="short_desc">{shortDesc}</p>
               <div className="">
                 <span className="icon d_flex">
                   <Fade cascade direction="down" triggerOnce damping={0.4}>
