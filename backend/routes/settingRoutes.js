@@ -5,7 +5,15 @@ import { isAuth } from "../utils.js";
 
 const settingsRoutes = express.Router();
 
-//create
+// Centralized error handler middleware
+const errorHandler = (res, error) => {
+  console.error(error); // Log the error for debugging purposes
+  res.status(500).json({ message: "An error occurred" });
+};
+
+//=======
+// Create
+//=======
 settingsRoutes.post(
   "/",
   isAuth,
@@ -15,14 +23,16 @@ settingsRoutes.post(
         ...req.body,
         user: req.user._id,
       });
-      res.send(settings);
+      res.status(201).json(settings); // 201 Created status
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
 
-//Fetch all
+//==========
+// Fetch all
+//==========
 settingsRoutes.get(
   "/",
   expressAsyncHandler(async (req, res) => {
@@ -30,14 +40,16 @@ settingsRoutes.get(
       const settings = await Settings.find({})
         .populate("user")
         .sort("-createdAt");
-      res.send(settings);
+      res.json(settings);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
 
-//Fetch single
+//=============
+// Fetch single
+//=============
 settingsRoutes.get(
   "/:id",
   isAuth,
@@ -45,14 +57,20 @@ settingsRoutes.get(
     const { id } = req.params;
     try {
       const setting = await Settings.findById(id);
-      res.send(setting);
+      if (!setting) {
+        res.status(404).json({ message: "Setting not found" });
+        return;
+      }
+      res.json(setting);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
 
-//Update
+//========
+// Update
+//=======
 settingsRoutes.put(
   "/:id",
   isAuth,
@@ -66,9 +84,13 @@ settingsRoutes.put(
         },
         { new: true }
       );
-      res.send(setting);
+      if (!setting) {
+        res.status(404).json({ message: "Setting not found" });
+        return;
+      }
+      res.json(setting);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );

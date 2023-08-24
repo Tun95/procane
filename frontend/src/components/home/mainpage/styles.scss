@@ -11,6 +11,7 @@
 }
 .slider_cate {
   overflow: hidden;
+  height: fit-content;
 }
 .slick-slide div {
   outline: none;
@@ -72,14 +73,11 @@
   .box .left {
     width: 90%;
   }
-  .box .right {
-    // width: 30%;
-  }
+
   .box img {
     width: 300px;
     height: 300px;
     object-fit: contain;
-    // object-position: center;
   }
 }
 
@@ -90,6 +88,13 @@
       .d_flex {
         flex-direction: column-reverse;
       }
+    }
+  }
+}
+@media screen and (max-width: 800px) {
+  .slider_cate {
+    .category-filter {
+      height: 600px;
     }
   }
 }
@@ -126,6 +131,7 @@
   .slider_cate {
     .category-filter {
       margin-top: 20px;
+      height: 450px;
     }
   }
   .home .contentWidth {
