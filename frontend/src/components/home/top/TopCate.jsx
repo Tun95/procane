@@ -48,7 +48,7 @@ function TopCate() {
 
   return (
     <>
-      <section className=" background newarrivals">
+      <section className=" background newarrivals topCat">
         {products.length > 0 ? (
           <div className="container">
             <div className="heading c_flex">

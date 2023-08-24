@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Slider from "react-slick";
 import { Context } from "../../../context/Context";
 import { Link } from "react-router-dom";
+import "./styles.scss";
 
 function TopCard({ products }) {
   const { state, dispatch: ctxDispatch, convertCurrency } = useContext(Context);
@@ -50,7 +51,7 @@ function TopCard({ products }) {
   };
   return (
     <>
-      <Slider {...Slidersettings}>
+      <Slider {...Slidersettings} className="slider_top_cate">
         {products?.map((product, index) => (
           <div className="box product" key={index}>
             <div className="img">
