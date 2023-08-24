@@ -71,13 +71,34 @@ footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: stretch;
+      .app-store {
+        margin-top: 0px;
+        margin-left: 20px;
+      }
+    }
     .horizontal {
       display: block;
       margin: 10px 0px;
       margin-top: 20px;
       color: var(--color-gray);
       background-color: var(--color-gray);
+    }
+  }
+}
+@media screen and (max-width: 400px) {
+  .footer-wrap {
+    .icon {
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      .app-store {
+        margin-top: 10px;
+        margin-left: 0px;
+      }
     }
   }
 }
