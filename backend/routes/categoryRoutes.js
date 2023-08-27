@@ -5,6 +5,12 @@ import { isAdmin, isAuth } from "../utils.js";
 
 const categoryRoutes = express.Router();
 
+// Centralized error handler middleware
+const errorHandler = (res, error) => {
+  console.error(error); // Log the error for debugging purposes
+  res.status(500).json({ message: "An error occurred" });
+};
+
 //create
 categoryRoutes.post(
   "/",
@@ -19,7 +25,7 @@ categoryRoutes.post(
       });
       res.send(category);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -34,7 +40,7 @@ categoryRoutes.get(
         .sort("-createdAt");
       res.send(categories);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -49,7 +55,7 @@ categoryRoutes.get(
       const categories = await Category.find({}).sort(mysort).populate("user");
       res.send(categories);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -65,7 +71,7 @@ categoryRoutes.get(
       const category = await Category.findById(id);
       res.send(category);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -87,7 +93,7 @@ categoryRoutes.put(
       );
       res.send(category);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -103,7 +109,7 @@ categoryRoutes.delete(
       const category = await Category.findByIdAndDelete(id);
       res.send(category);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );

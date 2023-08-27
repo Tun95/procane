@@ -34,9 +34,10 @@
 .page_not_found .head_size {
   font-size: 130px;
 }
-/* .center-overlay {
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-} */
+
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 480px) {
+  .page_not_found .a_flex {
+    flex-direction: column;
+  }
+}

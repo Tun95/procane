@@ -109,30 +109,34 @@ export function Category() {
                 >
                   <div className="settingsItem ">
                     <span className="color_split color_split_split">
-                      <input
-                        type="text"
-                        placeholder="category e.g office chair"
-                        className="color_input"
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                      />
-                      <img
-                        src={categoryImg || cat1}
-                        alt="color"
-                        className="color_image"
-                      />
-                      <label htmlFor="file">
-                        <PublishIcon
-                          className="upload-btn color_upload_btn"
-                          onChange={uploadFileHandler}
+                      <span>
+                        <input
+                          type="text"
+                          placeholder="category e.g office chair"
+                          className="color_input"
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
                         />
-                      </label>
-                      <input
-                        onChange={uploadFileHandler}
-                        type="file"
-                        id="file"
-                        style={{ display: "none" }}
-                      />
+                      </span>
+                      <span className="a_flex">
+                        <img
+                          src={categoryImg || cat1}
+                          alt="color"
+                          className="color_image"
+                        />
+                        <label htmlFor="file">
+                          <PublishIcon
+                            className="upload-btn color_upload_btn"
+                            onChange={uploadFileHandler}
+                          />
+                          <input
+                            onChange={uploadFileHandler}
+                            type="file"
+                            id="file"
+                            style={{ display: "none" }}
+                          />{" "}
+                        </label>
+                      </span>
                     </span>
                     <div className="settings-btn Filterbtn">
                       <button className="settingsButton setting-create">
@@ -482,30 +486,34 @@ export function Color() {
                 >
                   <div className="settingsItem ">
                     <span className="color_split color_split_split">
-                      <input
-                        type="text"
-                        placeholder="color e.g red"
-                        className="color_input"
-                        value={colorName}
-                        onChange={(e) => setColorName(e.target.value)}
-                      />
-                      <img
-                        src={color || gray}
-                        alt="color"
-                        className="color_image"
-                      />
-                      <label htmlFor="file">
-                        <PublishIcon
-                          className="upload-btn color_upload_btn"
-                          onChange={uploadFileHandler}
+                      <span>
+                        <input
+                          type="text"
+                          placeholder="color e.g red"
+                          className="color_input"
+                          value={colorName}
+                          onChange={(e) => setColorName(e.target.value)}
                         />
-                      </label>
-                      <input
-                        onChange={uploadFileHandler}
-                        type="file"
-                        id="file"
-                        style={{ display: "none" }}
-                      />
+                      </span>
+                      <span className="a_flex">
+                        <img
+                          src={color || gray}
+                          alt="color"
+                          className="color_image"
+                        />
+                        <label htmlFor="file">
+                          <PublishIcon
+                            className="upload-btn color_upload_btn"
+                            onChange={uploadFileHandler}
+                          />
+                          <input
+                            onChange={uploadFileHandler}
+                            type="file"
+                            id="file"
+                            style={{ display: "none" }}
+                          />
+                        </label>
+                      </span>
                     </span>
                     <div className="settings-btn Filterbtn">
                       <button className="settingsButton setting-create">

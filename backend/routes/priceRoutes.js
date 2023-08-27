@@ -6,6 +6,12 @@ import { isAdmin, isAuth } from "../utils.js";
 
 const priceRoutes = express.Router();
 
+// Centralized error handler middleware
+const errorHandler = (res, error) => {
+  console.error(error); // Log the error for debugging purposes
+  res.status(500).json({ message: "An error occurred" });
+};
+
 //create
 priceRoutes.post(
   "/",
@@ -20,7 +26,7 @@ priceRoutes.post(
       });
       res.send(price);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -34,7 +40,7 @@ priceRoutes.get(
       const prices = await Price.find({}).sort(mysort).populate("user");
       res.send(prices);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -50,7 +56,7 @@ priceRoutes.get(
       const price = await Price.findById(id);
       res.send(price);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -72,7 +78,7 @@ priceRoutes.put(
       );
       res.send(price);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -88,7 +94,7 @@ priceRoutes.delete(
       const price = await Price.findByIdAndDelete(id);
       res.send(price);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );

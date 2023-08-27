@@ -89,8 +89,25 @@
   .color_split input:nth-child(2) {
     margin-left: 10px;
   }
-  .color_image{
+  .color_image {
     width: 50px;
     margin: 5px;
+  }
+
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 420px) {
+    .settingsTitle {
+      font-size: 17px;
+    }
+    .color_split_split {
+      display: flex;
+      width: 100%;
+      input {
+        width: 100%;
+      }
+    }
+    .settingsButton {
+      font-size: 16px;
+    }
   }
 }

@@ -6,6 +6,12 @@ import { isAdmin, isAuth } from "../utils.js";
 
 const bannerRoutes = express.Router();
 
+// Centralized error handler middleware
+const errorHandler = (res, error) => {
+  console.error(error); // Log the error for debugging purposes
+  res.status(500).json({ message: "An error occurred" });
+};
+
 //======
 //create
 //======
@@ -21,7 +27,7 @@ bannerRoutes.post(
       });
       res.send(banner);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -34,7 +40,7 @@ bannerRoutes.get(
       const banners = await Banner.find({}).populate("user").sort("-createdAt");
       res.send(banners);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -50,7 +56,7 @@ bannerRoutes.get(
       const banner = await Banner.findById(id);
       res.send(banner);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -72,7 +78,7 @@ bannerRoutes.put(
       );
       res.send(banner);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -88,7 +94,7 @@ bannerRoutes.delete(
       const banner = await Banner.findByIdAndDelete(id);
       res.send(banner);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );

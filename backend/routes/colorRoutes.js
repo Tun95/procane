@@ -6,6 +6,12 @@ import { isAdmin, isAuth } from "../utils.js";
 
 const colorRoutes = express.Router();
 
+// Centralized error handler middleware
+const errorHandler = (res, error) => {
+  console.error(error); // Log the error for debugging purposes
+  res.status(500).json({ message: "An error occurred" });
+};
+
 //======
 //create
 //======
@@ -21,7 +27,7 @@ colorRoutes.post(
       });
       res.send(color);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -36,7 +42,7 @@ colorRoutes.get(
       const colors = await Color.find({}).populate("user").sort("-createdAt");
       res.send(colors);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -52,7 +58,7 @@ colorRoutes.get(
       const color = await Color.findById(id);
       res.send(color);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -74,7 +80,7 @@ colorRoutes.put(
       );
       res.send(color);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -90,7 +96,7 @@ colorRoutes.delete(
       const color = await Color.findByIdAndDelete(id);
       res.send(color);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );

@@ -6,6 +6,12 @@ import { isAdmin, isAuth } from "../utils.js";
 
 const brandRoutes = express.Router();
 
+// Centralized error handler middleware
+const errorHandler = (res, error) => {
+  console.error(error); // Log the error for debugging purposes
+  res.status(500).json({ message: "An error occurred" });
+};
+
 //create
 brandRoutes.post(
   "/",
@@ -19,7 +25,7 @@ brandRoutes.post(
       });
       res.send(brand);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -33,7 +39,7 @@ brandRoutes.get(
       const brands = await Brand.find({}).sort(mysort).populate("user");
       res.send(brands);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -49,7 +55,7 @@ brandRoutes.get(
       const brand = await Brand.findById(id);
       res.send(brand);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -71,7 +77,7 @@ brandRoutes.put(
       );
       res.send(brand);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
@@ -87,7 +93,7 @@ brandRoutes.delete(
       const brand = await Brand.findByIdAndDelete(id);
       res.send(brand);
     } catch (error) {
-      res.send(error);
+      errorHandler(res, error);
     }
   })
 );
