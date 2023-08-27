@@ -1214,9 +1214,9 @@ orderRouter.post(
     </tr>
   </table>
 </p>
-  <hr/>
-  <p class="thanks">Thanks for shopping with us.</p>
-  <!-- This anchor tag will be displayed as a plain link without any additional styles -->
+  
+  <small class="thanks">Thanks for shopping with us.</small>
+  
   
 </body>
 </html>
@@ -1625,9 +1625,9 @@ orderRouter.post(
     </tr>
   </table>
 </p>
-  <hr/>
-  <p class="thanks">Thanks for shopping with us.</p>
-  <!-- This anchor tag will be displayed as a plain link without any additional styles -->
+  
+  <small class="thanks">Thanks for shopping with us.</small>
+  
   
 </body>
 </html>
@@ -2035,9 +2035,9 @@ orderRouter.post(
     </tr>
   </table>
 </p>
-  <hr/>
-  <p class="thanks">Thanks for shopping with us.</p>
-  <!-- This anchor tag will be displayed as a plain link without any additional styles -->
+  
+  <small class="thanks">Thanks for shopping with us.</small>
+  
   
 </body>
 </html>
@@ -2440,10 +2440,7 @@ orderRouter.put(
     </tr>
   </table>
 </p>
-  <hr/>
-  <p class="thanks">Thanks for shopping with us.</p>
-  <!-- This anchor tag will be displayed as a plain link without any additional styles -->
-  
+  <small class="thanks">Thanks for shopping with us.</small>
 </body>
 </html>
 `;

@@ -843,7 +843,7 @@ productRouter.get("/admin/:id", async (req, res) => {
       { $match: { _id: mongoose.Types.ObjectId(productId) } },
       {
         $lookup: {
-          from: "users", // Replace with the actual collection name for the 'seller' reference
+          from: "users",
           localField: "seller",
           foreignField: "_id",
           as: "seller",
@@ -854,7 +854,7 @@ productRouter.get("/admin/:id", async (req, res) => {
       },
       {
         $lookup: {
-          from: "orders", // Replace with the actual collection name for the 'order' virtual reference
+          from: "orders",
           localField: "_id",
           foreignField: "orderItems.product",
           as: "orders",
