@@ -116,6 +116,8 @@ function App() {
         }))
         .find(() => true)) ||
     {};
+
+  //
   window.appShortDesc = shortDesc || "My web app";
   useEffect(() => {
     // Update the favicon dynamically
