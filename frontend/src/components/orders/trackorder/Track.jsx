@@ -7,6 +7,7 @@ import OrderInfo from "./OrderInfo";
 import { Helmet } from "react-helmet-async";
 
 function Track() {
+  window.scrollTo(0, 0);
   //================
   // CREATE SHIPMENT
   //================
