@@ -117,8 +117,9 @@ function App() {
         .find(() => true)) ||
     {};
 
-  //
+  // Set the appShortDesc as a global variable
   window.appShortDesc = shortDesc || "My web app";
+
   useEffect(() => {
     // Update the favicon dynamically
     const updateFavicon = () => {
@@ -135,6 +136,14 @@ function App() {
     const dynamicTitleElement = document.getElementById("dynamicTitle");
     if (dynamicTitleElement) {
       dynamicTitleElement.innerText = webnameValue;
+    }
+
+    // Set the description dynamically using window.appShortDesc
+    const metaDescriptionTag = document.querySelector(
+      "meta[name='description']"
+    );
+    if (metaDescriptionTag) {
+      metaDescriptionTag.content = window.appShortDesc || "My web app";
     }
   }, [faviconUrl, webname]);
 
