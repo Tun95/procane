@@ -96,7 +96,14 @@ TimeAgo.addLocale(ru);
 function App() {
   const { darkMode, state } = useContext(Context);
   const { settings } = state;
-  const { messengerAppId, messengerPageId, faviconUrl, webname, paypal } =
+  const {
+    messengerAppId,
+    messengerPageId,
+    shortDesc,
+    faviconUrl,
+    webname,
+    paypal,
+  } =
     (settings &&
       settings
         .map((s) => ({
@@ -105,9 +112,11 @@ function App() {
           messengerPageId: s.messengerPageId,
           faviconUrl: s.faviconUrl,
           webname: s.webname,
+          shortDesc: s.shortDesc,
         }))
         .find(() => true)) ||
     {};
+  window.appShortDesc = shortDesc || "My web app";
   useEffect(() => {
     // Update the favicon dynamically
     const updateFavicon = () => {
