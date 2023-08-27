@@ -1093,7 +1093,6 @@ orderRouter.post(
     }
     .thanks {
       margin-top: 20px;
-      font-size: 16px;
     }
     .footer {
       margin-top: 20px;
@@ -1504,7 +1503,6 @@ orderRouter.post(
     }
     .thanks {
       margin-top: 20px;
-      font-size: 16px;
     }
     .footer {
       margin-top: 20px;
@@ -1914,7 +1912,6 @@ orderRouter.post(
     }
     .thanks {
       margin-top: 20px;
-      font-size: 16px;
     }
     .footer {
       margin-top: 20px;
@@ -2319,7 +2316,6 @@ orderRouter.put(
     }
     .thanks {
       margin-top: 20px;
-      font-size: 16px;
     }
     .footer {
       margin-top: 20px;
