@@ -95,7 +95,7 @@ function ProductEdit() {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(
-          `${request}/api/products/${productId}`
+          `${request}/api/products/admin/${productId}`
         );
         setName(data.name);
         setSlug(data.slug);
@@ -532,7 +532,7 @@ function ProductEdit() {
                     </div>
                     <div className="productUpload box_shadow mtb">
                       <div className="productUploadImg-delete">
-                        {images.map((x) => (
+                        {images?.map((x) => (
                           <div key={x}>
                             <img
                               src={x}

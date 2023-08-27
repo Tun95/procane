@@ -955,20 +955,42 @@ orderRouter.post(
         for (const index in order.orderItems) {
           const item = order.orderItems[index];
           const product = await Product.findById(item.product);
-          if (!product) {
-            res
-              .status(404)
-              .send({ message: `Product Not Found: ${item.product}` });
-            return;
-          }
+
+          // Check if the item quantity is greater than the available countInStock
           if (item.quantity > product.countInStock) {
-            res.status(400).send({
-              message: `Insufficient stock for product: ${product.name}`,
-            });
-            return;
+            throw new Error(`Insufficient stock for product: ${product.name}`);
           }
+
+          // Get the current date in the "YYYY-MM-DD" format
+          const currentDate = new Date();
+          const formattedDate = `${currentDate.getFullYear()}-${(
+            currentDate.getMonth() + 1
+          )
+            .toString()
+            .padStart(2, "0")}-${currentDate
+            .getDate()
+            .toString()
+            .padStart(2, "0")}`;
+
+          // Find the sold entry for the current date, if it exists
+          const existingSoldEntryIndex = product.sold.findIndex(
+            (entry) => entry.date.toISOString().slice(0, 10) === formattedDate
+          );
+
+          // If an entry for today exists, update its value, otherwise create a new entry
+          if (existingSoldEntryIndex !== -1) {
+            product.sold[existingSoldEntryIndex].value += item.quantity;
+          } else {
+            product.sold.push({
+              value: item.quantity,
+              date: new Date(formattedDate),
+            });
+          }
+
+          // Decrease the countInStock
           product.countInStock -= item.quantity;
           product.numSales += item.quantity;
+
           await product.save();
         }
 
@@ -1351,9 +1373,36 @@ orderRouter.post(
           throw new Error(`Insufficient stock for product: ${product.name}`);
         }
 
-        // Decrease the countInStock and increase the numSales
+        // Get the current date in the "YYYY-MM-DD" format
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getFullYear()}-${(
+          currentDate.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}-${currentDate
+          .getDate()
+          .toString()
+          .padStart(2, "0")}`;
+
+        // Find the sold entry for the current date, if it exists
+        const existingSoldEntryIndex = product.sold.findIndex(
+          (entry) => entry.date.toISOString().slice(0, 10) === formattedDate
+        );
+
+        // If an entry for today exists, update its value, otherwise create a new entry
+        if (existingSoldEntryIndex !== -1) {
+          product.sold[existingSoldEntryIndex].value += item.quantity;
+        } else {
+          product.sold.push({
+            value: item.quantity,
+            date: new Date(formattedDate),
+          });
+        }
+
+        // Decrease the countInStock
         product.countInStock -= item.quantity;
         product.numSales += item.quantity;
+
         await product.save();
       }
       // Convert the currency if needed
@@ -1734,9 +1783,36 @@ orderRouter.post(
           throw new Error(`Insufficient stock for product: ${product.name}`);
         }
 
-        // Decrease the countInStock and increase the numSales
+        // Get the current date in the "YYYY-MM-DD" format
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getFullYear()}-${(
+          currentDate.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}-${currentDate
+          .getDate()
+          .toString()
+          .padStart(2, "0")}`;
+
+        // Find the sold entry for the current date, if it exists
+        const existingSoldEntryIndex = product.sold.findIndex(
+          (entry) => entry.date.toISOString().slice(0, 10) === formattedDate
+        );
+
+        // If an entry for today exists, update its value, otherwise create a new entry
+        if (existingSoldEntryIndex !== -1) {
+          product.sold[existingSoldEntryIndex].value += item.quantity;
+        } else {
+          product.sold.push({
+            value: item.quantity,
+            date: new Date(formattedDate),
+          });
+        }
+
+        // Decrease the countInStock
         product.countInStock -= item.quantity;
         product.numSales += item.quantity;
+
         await product.save();
       }
       // Convert the currency if needed
@@ -2033,9 +2109,36 @@ orderRouter.put(
           throw new Error(`Insufficient stock for product: ${product.name}`);
         }
 
-        // Decrease the countInStock and increase the numSales
+        // Get the current date in the "YYYY-MM-DD" format
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getFullYear()}-${(
+          currentDate.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}-${currentDate
+          .getDate()
+          .toString()
+          .padStart(2, "0")}`;
+
+        // Find the sold entry for the current date, if it exists
+        const existingSoldEntryIndex = product.sold.findIndex(
+          (entry) => entry.date.toISOString().slice(0, 10) === formattedDate
+        );
+
+        // If an entry for today exists, update its value, otherwise create a new entry
+        if (existingSoldEntryIndex !== -1) {
+          product.sold[existingSoldEntryIndex].value += item.quantity;
+        } else {
+          product.sold.push({
+            value: item.quantity,
+            date: new Date(formattedDate),
+          });
+        }
+
+        // Decrease the countInStock
         product.countInStock -= item.quantity;
         product.numSales += item.quantity;
+
         await product.save();
       }
 

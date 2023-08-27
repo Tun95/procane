@@ -837,27 +837,44 @@ productRouter.get("/:id", async (req, res) => {
 //===========================
 productRouter.get("/admin/:id", async (req, res) => {
   const productId = req.params.id;
-  const product = await Product.findById(productId).populate({
-    path: "order",
-    match: { "order.orderItems.product": productId },
-    populate: {
-      path: "orderItems",
-      match: { product: productId },
-    },
-  });
 
-  if (product) {
-    // Filter out the order items with the specified product ID
-    const filteredOrderItems = product.order[0].orderItems.filter(
-      (item) => item.product.toString() === productId
-    );
+  try {
+    const product = await Product.aggregate([
+      { $match: { _id: mongoose.Types.ObjectId(productId) } },
+      {
+        $lookup: {
+          from: "users", // Replace with the actual collection name for the 'seller' reference
+          localField: "seller",
+          foreignField: "_id",
+          as: "seller",
+        },
+      },
+      {
+        $unwind: "$seller",
+      },
+      {
+        $lookup: {
+          from: "orders", // Replace with the actual collection name for the 'order' virtual reference
+          localField: "_id",
+          foreignField: "orderItems.product",
+          as: "orders",
+        },
+      },
+      {
+        $addFields: {
+          sold: { $slice: ["$sold", -3] }, // Limit the 'sold' array to the last 3 entries
+        },
+      },
+    ]);
 
-    // Update the product object with the filtered order items
-    product.order[0].orderItems = filteredOrderItems;
+    if (product.length === 0) {
+      return res.status(404).send({ message: "Product Not Found" });
+    }
 
-    res.send(product);
-  } else {
-    res.status(404).send({ message: "Product Not Found" });
+    res.send(product[0]); // Assuming there's only one product with the given ID
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal Server Error" });
   }
 });
 
