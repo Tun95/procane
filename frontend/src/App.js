@@ -147,6 +147,7 @@ function App() {
     }
   }, [faviconUrl, webname]);
 
+  //============================
   // Set the PayPal client ID on the window object
   useEffect(() => {
     window.paypalClientId = paypal; // Replace this with the actual PayPal client ID
