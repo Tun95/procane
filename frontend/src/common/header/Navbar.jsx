@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Menu from "@mui/material/Menu";
@@ -57,6 +57,8 @@ const StyledMenu = styled((props) => (
 function Navbar() {
   const navigate = useNavigate();
 
+  let storeRef = useRef(null);
+
   const { state, dispatch: ctxDispatch, darkMode } = useContext(Context);
   const { userInfo, categories } = state;
 
@@ -67,6 +69,29 @@ function Navbar() {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleCategoryClick = (event, category) => {
+    event.preventDefault();
+
+    // Close the menu
+    handleClose();
+
+    // Log storeRef and its current value
+    console.log("storeRef:", storeRef.current);
+
+    // Scroll to the "store" section
+    if (storeRef.current) {
+      console.log("Scrolling to:", storeRef.current.offsetTop);
+      window.scrollTo({
+        behavior: "smooth",
+        top: storeRef.current.offsetTop,
+      });
+    }
+
+    // You can also update the URL with the selected category
+    // For example, using react-router or similar library
+    navigate(`/store?category=${category}`);
   };
 
   const handleOpen = () => {
@@ -105,7 +130,7 @@ function Navbar() {
                     key={index}
                     component={Link}
                     to={`/store?category=${c.category}`}
-                    onClick={handleClose}
+                    onClick={(e) => handleCategoryClick(e, c.category)}
                     disableRipple
                   >
                     {c.category}

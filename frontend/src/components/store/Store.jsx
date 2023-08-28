@@ -99,12 +99,13 @@ function Store() {
   };
 
   //scroll
+  const storeRef = useRef(null);
   const storeItemsRef = useRef();
   // Function to scroll to the "Store Items" section
 
   return (
     <>
-      <section className="store background" id="store">
+      <section className="store background" id="store" ref={storeRef}>
         <div className="container ">
           <div className="store_grid">
             <Filter

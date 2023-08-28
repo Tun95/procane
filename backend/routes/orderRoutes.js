@@ -2272,7 +2272,7 @@ orderRouter.put(
             // If the currency sign is not available, return the original price without conversion
             const formatter = new Intl.NumberFormat("en-US", {
               style: "currency",
-              currency: "USD", // Replace "USD" with the default currency code if needed
+              currency: order.currencySign, // Replace "USD" with the default currency code if needed
             });
             return formatter.format(price);
           }
