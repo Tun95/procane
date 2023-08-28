@@ -1,46 +1,83 @@
 import express from "express";
 import expressAsyncHandler from "express-async-handler";
-import Sib from "sib-api-v3-sdk";
 import EmailMsg from "../models/emailMessaging.js";
 import { isAdmin, isAuth } from "../utils.js";
 import nodemailer from "nodemailer";
 
 const sendEmailRouter = express.Router();
 
-//Contact Admin
+// Contact Admin
 sendEmailRouter.post(
-  "/",
+  '/',
   expressAsyncHandler(async (req, res) => {
-    const client = Sib.ApiClient.instance;
-    const apiKey = client.authentications["api-key"];
-    apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
-
     const { email, name, subject, message } = req.body;
-    const tranEmailApi = new Sib.TransactionalEmailsApi();
-    const sender = {
-      email,
-      name,
-    };
-    const receivers = [
-      {
-        email: process.env.EMAIL_ADDRESS,
+    // Create a nodemailer transport
+    const smtpTransport = nodemailer.createTransport({
+      service: process.env.MAIL_SERVICE,
+      auth: {
+        user: process.env.EMAIL_ADDRESS,
+        pass: process.env.GMAIL_PASS,
       },
-    ];
-    tranEmailApi
-      .sendTransacEmail({
-        sender,
-        to: receivers,
-        subject,
-        textContent: message,
-        params: {
-          role: "Frontend",
-        },
-      })
-      .then(console.log)
-      .catch(console.log);
-    res.json("sent");
+    });
+
+    // Create a mail options object with sender's name and email
+    const mailOptions = {
+      from: {
+        name,
+        address: email,
+      },
+      to: process.env.EMAIL_ADDRESS,
+      subject,
+      text: message,
+    };
+
+    // Send the email
+    smtpTransport.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Email sending error:", error);
+        res.status(500).json({ message: "Failed to send email" });
+      } else {
+        console.log("Email sent:", info.response);
+        res.status(200).json({ message: "Email sent successfully" });
+      }
+    });
   })
 );
+
+//Contact Admin
+// sendEmailRouter.post(
+//   "/",
+//   expressAsyncHandler(async (req, res) => {
+//     const client = Sib.ApiClient.instance;
+//     const apiKey = client.authentications["api-key"];
+//     apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
+
+//     const { email, name, subject, message } = req.body;
+//     const tranEmailApi = new Sib.TransactionalEmailsApi();
+//     const sender = {
+//       email,
+//       name,
+//     };
+//     const receivers = [
+//       {
+//         email: process.env.EMAIL_ADDRESS,
+//       },
+//     ];
+//     tranEmailApi
+//       .sendTransacEmail({
+//         sender,
+//         to: receivers,
+//         subject,
+//         textContent: message,
+//         params: {
+//           role: "Frontend",
+//         },
+//       })
+//       .then(console.log)
+//       .catch(console.log);
+//     res.json("sent");
+//   })
+// );
 
 //Subscribe to News Letter
 sendEmailRouter.post(

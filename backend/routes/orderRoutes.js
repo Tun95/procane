@@ -3,7 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import Order from "../models/orderModels.js";
 import User from "../models/userModels.js";
 import { isAuth, isAdmin, isSellerOrAdmin } from "../utils.js";
-import Sib from "sib-api-v3-sdk";
+import nodemailer from "nodemailer";
 import Product from "../models/productModels.js";
 import Settings from "../models/settings.js";
 import Stripe from "stripe";
@@ -915,15 +915,6 @@ orderRouter.post(
   "/:id/stripe",
   isAuth,
   expressAsyncHandler(async (req, res) => {
-    const settings = await Settings.find({});
-    const { currency: currencyStripe } =
-      (settings &&
-        settings
-          .map((s) => ({
-            currency: s.currency,
-          }))
-          .find(() => true)) ||
-      {};
     const { stripeApiKey } = (await Settings.findOne({})) ?? {};
     const stripe = Stripe(stripeApiKey);
     console.log(stripeApiKey);
@@ -995,13 +986,12 @@ orderRouter.post(
         }
 
         // Convert the currency if needed
-        let convertedCurrencySign = order.currencySign;
         let convertedItemsPrice = order.itemsPrice;
         let convertedTaxPrice = order.taxPrice;
         let convertedShippingPrice = order.shippingPrice;
         let convertedGrandTotal = order.grandTotal;
 
-        if (order.currencySign !== currencyStripe) {
+        if (order.currencySign) {
           try {
             convertedItemsPrice = await convertCurrency(
               order.itemsPrice,
@@ -1019,10 +1009,9 @@ orderRouter.post(
               order.grandTotal,
               order.currencySign
             );
-            convertedCurrencySign = order.currencySign;
-            const formatter = new Intl.NumberFormat("en-GB", {
+            const formatter = new Intl.NumberFormat("en-US", {
               style: "currency",
-              currency: convertedCurrencySign,
+              currency: order.currencySign,
               currencyDisplay: "symbol", // Display the currency symbol instead of the currency code
             });
             // Format converted values
@@ -1049,7 +1038,7 @@ orderRouter.post(
               // If the currency sign is not available, return the original price without conversion
               const formatter = new Intl.NumberFormat("en-US", {
                 style: "currency",
-                currency: "USD", // Replace "USD" with the default currency code if needed
+                currency: order.currencySign, // Replace "USD" with the default currency code if needed
               });
               return formatter.format(price);
             }
@@ -1220,33 +1209,34 @@ orderRouter.post(
 </body>
 </html>
 `;
-        const client = Sib.ApiClient.instance;
-        const apiKey = client.authentications["api-key"];
-        apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
-
-        const tranEmailApi = new Sib.TransactionalEmailsApi();
-        const sender = {
-          name: process.env.SHOP_NAME,
-          email: process.env.EMAIL_ADDRESS,
-        };
-        const receivers = [
-          {
-            name: `${order.user.firstName} ${order.user.lastName}`,
-            email: `${order.user.email}`,
+        // Create a nodemailer transport
+        const smtpTransport = nodemailer.createTransport({
+          service: process.env.MAIL_SERVICE,
+          auth: {
+            user: process.env.EMAIL_ADDRESS,
+            pass: process.env.GMAIL_PASS,
           },
-        ];
-        tranEmailApi
-          .sendTransacEmail({
-            sender,
-            to: receivers,
-            subject: `New Order ${order.trackingId}`,
-            htmlContent: payOrderEmailTemplate,
-            params: {
-              role: "Frontend",
-            },
-          })
-          .then(console.log)
-          .catch(console.log);
+        });
+
+        // Create a mail options object with sender's name and email
+        const mailOptions = {
+          from: {
+            name: process.env.SHOP_NAME,
+            address: process.env.EMAIL_ADDRESS,
+          },
+          to: `${order.user.email}`,
+          subject: `New Order ${order.trackingId}`,
+          html: payOrderEmailTemplate,
+        };
+
+        // Send the email
+        smtpTransport.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error("Email sending error:", error);
+          } else {
+            console.log("Email sent:", info.response);
+          }
+        });
 
         const updatedOrder = await order.save();
 
@@ -1405,13 +1395,12 @@ orderRouter.post(
         await product.save();
       }
       // Convert the currency if needed
-      let convertedCurrencySign = order.currencySign;
       let convertedItemsPrice = order.itemsPrice;
       let convertedTaxPrice = order.taxPrice;
       let convertedShippingPrice = order.shippingPrice;
       let convertedGrandTotal = order.grandTotal;
 
-      if (order.currencySign !== currency) {
+      if (order.currencySign) {
         try {
           convertedItemsPrice = await convertCurrency(
             order.itemsPrice,
@@ -1429,10 +1418,9 @@ orderRouter.post(
             order.grandTotal,
             order.currencySign
           );
-          convertedCurrencySign = order.currencySign;
-          const formatter = new Intl.NumberFormat("en-GB", {
+          const formatter = new Intl.NumberFormat("en-US", {
             style: "currency",
-            currency: convertedCurrencySign,
+            currency: order.currencySign,
             currencyDisplay: "symbol", // Display the currency symbol instead of the currency code
           });
           // Format converted values
@@ -1459,7 +1447,7 @@ orderRouter.post(
             // If the currency sign is not available, return the original price without conversion
             const formatter = new Intl.NumberFormat("en-US", {
               style: "currency",
-              currency: "USD", // Replace "USD" with the default currency code if needed
+              currency: order.currencySign, // Replace "USD" with the default currency code if needed
             });
             return formatter.format(price);
           }
@@ -1630,33 +1618,34 @@ orderRouter.post(
 </body>
 </html>
 `;
-      const client = Sib.ApiClient.instance;
-      const apiKey = client.authentications["api-key"];
-      apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
-
-      const tranEmailApi = new Sib.TransactionalEmailsApi();
-      const sender = {
-        name: process.env.SHOP_NAME,
-        email: process.env.EMAIL_ADDRESS,
-      };
-      const receivers = [
-        {
-          name: `${order.user.firstName} ${order.user.lastName}`,
-          email: `${order.user.email}`,
+      // Create a nodemailer transport
+      const smtpTransport = nodemailer.createTransport({
+        service: process.env.MAIL_SERVICE,
+        auth: {
+          user: process.env.EMAIL_ADDRESS,
+          pass: process.env.GMAIL_PASS,
         },
-      ];
-      tranEmailApi
-        .sendTransacEmail({
-          sender,
-          to: receivers,
-          subject: `New Order ${order.trackingId}`,
-          htmlContent: payOrderEmailTemplate,
-          params: {
-            role: "Frontend",
-          },
-        })
-        .then(console.log)
-        .catch(console.log);
+      });
+
+      // Create a mail options object with sender's name and email
+      const mailOptions = {
+        from: {
+          name: process.env.SHOP_NAME,
+          address: process.env.EMAIL_ADDRESS,
+        },
+        to: `${order.user.email}`,
+        subject: `New Order ${order.trackingId}`,
+        html: payOrderEmailTemplate,
+      };
+
+      // Send the email
+      smtpTransport.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error("Email sending error:", error);
+        } else {
+          console.log("Email sent:", info.response);
+        }
+      });
 
       await order.save();
       res.json({ success: true, message: "Payment successful" });
@@ -1731,15 +1720,6 @@ orderRouter.post(
   expressAsyncHandler(async (req, res) => {
     const orderId = req.params.id;
     const paymentResponse = req.body;
-    const settings = await Settings.find({});
-    const { currency } =
-      (settings &&
-        settings
-          .map((s) => ({
-            currency: s.currency,
-          }))
-          .find(() => true)) ||
-      {};
     const order = await Order.findById(orderId).populate("user");
 
     if (!order) {
@@ -1814,13 +1794,12 @@ orderRouter.post(
         await product.save();
       }
       // Convert the currency if needed
-      let convertedCurrencySign = order.currencySign;
       let convertedItemsPrice = order.itemsPrice;
       let convertedTaxPrice = order.taxPrice;
       let convertedShippingPrice = order.shippingPrice;
       let convertedGrandTotal = order.grandTotal;
 
-      if (order.currencySign !== currency) {
+      if (order.currencySign) {
         try {
           convertedItemsPrice = await convertCurrency(
             order.itemsPrice,
@@ -1838,10 +1817,9 @@ orderRouter.post(
             order.grandTotal,
             order.currencySign
           );
-          convertedCurrencySign = order.currencySign;
-          const formatter = new Intl.NumberFormat("en-GB", {
+          const formatter = new Intl.NumberFormat("en-US", {
             style: "currency",
-            currency: convertedCurrencySign,
+            currency: order.currencySign,
             currencyDisplay: "symbol", // Display the currency symbol instead of the currency code
           });
           // Format converted values
@@ -1868,7 +1846,7 @@ orderRouter.post(
             // If the currency sign is not available, return the original price without conversion
             const formatter = new Intl.NumberFormat("en-US", {
               style: "currency",
-              currency: "USD", // Replace "USD" with the default currency code if needed
+              currency: order.currencySign, // Replace "USD" with the default currency code if needed
             });
             return formatter.format(price);
           }
@@ -2039,33 +2017,34 @@ orderRouter.post(
 </body>
 </html>
 `;
-      const client = Sib.ApiClient.instance;
-      const apiKey = client.authentications["api-key"];
-      apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
-
-      const tranEmailApi = new Sib.TransactionalEmailsApi();
-      const sender = {
-        name: process.env.SHOP_NAME,
-        email: process.env.EMAIL_ADDRESS,
-      };
-      const receivers = [
-        {
-          name: `${order.user.firstName} ${order.user.lastName}`,
-          email: `${order.user.email}`,
+      // Create a nodemailer transport
+      const smtpTransport = nodemailer.createTransport({
+        service: process.env.MAIL_SERVICE,
+        auth: {
+          user: process.env.EMAIL_ADDRESS,
+          pass: process.env.GMAIL_PASS,
         },
-      ];
-      tranEmailApi
-        .sendTransacEmail({
-          sender,
-          to: receivers,
-          subject: `New Order ${order.trackingId}`,
-          htmlContent: payOrderEmailTemplate,
-          params: {
-            role: "Frontend",
-          },
-        })
-        .then(console.log)
-        .catch(console.log);
+      });
+
+      // Create a mail options object with sender's name and email
+      const mailOptions = {
+        from: {
+          name: process.env.SHOP_NAME,
+          address: process.env.EMAIL_ADDRESS,
+        },
+        to: `${order.user.email}`,
+        subject: `New Order ${order.trackingId}`,
+        html: payOrderEmailTemplate,
+      };
+
+      // Send the email
+      smtpTransport.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error("Email sending error:", error);
+        } else {
+          console.log("Email sent:", info.response);
+        }
+      });
 
       await order.save();
       res.json({ success: true, message: "Payment successful" });
@@ -2082,8 +2061,6 @@ orderRouter.put(
   "/:id/pay",
   isAuth,
   expressAsyncHandler(async (req, res) => {
-    const settings = await Settings.find({});
-
     const order = await Order.findById(req.params.id).populate("user");
     if (order) {
       order.isPaid = true;
@@ -2440,33 +2417,34 @@ orderRouter.put(
 </body>
 </html>
 `;
-      const client = Sib.ApiClient.instance;
-      const apiKey = client.authentications["api-key"];
-      apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
-
-      const tranEmailApi = new Sib.TransactionalEmailsApi();
-      const sender = {
-        name: process.env.SHOP_NAME,
-        email: process.env.EMAIL_ADDRESS,
-      };
-      const receivers = [
-        {
-          name: `${order.user.firstName} ${order.user.lastName}`,
-          email: `${order.user.email}`,
+      // Create a nodemailer transport
+      const smtpTransport = nodemailer.createTransport({
+        service: process.env.MAIL_SERVICE,
+        auth: {
+          user: process.env.EMAIL_ADDRESS,
+          pass: process.env.GMAIL_PASS,
         },
-      ];
-      tranEmailApi
-        .sendTransacEmail({
-          sender,
-          to: receivers,
-          subject: `New Order ${order.trackingId}`,
-          htmlContent: payOrderEmailTemplate,
-          params: {
-            role: "Frontend",
-          },
-        })
-        .then(console.log)
-        .catch(console.log);
+      });
+
+      // Create a mail options object with sender's name and email
+      const mailOptions = {
+        from: {
+          name: process.env.SHOP_NAME,
+          address: process.env.EMAIL_ADDRESS,
+        },
+        to: `${order.user.email}`,
+        subject: `New Order ${order.trackingId}`,
+        html: payOrderEmailTemplate,
+      };
+
+      // Send the email
+      smtpTransport.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error("Email sending error:", error);
+        } else {
+          console.log("Email sent:", info.response);
+        }
+      });
 
       await order.save();
 
