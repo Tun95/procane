@@ -202,7 +202,6 @@ orderRouter.get(
 function calculatePercentageChange(previousValue, currentValue) {
   return ((currentValue - previousValue) / previousValue) * 100;
 }
-
 orderRouter.get(
   "/seller-summary",
   isAuth,
@@ -402,111 +401,6 @@ orderRouter.get(
       res.status(200).json(sellerSummary);
     } catch (err) {
       console.error(err);
-      res
-        .status(500)
-        .json({ message: "An error occurred while fetching seller summary" });
-    }
-  })
-);
-
-//================================
-//SINGLE SELLER EARNINGS PER MONTH
-//================================
-// orderRouter.get(
-//   "/seller-summary/:id",
-//   isAuth,
-//   isSellerOrAdmin,
-//   expressAsyncHandler(async (req, res) => {
-//     const sellerId = req.params?.id;
-
-//     try {
-//       const sellerSummary = await Order.aggregate([
-//         // Match orders for the specific seller
-//         {
-//           $match: { seller: mongoose.Types.ObjectId(sellerId) },
-//         },
-//         // Group orders by month
-//         {
-//           $group: {
-//             _id: {
-//               year: { $year: "$createdAt" },
-//               month: { $month: "$createdAt" },
-//             },
-//             totalEarningsPerMonth: { $sum: "$grandTotal" }, // Sum up total earnings per month
-//           },
-//         },
-//         // Sort by date in descending order to get the latest month's earnings first
-//         {
-//           $sort: { "_id.year": -1, "_id.month": -1 },
-//         },
-//         // Limit to only one document to get the latest month's earnings
-//         {
-//           $limit: 1,
-//         },
-//         // Project to show only the desired fields in the result
-//         {
-//           $project: {
-//             _id: 0,
-//             totalEarnings: "$totalEarningsPerMonth", // Rename the field to totalEarnings
-//           },
-//         },
-//       ]);
-
-//       if (sellerSummary.length > 0) {
-//         res.status(200).json(sellerSummary[0]);
-//       } else {
-//         // No data found for the seller
-//         res.status(404).json({ message: "Seller data not found" });
-//       }
-//     } catch (err) {
-//       res
-//         .status(500)
-//         .json({ message: "An error occurred while fetching seller summary" });
-//     }
-//   })
-// );
-orderRouter.get(
-  "/seller-summary/:id",
-  isAuth,
-  isSellerOrAdmin,
-  expressAsyncHandler(async (req, res) => {
-    const sellerId = req.params?.id;
-
-    try {
-      const sellerSummary = await Order.aggregate([
-        // Match orders for the specific seller that are paid (isPaid: true)
-        {
-          $match: { seller: mongoose.Types.ObjectId(sellerId), isPaid: true },
-        },
-        // Group orders by month
-        {
-          $group: {
-            _id: {
-              year: { $year: "$createdAt" },
-              month: { $month: "$createdAt" },
-            },
-            totalEarningsPerMonth: { $sum: "$grandTotal" }, // Sum up total earnings per month
-          },
-        },
-        // Sort by date in descending order to get the latest month's earnings first
-        {
-          $sort: { "_id.year": -1, "_id.month": -1 },
-        },
-        // Limit to only one document to get the latest month's earnings
-        {
-          $limit: 1,
-        },
-        // Project to show only the desired fields in the result
-        {
-          $project: {
-            _id: 0,
-            totalEarnings: "$totalEarningsPerMonth", // Rename the field to totalEarnings
-          },
-        },
-      ]);
-
-      res.status(200).json(sellerSummary[0]);
-    } catch (err) {
       res
         .status(500)
         .json({ message: "An error occurred while fetching seller summary" });

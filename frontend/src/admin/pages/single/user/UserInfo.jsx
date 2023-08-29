@@ -36,13 +36,6 @@ const reducer = (state, action) => {
     case "FETCH_ORDER_FAIL":
       return { ...state, loading: false, error: action.payload };
 
-    case "FETCH_EARNING_REQUEST":
-      return { ...state, loading: true, error: "" };
-    case "FETCH_EARNING_SUCCESS":
-      return { ...state, loading: false, summary: action.payload, error: "" };
-    case "FETCH_EARNING_FAIL":
-      return { ...state, loading: false, error: action.payload };
-
     default:
       return state;
   }
@@ -55,7 +48,7 @@ function UserInfo() {
   const { state, convertCurrency } = useContext(Context);
   const { userInfo } = state;
 
-  const [{ loading, error, user, summary }, dispatch] = useReducer(reducer, {
+  const [{ loading, error, user }, dispatch] = useReducer(reducer, {
     user: [],
     loading: true,
     summary: { salesData: [] },
@@ -79,29 +72,6 @@ function UserInfo() {
     };
     fetchData();
     console.log(userId);
-  }, [userId, userInfo]);
-  console.log(user);
-
-  //==================
-  // EARNINGS MONTHLY
-  //==================
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch({ type: "FETCH_EARNING_REQUEST" });
-        const { data } = await axios.get(
-          `${request}/api/orders/seller-summary/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${userInfo.token}` },
-          }
-        );
-        dispatch({ type: "FETCH_EARNING_SUCCESS", payload: data });
-      } catch (err) {
-        dispatch({ type: "FETCH_EARNING_FAIL", payload: getError(err) });
-        console.log(err);
-      }
-    };
-    fetchData();
   }, [userId, userInfo]);
   console.log(user);
 
