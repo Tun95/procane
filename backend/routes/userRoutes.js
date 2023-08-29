@@ -173,52 +173,192 @@ userRouter.post("/generate-affiliate-code/:id", async (req, res) => {
 //=========================
 //SELLER WITHDRAWAL REQUEST
 //=========================
-userRouter.post(
-  "/withdraw",
-  // isAuth,
-  // isSellerOrAdmin,
-  expressAsyncHandler(async (req, res) => {
-    const sellerId = req.user._id;
-    const { amount } = req.body;
+// userRouter.post("/withdraw", async (req, res) => {
+//   const { userId, amount } = req.body;
 
-    try {
-      // Fetch the seller's document from the database
-      const seller = await User.findById(sellerId);
+//   try {
+//     // Find the seller user by userId
+//     const seller = await User.findById(userId);
 
-      // Check if the seller has sufficient balance for the withdrawal
-      if (seller.grandTotalEarnings < amount) {
-        return res
-          .status(400)
-          .json({ message: "Insufficient balance for withdrawal" });
-      }
+//     if (!seller) {
+//       return res.status(404).json({ message: "Seller not found" });
+//     }
 
-      // Create a new withdrawal record
-      const withdrawal = {
-        amount,
-        status: "pending", // Set the status to pending initially
-        requestDate: new Date(),
-      };
+//     if (!seller.isSeller) {
+//       return res.status(400).json({ message: "User is not a seller" });
+//     }
 
-      // Add the new withdrawal record to the seller's document
-      seller.withdrawalRequests.push(withdrawal);
+//     if (amount <= 0 || amount > seller.grandTotalEarnings) {
+//       return res.status(400).json({ message: "Invalid withdrawal amount" });
+//     }
 
-      // Deduct the withdrawal amount from the seller's grandTotalEarnings
-      seller.grandTotalEarnings -= amount;
+//     if (amount < seller.minimumWithdrawalAmount) {
+//       return res
+//         .status(400)
+//         .json({ message: "Withdrawal amount is below the minimum" });
+//     }
 
-      // Save the updated seller document
+//     // Deduct the withdrawal amount from the grandTotalEarnings
+//     seller.grandTotalEarnings -= amount;
+
+//     // Add the withdrawal request to the seller's withdrawalRequests
+//     seller.withdrawalRequests.push({
+//       amount,
+//       status: "pending",
+//       requestDate: new Date(),
+//     });
+
+//     await seller.save();
+
+//     res
+//       .status(200)
+//       .json({ message: "Withdrawal request submitted successfully" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+userRouter.post("/withdraw", async (req, res) => {
+  const { userId, amount } = req.body;
+
+  try {
+    // Find the seller user by userId
+    const seller = await User.findById(userId);
+
+    if (!seller) {
+      return res.status(404).json({ message: "Seller not found" });
+    }
+
+    if (!seller.isSeller) {
+      return res.status(400).json({ message: "User is not a seller" });
+    }
+
+    if (amount <= 0 || amount > seller.grandTotalEarnings) {
+      return res.status(400).json({ message: "Invalid withdrawal amount" });
+    }
+
+    if (amount < seller.minimumWithdrawalAmount) {
+      return res
+        .status(400)
+        .json({ message: "Withdrawal amount is below the minimum" });
+    }
+
+    // Deduct the withdrawal amount from the grandTotalEarnings
+    seller.grandTotalEarnings -= amount;
+
+    // Deduct the withdrawal amount from the availableBalance
+    seller.availableBalance -= amount;
+
+    // Add the withdrawal request to the seller's withdrawalRequests
+    seller.withdrawalRequests.push({
+      amount,
+      status: "pending",
+      requestDate: new Date(),
+    });
+
+    await seller.save();
+
+    res
+      .status(200)
+      .json({ message: "Withdrawal request submitted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+//======================================
+//ADMIN APPROVAL/DECLINE A WITHDRAWAL
+//======================================
+// userRouter.patch("/withdraw/:id", async (req, res) => {
+//   const { id } = req.params; // Change 'requestId' to 'id'
+//   const { action } = req.body;
+
+//   try {
+//     // Find the seller user by userId
+//     const seller = await User.findOne({ "withdrawalRequests._id": id }); // Use 'id' here
+
+//     if (!seller) {
+//       return res.status(404).json({ message: "Seller not found" });
+//     }
+
+//     if (action === "approve") {
+//       // Find the withdrawal request and update its status to approved
+//       const withdrawalRequest = seller.withdrawalRequests.id(id);
+//       withdrawalRequest.status = "approved";
+//       withdrawalRequest.approvalDate = new Date();
+
+//       // Save the updated user document
+//       await seller.save();
+
+//       res.status(200).json({ message: "Withdrawal request approved" });
+//     } else if (action === "decline") {
+//       // Find the withdrawal request and update its status to declined
+//       const withdrawalRequest = seller.withdrawalRequests.id(id);
+//       withdrawalRequest.status = "declined";
+
+//       // Return the declined amount back to grandTotalEarnings
+//       seller.grandTotalEarnings += withdrawalRequest.amount;
+
+//       // Save the updated user document
+//       await seller.save();
+
+//       res.status(200).json({ message: "Withdrawal request declined" });
+//     } else {
+//       res.status(400).json({ message: "Invalid action" });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+userRouter.patch("/withdraw/:id", async (req, res) => {
+  const { id } = req.params;
+  const { action } = req.body;
+
+  try {
+    // Find the seller user by userId
+    const seller = await User.findOne({ "withdrawalRequests._id": id });
+
+    if (!seller) {
+      return res.status(404).json({ message: "Seller not found" });
+    }
+
+    const withdrawalRequest = seller.withdrawalRequests.id(id);
+    const withdrawalAmount = withdrawalRequest.amount;
+
+    if (action === "approve") {
+      // Find the withdrawal request and update its status to approved
+      withdrawalRequest.status = "approved";
+      withdrawalRequest.approvalDate = new Date();
+
+      // Update the withdrawnAmount by adding the approved withdrawal amount
+      seller.withdrawnAmount += withdrawalAmount;
+
+      // Save the updated user document
       await seller.save();
 
-      res
-        .status(201)
-        .json({ message: "Withdrawal request submitted successfully" });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ message: "An error occurred while processing the request" });
+      res.status(200).json({ message: "Withdrawal request approved" });
+    } else if (action === "decline") {
+      // Find the withdrawal request and update its status to declined
+      withdrawalRequest.status = "declined";
+
+      // Return the declined amount back to grandTotalEarnings
+      seller.grandTotalEarnings += withdrawalAmount;
+
+      // Save the updated user document
+      await seller.save();
+
+      res.status(200).json({ message: "Withdrawal request declined" });
+    } else {
+      res.status(400).json({ message: "Invalid action" });
     }
-  })
-);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 //=======================
 // AFFILIATE COMMISSION

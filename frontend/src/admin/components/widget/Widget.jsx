@@ -13,7 +13,7 @@ function Widget({
   TotalOrders,
   TotalSales,
   GrandTotalSales,
-  SellersGrandTotalSales,
+  SellersBalance,
 }) {
   let data;
 
@@ -28,7 +28,7 @@ function Widget({
       : type === "balance"
       ? GrandTotalSales || 0
       : type === "seller"
-      ? SellersGrandTotalSales || 0
+      ? SellersBalance || 0
       : 0;
   const diff = 20;
   switch (type) {
@@ -89,7 +89,7 @@ function Widget({
       break;
     case "seller":
       data = {
-        title: "MONTHLY EARNINGS",
+        title: "BALANCE",
         isMoney: true,
         link: "Total Balance",
         icon: (

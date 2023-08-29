@@ -95,10 +95,16 @@ function SellerDashboard() {
   const TotalOrders = orderNum?.toLocaleString("en-GB");
 
   //TOTAL SALES PER DAY
-  const salesTotal = summary.earningsPerDay
-    ? summary.earningsPerDay[0]?.totalEarningsPerDay.toFixed(0)
+  const withdrawn = summary.withdrawnAmount
+    ? summary.withdrawnAmount?.toFixed(0)
     : 0;
-  const TotalSales = convertCurrency(salesTotal);
+  const withdrawnAmount = convertCurrency(withdrawn);
+
+  //TOTAL SALES PER DAY
+  const availableBalance = summary.availableBalance
+    ? summary.availableBalance?.toFixed(0)
+    : 0;
+  const LeftBalance = convertCurrency(availableBalance);
 
   //TOTAL SALES PER DAY
   const grandTotal = summary.grandTotalEarnings
@@ -122,8 +128,9 @@ function SellerDashboard() {
           <>
             <div className="widgets ">
               <Widget TotalOrders={TotalOrders} type="order" />
-              <Widget TotalSales={TotalSales} type="income" />
-              <Widget GrandTotalSales={GrandTotalSales} type="balance" />
+              <Widget withdrawnAmount={withdrawnAmount} type="withdrawn" />
+              <Widget LeftBalance={LeftBalance} type="balance" />
+              <Widget GrandTotalSales={GrandTotalSales} type="earnings" />
             </div>
             <div className="charts">
               <Chart

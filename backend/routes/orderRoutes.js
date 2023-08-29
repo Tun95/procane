@@ -202,6 +202,7 @@ orderRouter.get(
 function calculatePercentageChange(previousValue, currentValue) {
   return ((currentValue - previousValue) / previousValue) * 100;
 }
+
 orderRouter.get(
   "/seller-summary",
   isAuth,
@@ -362,6 +363,22 @@ orderRouter.get(
 
       // Calculate and update the grandTotalEarnings for the seller
       const seller = await User.findById(sellerId);
+
+      // Calculate and update the availableBalance for the seller
+      const withdrawalRequests = seller ? seller.withdrawalRequests : [];
+      const totalWithdrawn = withdrawalRequests.reduce(
+        (total, request) =>
+          request.status === "approved" ? total + request.amount : total,
+        0
+      );
+      // Fetch the grandTotalEarnings and withdrawnAmount directly from the seller instance
+      const grandTotalEarningsValue = seller ? seller.grandTotalEarnings : 0;
+      const withdrawnAmount = seller ? seller.withdrawnAmount : 0;
+
+      const availableBalance = grandTotalEarningsValue - totalWithdrawn;
+      seller.availableBalance = availableBalance; // Update the user's availableBalance field
+      await seller.save(); // Save the updated user document
+
       if (seller) {
         const grandTotalEarnings = await seller.calculateGrandTotalEarnings();
         seller.grandTotalEarnings = grandTotalEarnings; // Update the user's grandTotalEarnings field
@@ -378,6 +395,8 @@ orderRouter.get(
             ? grandTotalEarnings[0].grandTotalEarnings
             : 0,
         monthlyPercentageChanges,
+        availableBalance,
+        withdrawnAmount,
       };
 
       res.status(200).json(sellerSummary);
@@ -779,106 +798,6 @@ orderRouter.put(
       res.send({ message: "Order Delivered" });
     } else {
       res.status(404).send({ message: "Order No Found" });
-    }
-  })
-);
-
-//=========================
-//SELLER WITHDRAWAL REQUEST
-//=========================
-orderRouter.post(
-  "/withdraw",
-  isAuth,
-  isSellerOrAdmin,
-  expressAsyncHandler(async (req, res) => {
-    const sellerId = req.user._id;
-    const { amount } = req.body;
-
-    try {
-      // Fetch the seller's document from the database
-      const seller = await User.findById(sellerId);
-
-      // Check if the seller has sufficient balance for the withdrawal
-      if (seller.grandTotalEarnings < amount) {
-        return res
-          .status(400)
-          .json({ message: "Insufficient balance for withdrawal" });
-      }
-
-      // Create a new withdrawal record
-      const withdrawal = {
-        amount,
-        status: "pending", // Set the status to pending initially
-        requestedAt: new Date(),
-      };
-
-      // Add the new withdrawal record to the seller's document
-      seller.withdrawals.push(withdrawal);
-
-      // Deduct the withdrawal amount from the seller's grandTotalEarnings
-      seller.grandTotalEarnings -= amount;
-
-      // Save the updated seller document
-      await seller.save();
-
-      res
-        .status(201)
-        .json({ message: "Withdrawal request submitted successfully" });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ message: "An error occurred while processing the request" });
-    }
-  })
-);
-
-//======================================
-//ADMIN APPROVAL/DECLINE OF A WITHDRAWAL
-//======================================
-orderRouter.post(
-  "/withdraw",
-  isAuth,
-  isSellerOrAdmin,
-  expressAsyncHandler(async (req, res) => {
-    const sellerId = req.user._id;
-    const { amount } = req.body;
-
-    try {
-      // Fetch the seller's document from the database
-      const seller = await User.findById(sellerId);
-
-      // Check if the seller has sufficient balance for the withdrawal
-      if (seller.grandTotalEarnings < amount) {
-        return res
-          .status(400)
-          .json({ message: "Insufficient balance for withdrawal" });
-      }
-
-      // Create a new withdrawal record
-      const withdrawal = {
-        amount,
-        status: "pending", // Set the status to pending initially
-        requestedAt: new Date(),
-      };
-
-      // Add the new withdrawal record to the seller's document
-      seller.withdrawals.push(withdrawal);
-
-      // Deduct the withdrawal amount from the seller's grandTotalEarnings
-      seller.grandTotalEarnings -= amount;
-
-      // Save the updated seller document
-      await seller.save();
-
-      res
-        .status(201)
-        .json({ message: "Withdrawal request submitted successfully" });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ message: "An error occurred while processing the request" });
     }
   })
 );

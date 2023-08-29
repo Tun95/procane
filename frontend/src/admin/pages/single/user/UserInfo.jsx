@@ -106,7 +106,7 @@ function UserInfo() {
   console.log(user);
 
   //==============
-  //SPENDING STATS 
+  //SPENDING STATS
   //==============
   const [userSpending, setUserSpending] = useState([]);
 
@@ -140,10 +140,10 @@ function UserInfo() {
   };
 
   //TOTAL SALES PER DAY
-  const grandTotal = summary.totalEarnings
-    ? summary.totalEarnings?.toFixed(0)
+  const balance = user?.user?.availableBalance
+    ? user?.user?.availableBalance?.toFixed(0)
     : 0;
-  const SellersGrandTotalSales = convertCurrency(grandTotal);
+  const SellersBalance = convertCurrency(balance);
 
   return (
     <div className="container">
@@ -200,10 +200,7 @@ function UserInfo() {
           </div>
           {user?.user?.isSeller ? (
             <div className="userInfo_widget">
-              <Widget
-                SellersGrandTotalSales={SellersGrandTotalSales}
-                type="seller"
-              />
+              <Widget SellersBalance={SellersBalance} type="seller" />
             </div>
           ) : null}
         </div>

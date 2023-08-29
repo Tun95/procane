@@ -9,7 +9,8 @@ import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlin
 function Widget({
   type,
   TotalOrders,
-  TotalSales,
+  withdrawnAmount,
+  LeftBalance,
   GrandTotalSales,
 }) {
   let data;
@@ -18,30 +19,19 @@ function Widget({
   const amount =
     type === "order"
       ? TotalOrders || 0
-      : type === "income"
-      ? TotalSales || 0
+      : type === "withdrawn"
+      ? withdrawnAmount || 0
       : type === "balance"
+      ? LeftBalance || 0
+      : type === "earnings"
       ? GrandTotalSales || 0
       : 0;
   const diff = 20;
 
   switch (type) {
-    case "user":
-      data = {
-        title: "USERS",
-        isMoney: false,
-        link: "Number of users",
-        icon: (
-          <PersonOutlineOutlinedIcon
-            className="icon"
-            style={{ color: "crimson", backgroundColor: "rgba(255,0,0,0.2)" }}
-          />
-        ),
-      };
-      break;
     case "order":
       data = {
-        title: "ODERS",
+        title: "ORDERS",
         isMoney: false,
         link: "All orders",
         icon: (
@@ -55,11 +45,11 @@ function Widget({
         ),
       };
       break;
-    case "income":
+    case "withdrawn":
       data = {
-        title: "EARNINIGS",
+        title: "WITHDRAWN",
         isMoney: true,
-        link: "Net earnings",
+        link: "Net Withdrawal",
         icon: (
           <MonetizationOnOutlinedIcon
             className="icon"
@@ -71,8 +61,21 @@ function Widget({
     case "balance":
       data = {
         title: "BALANCE",
+        isMoney: false,
+        link: "Available Balance",
+        icon: (
+          <PersonOutlineOutlinedIcon
+            className="icon"
+            style={{ color: "crimson", backgroundColor: "rgba(255,0,0,0.2)" }}
+          />
+        ),
+      };
+      break;
+    case "earnings":
+      data = {
+        title: "EARNINGS",
         isMoney: true,
-        link: "Total Balance",
+        link: "Net Earnings",
         icon: (
           <AccountBalanceWalletOutlinedIcon
             className="icon"
