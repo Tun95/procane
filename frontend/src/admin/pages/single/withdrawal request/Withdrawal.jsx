@@ -218,12 +218,14 @@ function Withdrawal() {
                             </button>
                           </div>
                         )}
-                        <button
-                          className="delete-button"
-                          onClick={() => deleteHandler(request)}
-                        >
-                          Delete
-                        </button>
+                        {request.status !== "pending" && (
+                          <button
+                            className="delete-button"
+                            onClick={() => deleteHandler(request)}
+                          >
+                            Delete
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
