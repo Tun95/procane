@@ -438,6 +438,20 @@
     font-size: 18px;
   }
 
+  //====Withdrawal====//
+  .withdrawal {
+    .box_shadow {
+      .withdrawal-card {
+        border: 1px solid var(--color-light-gray);
+      }
+      .form-group {
+        .gateway {
+          background-color: var(--color-black);
+        }
+      }
+    }
+  }
+
   /*====Settings====*/
   .settings {
     .tab_sub {

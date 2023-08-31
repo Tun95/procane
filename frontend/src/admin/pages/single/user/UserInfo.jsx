@@ -109,7 +109,7 @@ function UserInfo() {
     return null;
   };
 
-  //TOTAL SALES PER DAY
+  //AVAILABLE BALANCE
   const balance = user?.user?.availableBalance
     ? user?.user?.availableBalance?.toFixed(0)
     : 0;

@@ -220,6 +220,16 @@ function Search() {
                         Orders
                       </MenuItem>,
                       <MenuItem
+                        key="admin-withdrawal-request"
+                        component={Link}
+                        to="/admin/withdrawal-request"
+                        onClick={handleClose}
+                        disableRipple
+                      >
+                        Withdrawals
+                      </MenuItem>,
+                      <MenuItem
+                        key="settings"
                         component={Link}
                         to={`/admin/settings`}
                         onClick={handleClose}
@@ -252,7 +262,7 @@ function Search() {
                         Products
                       </MenuItem>,
                       <MenuItem
-                        key="admin-orders"
+                        key="seller-orders"
                         component={Link}
                         to="/vendor/orders"
                         onClick={handleClose}

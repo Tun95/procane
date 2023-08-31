@@ -89,8 +89,6 @@ function Navbar() {
       });
     }
 
-    // You can also update the URL with the selected category
-    // For example, using react-router or similar library
     navigate(`/store?category=${category}`);
   };
 
@@ -153,11 +151,16 @@ function Navbar() {
                 </li>
               ) : null}
               {userInfo && userInfo.isSeller ? (
-                <li>
-                  <Link to={`/vendor-profile/${userInfo._id}`}>
-                    vendor account
-                  </Link>
-                </li>
+                <>
+                  <li>
+                    <Link to={`/vendor-profile/${userInfo._id}`}>
+                      vendor account
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={`/vendor/withdraw`}>Withdraw</Link>
+                  </li>
+                </>
               ) : (
                 <li>
                   <span className="pointer" onClick={handleOpen}>

@@ -173,192 +173,399 @@ userRouter.post("/generate-affiliate-code/:id", async (req, res) => {
 //=========================
 //SELLER WITHDRAWAL REQUEST
 //=========================
-// userRouter.post("/withdraw", async (req, res) => {
-//   const { userId, amount } = req.body;
-
-//   try {
-//     // Find the seller user by userId
-//     const seller = await User.findById(userId);
-
-//     if (!seller) {
-//       return res.status(404).json({ message: "Seller not found" });
-//     }
-
-//     if (!seller.isSeller) {
-//       return res.status(400).json({ message: "User is not a seller" });
-//     }
-
-//     if (amount <= 0 || amount > seller.grandTotalEarnings) {
-//       return res.status(400).json({ message: "Invalid withdrawal amount" });
-//     }
-
-//     if (amount < seller.minimumWithdrawalAmount) {
-//       return res
-//         .status(400)
-//         .json({ message: "Withdrawal amount is below the minimum" });
-//     }
-
-//     // Deduct the withdrawal amount from the grandTotalEarnings
-//     seller.grandTotalEarnings -= amount;
-
-//     // Add the withdrawal request to the seller's withdrawalRequests
-//     seller.withdrawalRequests.push({
-//       amount,
-//       status: "pending",
-//       requestDate: new Date(),
-//     });
-
-//     await seller.save();
-
-//     res
-//       .status(200)
-//       .json({ message: "Withdrawal request submitted successfully" });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
-userRouter.post("/withdraw", async (req, res) => {
-  const { userId, amount } = req.body;
-
-  try {
-    // Find the seller user by userId
-    const seller = await User.findById(userId);
-
-    if (!seller) {
-      return res.status(404).json({ message: "Seller not found" });
-    }
-
-    if (!seller.isSeller) {
-      return res.status(400).json({ message: "User is not a seller" });
-    }
-
-    if (amount <= 0 || amount > seller.grandTotalEarnings) {
-      return res.status(400).json({ message: "Invalid withdrawal amount" });
-    }
-
-    if (amount < seller.minimumWithdrawalAmount) {
-      return res
-        .status(400)
-        .json({ message: "Withdrawal amount is below the minimum" });
-    }
-
-    // Deduct the withdrawal amount from the grandTotalEarnings
-    seller.grandTotalEarnings -= amount;
-
-    // Deduct the withdrawal amount from the availableBalance
-    seller.availableBalance -= amount;
-
-    // Add the withdrawal request to the seller's withdrawalRequests
-    seller.withdrawalRequests.push({
-      amount,
-      status: "pending",
-      requestDate: new Date(),
-    });
-
-    await seller.save();
-
-    res
-      .status(200)
-      .json({ message: "Withdrawal request submitted successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+function generateTransactionId() {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const length = 10;
+  let transactionId = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    transactionId += characters.charAt(randomIndex);
   }
-});
+  return transactionId;
+}
+userRouter.post(
+  "/withdraw",
+  isAuth,
+  isSellerOrAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    const { amount, email, gateway } = req.body;
+
+    try {
+      // Find the seller user by userId
+      const seller = await User.findById(userId);
+
+      if (!seller) {
+        return res.status(404).json({ message: "Seller not found" });
+      }
+
+      if (!seller.isSeller) {
+        return res.status(400).json({ message: "User is not a seller" });
+      }
+
+      if (amount <= 0 || amount > seller.grandTotalEarnings) {
+        return res.status(400).json({ message: "Invalid withdrawal amount" });
+      }
+
+      if (amount < seller.minimumWithdrawalAmount) {
+        return res
+          .status(400)
+          .json({ message: "Withdrawal amount is below the minimum" });
+      }
+
+      // Generate a transaction ID for the withdrawal request
+      const transactionId = generateTransactionId();
+
+      // Deduct the withdrawal amount from the grandTotalEarnings
+      seller.grandTotalEarnings -= amount;
+
+      // Deduct the withdrawal amount from the availableBalance
+      seller.availableBalance -= amount;
+
+      // Add the withdrawal request to the seller's withdrawalRequests
+      seller.withdrawalRequests.push({
+        amount,
+        gateway,
+        email,
+        transactionId, // Add the generated transactionId
+        status: "pending",
+        requestDate: new Date(),
+      });
+
+      await seller.save();
+
+      res
+        .status(200)
+        .json({ message: "Withdrawal request submitted successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  })
+);
+
+//==============================
+// Fetch all withdrawal requests
+//==============================
+userRouter.get(
+  "/withdrawal-requests",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    try {
+      // Find all users with withdrawal requests
+      const usersWithWithdrawalRequests = await User.find({
+        "withdrawalRequests.0": { $exists: true },
+      });
+
+      if (usersWithWithdrawalRequests.length === 0) {
+        // No withdrawal requests found
+        res.status(200).json({ message: "No withdrawal requests found" });
+        return;
+      }
+
+      // Extract withdrawal requests from users
+      const withdrawalRequests = usersWithWithdrawalRequests.map((user) => {
+        return {
+          userId: user._id,
+          username: `${user.firstName} ${user.lastName}`,
+          sellerName: user.isSeller ? user.seller.name : null,
+          requests: user.withdrawalRequests,
+        };
+      });
+
+      withdrawalRequests.forEach((user) => {
+        user.requests.sort((a, b) => b.requestDate - a.requestDate);
+      });
+
+      res.status(200).json(withdrawalRequests);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  })
+);
+
+//=====================================
+// DELETE A SPECIFIC WITHDRAWAL REQUEST
+//=====================================
+userRouter.delete(
+  "/withdrawal-requests/:id",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      // Find the user with the withdrawal request
+      const userWithWithdrawal = await User.findOne({
+        "withdrawalRequests._id": id,
+      });
+
+      if (!userWithWithdrawal) {
+        return res
+          .status(404)
+          .json({ message: "Withdrawal request not found" });
+      }
+
+      // Find and remove the withdrawal request
+      const withdrawalRequest = userWithWithdrawal.withdrawalRequests.id(id);
+
+      if (!withdrawalRequest) {
+        return res
+          .status(404)
+          .json({ message: "Withdrawal request not found" });
+      }
+
+      withdrawalRequest.remove();
+      await userWithWithdrawal.save();
+
+      res
+        .status(200)
+        .json({ message: "Withdrawal request deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  })
+);
 
 //======================================
 //ADMIN APPROVAL/DECLINE A WITHDRAWAL
 //======================================
-// userRouter.patch("/withdraw/:id", async (req, res) => {
-//   const { id } = req.params; // Change 'requestId' to 'id'
-//   const { action } = req.body;
+// Function to send withdrawal approval/decline email
+async function sendWithdrawalEmail(
+  toEmail,
+  withdrawalAmount,
+  gateway,
+  transactionId,
+  status
+) {
+  const transporter = nodemailer.createTransport({
+    service: process.env.MAIL_SERVICE,
+    auth: {
+      user: process.env.EMAIL_ADDRESS,
+      pass: process.env.GMAIL_PASS,
+    },
+  });
 
-//   try {
-//     // Find the seller user by userId
-//     const seller = await User.findOne({ "withdrawalRequests._id": id }); // Use 'id' here
+  let subject = "";
+  let message = "";
 
-//     if (!seller) {
-//       return res.status(404).json({ message: "Seller not found" });
-//     }
-
-//     if (action === "approve") {
-//       // Find the withdrawal request and update its status to approved
-//       const withdrawalRequest = seller.withdrawalRequests.id(id);
-//       withdrawalRequest.status = "approved";
-//       withdrawalRequest.approvalDate = new Date();
-
-//       // Save the updated user document
-//       await seller.save();
-
-//       res.status(200).json({ message: "Withdrawal request approved" });
-//     } else if (action === "decline") {
-//       // Find the withdrawal request and update its status to declined
-//       const withdrawalRequest = seller.withdrawalRequests.id(id);
-//       withdrawalRequest.status = "declined";
-
-//       // Return the declined amount back to grandTotalEarnings
-//       seller.grandTotalEarnings += withdrawalRequest.amount;
-
-//       // Save the updated user document
-//       await seller.save();
-
-//       res.status(200).json({ message: "Withdrawal request declined" });
-//     } else {
-//       res.status(400).json({ message: "Invalid action" });
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
-userRouter.patch("/withdraw/:id", async (req, res) => {
-  const { id } = req.params;
-  const { action } = req.body;
-
-  try {
-    // Find the seller user by userId
-    const seller = await User.findOne({ "withdrawalRequests._id": id });
-
-    if (!seller) {
-      return res.status(404).json({ message: "Seller not found" });
-    }
-
-    const withdrawalRequest = seller.withdrawalRequests.id(id);
-    const withdrawalAmount = withdrawalRequest.amount;
-
-    if (action === "approve") {
-      // Find the withdrawal request and update its status to approved
-      withdrawalRequest.status = "approved";
-      withdrawalRequest.approvalDate = new Date();
-
-      // Update the withdrawnAmount by adding the approved withdrawal amount
-      seller.withdrawnAmount += withdrawalAmount;
-
-      // Save the updated user document
-      await seller.save();
-
-      res.status(200).json({ message: "Withdrawal request approved" });
-    } else if (action === "decline") {
-      // Find the withdrawal request and update its status to declined
-      withdrawalRequest.status = "declined";
-
-      // Return the declined amount back to grandTotalEarnings
-      seller.grandTotalEarnings += withdrawalAmount;
-
-      // Save the updated user document
-      await seller.save();
-
-      res.status(200).json({ message: "Withdrawal request declined" });
-    } else {
-      res.status(400).json({ message: "Invalid action" });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+  if (status === "approved") {
+    subject = "Withdrawal Request Approved";
+    message = `
+    <html>
+      <head>
+       <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+          }
+          .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          h2 {
+            color: #333;
+          }
+          p {
+            color: #666;
+            margin: 10px 0;
+          }
+          .footer {
+            margin-top: 20px;
+            text-align: center;
+          }
+          .social-icons {
+            margin-top: 10px;
+          }
+          .social-icon {
+            margin: 0 5px;
+            font-size: 24px;
+            color: #333;
+          }
+          .icons{
+            width:25px;
+            height: 25px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h2>Withdrawal Request Approved</h2>
+          <p>Your withdrawal request for $${withdrawalAmount} via ${gateway} has been approved.</p>
+          <p>Transaction ID: ${transactionId}</p>
+        </div>
+        <div class="footer">
+          <p>For more information, visit our website:</p>
+          <p><strong>${process.env.SHOP_NAME}</strong></p>
+          <div class="social-icons">
+            <a href="#" class="social-icon">
+              <img class="icons" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399098/facebook_e2bdv6.png" alt="Facebook">
+            </a>
+            <a href="#" class="social-icon">
+              <img class="icons" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399098/twitter_djgizx.png" alt="Twitter">
+            </a>
+            <a href="#" class="social-icon">
+              <img class="icons" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399099/whatsapp_m0dmdp.png" alt="WhatsApp">
+            </a>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+  } else if (status === "declined") {
+    subject = "Withdrawal Request Declined";
+    message = `
+    <html>
+      <head>
+       <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+          }
+          .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          h2 {
+            color: #333;
+          }
+          p {
+            color: #666;
+            margin: 10px 0;
+          }
+          .footer {
+            margin-top: 20px;
+            text-align: center;
+          }
+          .social-icons {
+            margin-top: 10px;
+          }
+          .social-icon {
+            margin: 0 5px;
+            font-size: 24px;
+            color: #333;
+          }
+          .icons{
+            width:25px;
+            height: 25px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h2>Withdrawal Request Declined</h2>
+          <p>Your withdrawal request for $${withdrawalAmount} via ${gateway} has been declined.</p>
+        </div>
+        <div class="footer">
+          <p>For more information, visit our website:</p>
+          <p><strong>${process.env.SHOP_NAME}</strong></p>
+          <div class="social-icons">
+            <a href="#" class="social-icon">
+              <img class="icons" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399098/facebook_e2bdv6.png" alt="Facebook">
+            </a>
+            <a href="#" class="social-icon">
+              <img class="icons" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399098/twitter_djgizx.png" alt="Twitter">
+            </a>
+            <a href="#" class="social-icon">
+              <img class="icons" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399099/whatsapp_m0dmdp.png" alt="WhatsApp">
+            </a>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
   }
-});
 
+  const mailOptions = {
+    from: `${process.env.SHOP_NAME} ${process.env.EMAIL_ADDRESS}`,
+    to: toEmail,
+    subject: subject,
+    html: message,
+  };
+
+  await transporter.sendMail(mailOptions);
+}
+userRouter.patch(
+  "/withdraw/:id",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { action } = req.body;
+
+    try {
+      // Find the seller user by userId
+      const seller = await User.findOne({ "withdrawalRequests._id": id });
+
+      if (!seller) {
+        return res.status(404).json({ message: "Seller not found" });
+      }
+
+      const withdrawalRequest = seller.withdrawalRequests.id(id);
+      const withdrawalAmount = withdrawalRequest.amount;
+      const gateway = withdrawalRequest.gateway;
+      const email = withdrawalRequest.email;
+      const transactionId = withdrawalRequest.transactionId; // Retrieve the transactionId from the withdrawal request
+
+      if (action === "approve") {
+        // Find the withdrawal request and update its status to approved
+        withdrawalRequest.status = "approved";
+        withdrawalRequest.approvalDate = new Date();
+
+        // Update the withdrawnAmount by adding the approved withdrawal amount
+        seller.withdrawnAmount += withdrawalAmount;
+
+        // Send email notification to the seller about withdrawal approval
+        sendWithdrawalEmail(
+          email,
+          withdrawalAmount,
+          gateway,
+          transactionId,
+          "approved"
+        );
+
+        // Save the updated user document
+        await seller.save();
+
+        res.status(200).json({ message: "Withdrawal request approved" });
+      } else if (action === "decline") {
+        // Find the withdrawal request and update its status to declined
+        withdrawalRequest.status = "declined";
+
+        // Return the declined amount back to grandTotalEarnings
+        seller.grandTotalEarnings += withdrawalAmount;
+
+        // Send email notification to the seller about withdrawal decline
+        sendWithdrawalEmail(
+          email,
+          withdrawalAmount,
+          gateway,
+          transactionId,
+          "declined"
+        );
+
+        // Save the updated user document
+        await seller.save();
+
+        res.status(200).json({ message: "Withdrawal request declined" });
+      } else {
+        res.status(400).json({ message: "Invalid action" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  })
+);
 
 //=======================
 // AFFILIATE COMMISSION
@@ -529,32 +736,6 @@ userRouter.get(
       res.json(result);
     } catch (error) {
       res.status(500).json({ error: "An error occurred" });
-    }
-  })
-);
-
-//TEST
-userRouter.get(
-  "/num_reviews/:id",
-  isAuth,
-  expressAsyncHandler(async (req, res) => {
-    const userId = req.params.id;
-    const result = await User.aggregate([
-      { $match: { _id: mongoose.Types.ObjectId(userId) } },
-      { $unwind: "$products" },
-      {
-        $group: {
-          _id: null,
-          totalNumReviews: { $sum: "$products.numReviews" },
-        },
-      },
-    ]);
-
-    if (result.length > 0) {
-      const totalNumReviews = result[0].totalNumReviews;
-      res.status(200).json({ totalNumReviews });
-    } else {
-      res.status(404).json({ message: "User not found" });
     }
   })
 );

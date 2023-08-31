@@ -62,7 +62,7 @@ function Widget({
       data = {
         title: "BALANCE",
         isMoney: false,
-        link: "Available Balance",
+        link: "Net Balance",
         icon: (
           <PersonOutlineOutlinedIcon
             className="icon"
@@ -75,7 +75,7 @@ function Widget({
       data = {
         title: "EARNINGS",
         isMoney: true,
-        link: "Net Earnings",
+        link: "Total Earnings",
         icon: (
           <AccountBalanceWalletOutlinedIcon
             className="icon"

@@ -57,6 +57,9 @@ const userSchema = new mongoose.Schema(
     withdrawalRequests: [
       {
         amount: { type: Number, required: true },
+        gateway: { type: String },
+        email: { type: String },
+        transactionId: { type: String },
         status: {
           type: String,
           enum: ["pending", "approved", "declined"],

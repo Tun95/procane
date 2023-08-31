@@ -89,6 +89,8 @@ import SellerScreen from "./seller/pages/single/main/SellerScreen";
 import SellerProductListScreen from "./seller/pages/list/main/product/SellerProductListScreen";
 import SellerDashboard from "./seller/pages/dashboard/Dashboard";
 import UnSubscribeScreen from "./screens/formscreens/unsubscribescreen/UnsubcribeScreen";
+import Withdrawal from "./admin/pages/single/withdrawal request/Withdrawal";
+import SellerWithdraw from "./seller/pages/single/withrawal request/SellerWithdraw";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -129,14 +131,14 @@ function App() {
 
     updateFavicon(); // Call the function to update favicon
     // Update the title dynamically
-    document.title = webname || "ShopFinity";
+    // document.title = webname || "ShopFinity";
 
-    // Set the webname in the script
-    const webnameValue = webname || "";
-    const dynamicTitleElement = document.getElementById("dynamicTitle");
-    if (dynamicTitleElement) {
-      dynamicTitleElement.innerText = webnameValue;
-    }
+    // // Set the webname in the script
+    // const webnameValue = webname || "";
+    // const dynamicTitleElement = document.getElementById("dynamicTitle");
+    // if (dynamicTitleElement) {
+    //   dynamicTitleElement.innerText = webnameValue;
+    // }
 
     // Set the description dynamically using window.appShortDesc
     const metaDescriptionTag = document.querySelector(
@@ -145,7 +147,7 @@ function App() {
     if (metaDescriptionTag) {
       metaDescriptionTag.content = window.appShortDesc || "My web app";
     }
-  }, [faviconUrl, webname]);
+  }, [faviconUrl]);
 
   //============================
   // Set the PayPal client ID on the window object
@@ -388,6 +390,14 @@ function App() {
                 </AdminRoute>
               }
             ></Route>
+            <Route
+              path="/admin/withdrawal-request"
+              element={
+                <AdminRoute>
+                  <Withdrawal />
+                </AdminRoute>
+              }
+            ></Route>
 
             {/* FILTERS */}
             <Route
@@ -551,6 +561,14 @@ function App() {
               element={
                 <SellerRoute>
                   <SellerOrderListScreen />
+                </SellerRoute>
+              }
+            ></Route>
+            <Route
+              path="/vendor/withdraw"
+              element={
+                <SellerRoute>
+                  <SellerWithdraw />
                 </SellerRoute>
               }
             ></Route>

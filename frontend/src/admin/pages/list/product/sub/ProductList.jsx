@@ -211,7 +211,7 @@ function ProductList({ currencySign, webname }) {
           {loading || successDelete ? (
             <LoadingBox></LoadingBox>
           ) : error ? (
-            <MessageBox>{error}</MessageBox>
+            <MessageBox variant="danger">{error}</MessageBox>
           ) : (
             <DataGrid
               className="datagrid"

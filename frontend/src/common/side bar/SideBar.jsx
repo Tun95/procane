@@ -32,6 +32,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import WorkIcon from "@mui/icons-material/Work";
 import { styled } from "@mui/material/styles";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 const StyledDivider = styled(Divider)(({ theme, darkMode }) => ({
   backgroundColor: darkMode ? "#ffffff" : "", // Change colors accordingly
@@ -167,6 +168,11 @@ function SideBar() {
       to: "/admin/orders",
     },
     {
+      text: "Withdrawals",
+      icon: <AccountBalanceWalletIcon />,
+      to: "/admin/withdrawal-request",
+    },
+    {
       text: "Settings",
       icon: <SettingsIcon />,
       to: "/admin/settings",
@@ -194,6 +200,11 @@ function SideBar() {
       text: "Orders",
       icon: <WarehouseIcon />,
       to: "/vendor/orders",
+    },
+    {
+      text: "Withdraw",
+      icon: <AccountBalanceWalletIcon />,
+      to: "/vendor/withdraw",
     },
   ];
   const list = (anchor) => (

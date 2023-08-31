@@ -1469,8 +1469,34 @@ orderRouter.post(
 );
 
 //=========
-// PAYTM
+// BLUESNAP
 //=========
+orderRouter.post("/bluesnap", async (req, res) => {
+  try {
+    const { amount, currency, paymentMethodToken } = req.body;
+
+    const response = await axios.post(
+      "https://sandbox.bluesnap.com/services/2/payment-fields-tokens",
+      {
+        amount,
+        currency,
+        paymentMethodToken,
+      },
+      {
+        auth: {
+          username: "API_16934390598971666311015",
+          password: "Christ92++++++",
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 const generateChecksum = (params, key) => {
   const data = Object.values(params).join("|");
   const checksum = crypto.createHmac("sha256", key).update(data).digest("hex");

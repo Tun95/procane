@@ -205,12 +205,7 @@
     display: none;
   }
 }
-@media (max-width: 1031px) {
-  #display-none {
-    display: none;
-  }
-}
-@media (max-width: 1000px) {
+@media (max-width: 1050px) {
   .header .navlink {
     display: none;
   }
@@ -218,6 +213,12 @@
     display: block;
   }
 }
+@media (max-width: 1031px) {
+  #display-none {
+    display: none;
+  }
+}
+
 @media (max-width: 860px) {
   .search .search-box {
     display: none;

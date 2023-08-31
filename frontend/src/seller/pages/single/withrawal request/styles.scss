@@ -1,0 +1,120 @@
+.seller_withdrawal {
+  .box_shadow {
+    padding: 20px;
+    .product {
+      width: 100%;
+      height: auto;
+      .left {
+        .userInfo_widget {
+          margin-top: 20px;
+          .left,
+          .right {
+            box-shadow: none;
+            height: auto;
+          }
+        }
+        .item {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20px;
+
+          .itemImg {
+            height: 100px;
+            width: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+          .details {
+            .itemTitle {
+              margin-bottom: 10px;
+              color: #555;
+            }
+            .detailItem {
+              margin-bottom: 10px;
+              font-size: 14px;
+              display: flex;
+              flex-wrap: wrap;
+              .itemKey {
+                font-weight: bold;
+                color: var(--color-gray);
+                margin-right: 5px;
+              }
+              .itemValue {
+                font-weight: 300;
+              }
+            }
+          }
+        }
+      }
+    }
+    .withdrawal-form {
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      input {
+        border: 2px solid var(--color-light-gray);
+        height: 35px;
+        width: 300px;
+        font-size: 15px;
+        color: var(--color-gray);
+        border-radius: 5px;
+        padding-left: 10px;
+      }
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .error {
+      color: var(--color-primary);
+      font-size: 14px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--color-light-gray);
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .submit-button {
+      background-color: #007bff;
+      color: var(--color-white);
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .submit-button.loading {
+      background-color: #0056b3;
+      cursor: not-allowed;
+    }
+
+    .submit-button:hover {
+      background-color: #0056b3;
+    }
+    @media screen and (max-width: 900px) {
+      .form-group {
+        input {
+          width: 100%;
+        }
+      }
+    }
+    @media screen and (max-width: 700px) {
+      flex-direction: column;
+      gap: 20px;
+      .product {
+        margin: 0;
+      }
+    }
+  }
+}
