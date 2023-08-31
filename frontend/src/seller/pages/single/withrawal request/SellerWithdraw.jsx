@@ -175,7 +175,7 @@ function SellerWithdraw() {
                     id="email"
                     name="email"
                     // className={email && email ? "input-error" : ""}
-                    placeholder="Enter PayPal Email"
+                    placeholder="Enter e.g PayPal Email"
                   />
                   <ErrorMessage
                     name="email"
@@ -190,7 +190,7 @@ function SellerWithdraw() {
                     as="select"
                     id="gateway"
                     name="gateway"
-                    className="gateway"
+                    className="gateway_select"
                   >
                     <option value="">Select Gateway</option>
                     <option value="PayPal">PayPal</option>
