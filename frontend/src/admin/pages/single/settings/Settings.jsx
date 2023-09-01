@@ -741,14 +741,14 @@ function Settings() {
                                     <PublishIcon
                                       className="userUpdateIcon upload-btn"
                                       onChange={uploadFavHandler}
-                                    />
+                                    />{" "}
                                   </label>
                                   <input
                                     onChange={uploadFavHandler}
-                                    type="favicon"
+                                    type="file"
                                     id="favicon"
                                     style={{ display: "none" }}
-                                  />
+                                  />{" "}
                                 </span>
                               </div>
                             </div>

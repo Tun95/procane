@@ -13,6 +13,7 @@ import fetch from "node-fetch";
 import crypto from "crypto";
 import shippo from "shippo";
 import mongoose from "mongoose";
+import bluesnap from "bluesnap";
 
 const orderRouter = express.Router();
 
@@ -1471,31 +1472,45 @@ orderRouter.post(
 //=========
 // BLUESNAP
 //=========
-orderRouter.post("/bluesnap", async (req, res) => {
-  try {
-    const { amount, currency, paymentMethodToken } = req.body;
+// BlueSnap config
+const gateway = new bluesnap.BlueSnapGateway({
+  environment: "Sandbox", // 'Production' or 'Sandbox'
+  username: "API_16934390598971666311015", // BlueSnap username
+  password: "Christ92++++++", // BlueSnap password
+  apiVersion: "3.0", // Optional
+});
 
-    const response = await axios.post(
-      "https://sandbox.bluesnap.com/services/2/payment-fields-tokens",
-      {
+orderRouter.post(
+  "/bluesnap",
+  // isAuth,
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const { amount, currency, paymentMethodToken } = req.body;
+
+      // Construct the card transaction request object
+      const cardTransactionRequest = {
         amount,
         currency,
-        paymentMethodToken,
-      },
-      {
-        auth: {
-          username: "API_16934390598971666311015",
-          password: "Christ92++++++",
+        paymentSource: {
+          paymentMethod: {
+            paymentMethodToken,
+          },
         },
-      }
-    );
+      };
 
-    res.json(response.data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
+      // Create the card transaction using the provided method
+      const cardTransaction = await gateway.transaction.card.create(
+        cardTransactionRequest
+      );
+
+      // Return the BlueSnap API response to the client
+      res.json(cardTransaction);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  })
+);
 
 const generateChecksum = (params, key) => {
   const data = Object.values(params).join("|");
@@ -2284,6 +2299,54 @@ orderRouter.put(
           console.log("Email sent:", info.response);
         }
       });
+
+      await order.save();
+
+      res.json({ success: true, message: "Payment successful" });
+    } else {
+      res.json({ success: false, message: "Payment canceled or failed" });
+    }
+  })
+);
+
+// Order Payment Route
+orderRouter.put(
+  "/:id/pay",
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id).populate("user");
+    if (order) {
+      // Update product quantities
+      await updateProductQuantities(order.orderItems);
+
+      // Convert and format currency
+      const convertedItemsPrice = await convertAndFormatCurrency(
+        order.itemsPrice,
+        order.currencySign
+      );
+      const convertedTaxPrice = await convertAndFormatCurrency(
+        order.taxPrice,
+        order.currencySign
+      );
+      const convertedShippingPrice = await convertAndFormatCurrency(
+        order.shippingPrice,
+        order.currencySign
+      );
+      const convertedGrandTotal = await convertAndFormatCurrency(
+        order.grandTotal,
+        order.currencySign
+      );
+
+      // Create and send email
+      const payOrderEmailTemplate = `<!DOCTYPE html>
+      <html>
+      <!-- Email template content -->
+      </html>`;
+      await sendEmail(
+        order.user.email,
+        `New Order ${order.trackingId}`,
+        payOrderEmailTemplate
+      );
 
       await order.save();
 

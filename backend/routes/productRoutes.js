@@ -643,95 +643,6 @@ productRouter.get(
   })
 );
 
-//TEST
-productRouter.get(
-  "/filters",
-  expressAsyncHandler(async (req, res) => {
-    const { query } = req;
-    const pageSize = query.pageSize || PAGE_SIZE;
-    const page = query.page || 1;
-
-    // Create an empty filter object
-    const filters = {};
-
-    // Add filters for each attribute if provided
-    if (query.category) {
-      const categories = query.category.split(",");
-      filters.category = { $in: categories };
-    }
-    if (query.seller) {
-      const sellers = query.seller.split(",");
-      filters.seller = { $in: sellers };
-    }
-    if (query.gender) {
-      const genders = query.gender.split(",");
-      filters.gender = { $in: genders };
-    }
-    if (query.color) {
-      const colors = query.color.split(",");
-      filters.color = { $in: colors };
-    }
-    if (query.size) {
-      const sizes = query.size.split(",");
-      filters.size = { $in: sizes };
-    }
-    if (query.brand) {
-      const brands = query.brand.split(",");
-      filters.brand = { $in: brands };
-    }
-    if (query.price) {
-      const priceRanges = query.price.split(",");
-      const priceFilters = priceRanges.map((range) => {
-        const [min, max] = range.split("-");
-
-        // Check if min and max are valid numbers
-        const minPrice = !isNaN(Number(min)) ? Number(min) : 0;
-        const maxPrice = !isNaN(Number(max)) ? Number(max) : Infinity;
-
-        return {
-          price: { $gte: minPrice, $lte: maxPrice },
-        };
-      });
-      filters.$or = priceFilters;
-    }
-    if (query.rating) {
-      const minRating = Number(query.rating);
-      filters.rating = { $gte: minRating };
-    }
-    if (query.query && query.query !== "all") {
-      const searchQuery = query.query;
-      filters.name = { $regex: searchQuery, $options: "i" };
-    }
-
-    const sortOrder =
-      query.order === "featured"
-        ? { featured: -1 }
-        : query.order === "lowest"
-        ? { price: 1 }
-        : query.order === "highest"
-        ? { price: -1 }
-        : query.order === "toprated"
-        ? { rating: -1 }
-        : query.order === "newest"
-        ? { createdAt: -1 }
-        : { _id: -1 };
-
-    const products = await Product.find(filters)
-      .populate("seller wish")
-      .sort(sortOrder)
-      .skip(pageSize * (page - 1))
-      .limit(pageSize);
-
-    const countProducts = await Product.countDocuments(filters);
-    res.send({
-      products,
-      countProducts,
-      page,
-      pages: Math.ceil(countProducts / pageSize),
-    });
-  })
-);
-
 //CATEGORIES
 productRouter.get(
   "/categories",
@@ -842,15 +753,17 @@ productRouter.get("/admin/:id", async (req, res) => {
     const product = await Product.aggregate([
       { $match: { _id: mongoose.Types.ObjectId(productId) } },
       {
+        $addFields: {
+          seller: { $ifNull: ["$seller", null] }, // Set a default value for seller if it's not present
+        },
+      },
+      {
         $lookup: {
           from: "users",
           localField: "seller",
           foreignField: "_id",
           as: "seller",
         },
-      },
-      {
-        $unwind: "$seller",
       },
       {
         $lookup: {
@@ -871,7 +784,8 @@ productRouter.get("/admin/:id", async (req, res) => {
       return res.status(404).send({ message: "Product Not Found" });
     }
 
-    res.send(product[0]); // Assuming there's only one product with the given ID
+    // Assuming there's only one product with the given ID
+    res.send(product[0]);
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Internal Server Error" });

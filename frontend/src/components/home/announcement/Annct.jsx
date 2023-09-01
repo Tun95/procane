@@ -103,7 +103,7 @@ function Annct() {
 
   // Check if there are no showRooms data
   if (showRooms.length === 0) {
-    return <div>No showRooms data found.</div>;
+    return <MessageBox>No data found.</MessageBox>;
   }
 
   const { titleOne, titleTwo, largeImage, smallImage } = showRooms[0];

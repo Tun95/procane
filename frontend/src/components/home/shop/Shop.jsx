@@ -48,7 +48,7 @@ function Shop() {
     <>
       <section className="shop background" id="shop">
         {products.length > 0 ? (
-          <div className="container d_flex shop-grid">
+          <div className="container shop-grid">
             <div className="">
               <div className="heading d_flex">
                 <div className="heading-left row  f_flex">

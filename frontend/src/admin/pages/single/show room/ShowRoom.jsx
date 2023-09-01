@@ -224,7 +224,7 @@ const ShowRoom = () => {
                   Recommended size: 1110x350
                 </small>
                 <img
-                  src={singleData.largeImage}
+                  src={singleData?.largeImage}
                   alt="Large"
                   className="largeImage"
                 />
@@ -270,7 +270,7 @@ const ShowRoom = () => {
                   </small>
                 </div>
                 <img
-                  src={singleData.smallImage}
+                  src={singleData?.smallImage}
                   alt="Small"
                   className="smallImage"
                 />
@@ -343,7 +343,7 @@ const ShowRoom = () => {
                   <input
                     type="text"
                     name="titleOne"
-                    value={singleData.titleOne}
+                    value={singleData?.titleOne}
                     onChange={handleChange}
                   />
                 </div>
@@ -352,7 +352,7 @@ const ShowRoom = () => {
                   <input
                     type="text"
                     name="titleTwo"
-                    value={singleData.titleTwo}
+                    value={singleData?.titleTwo}
                     onChange={handleChange}
                   />
                 </div>
