@@ -30,9 +30,9 @@ function Shop() {
     loading: true,
     error: "",
   });
-  //============
+  //================
   //PRODUCT FETCHING
-  //============
+  //================
   useEffect(() => {
     const fetchData = async () => {
       try {
