@@ -86,7 +86,7 @@ function Payment(props) {
 
   //PAYMENT METHOD
   const [paymentMethodName, setPaymentMethod] = useState(
-    paymentMethod || PayPal
+    paymentMethod || Stripe
   );
   const selectPaymentMethod = (method) => {
     setPaymentMethod(method);
@@ -94,7 +94,7 @@ function Payment(props) {
   console.log(paymentMethodName);
 
   //STRIPE MODAL
-  const [openStripeModal, is0penStripeModal] = useState(false);
+  const [openStripeModal, is0penStripeModal] = useState(true);
   const closeStripeModal = () => {
     is0penStripeModal(false);
     document.body.style.overflow = "unset";
@@ -113,7 +113,7 @@ function Payment(props) {
   };
 
   //PAYPAL MODAL
-  const [openPaypalModal, is0penPaypalModal] = useState(true);
+  const [openPaypalModal, is0penPaypalModal] = useState(false);
   const closePaypalModal = () => {
     is0penPaypalModal(false);
     document.body.style.overflow = "unset";
@@ -674,6 +674,7 @@ function Payment(props) {
                             required
                             name="payment"
                             id="stripe"
+                            checked={openStripeModal === true}
                             value={Stripe}
                             onChange={(e) => setPaymentMethod(e.target.value)}
                           />
@@ -710,7 +711,6 @@ function Payment(props) {
                             required
                             name="payment"
                             id="paypal"
-                            checked={openPaypalModal === true}
                             value={PayPal}
                             onChange={(e) => setPaymentMethod(e.target.value)}
                           />
