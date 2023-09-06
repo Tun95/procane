@@ -765,7 +765,7 @@ function Payment(props) {
                         </span>
                       </div>
                     </label>
-                    <label
+                    {/* <label
                       className={
                         openPayTmModal
                           ? "active payment_label "
@@ -800,7 +800,7 @@ function Payment(props) {
                           </span>
                         </span>
                       </div>
-                    </label>
+                    </label> */}
 
                     <label
                       className={
