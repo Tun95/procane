@@ -10,7 +10,7 @@
           .left,
           .right {
             box-shadow: none;
-            height: auto;
+            min-height: 120px;
           }
         }
         .item {
@@ -61,6 +61,10 @@
         color: var(--color-gray);
         border-radius: 5px;
         padding-left: 10px;
+      }
+      .gateway_select {
+        height: 35px;
+        width: 300px;
       }
     }
 
@@ -115,6 +119,19 @@
       .product {
         margin: 0;
       }
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 545px) {
+      .form-group {
+        .gateway_select {
+          width: 100%;
+        }
+      }
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 420px) {
+      padding: 0;
+      margin: 0px;
     }
   }
 }

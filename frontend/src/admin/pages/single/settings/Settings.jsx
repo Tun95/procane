@@ -77,6 +77,7 @@ function Settings() {
   const [stripePubKey, setstripePubKey] = useState("");
   const [exhangerate, setExhangeRate] = useState("");
   const [tax, setTax] = useState("");
+  const [minimumWithdrawalAmount, setMinimumWithdrawalAmount] = useState("");
   const [express, setExpress] = useState("");
   const [expressCharges, setExpressCharges] = useState("");
   const [standard, setStandard] = useState("");
@@ -130,6 +131,7 @@ function Settings() {
         setstripePubKey(data.stripePubKey);
         setExhangeRate(data.exhangerate);
         setTax(data.tax);
+        setMinimumWithdrawalAmount(data.minimumWithdrawalAmount);
         setExpress(data.express);
         setExpressCharges(data.expressCharges);
         setStandard(data.standard);
@@ -191,12 +193,15 @@ function Settings() {
           paystackkey,
           stripeApiKey,
           stripePubKey,
+
           exhangerate,
           tax,
+          minimumWithdrawalAmount,
           express,
           expressCharges,
           standard,
           standardCharges,
+
           messenger,
           email,
           playstore,
@@ -597,17 +602,7 @@ function Settings() {
                               placeholder="api key"
                             />
                           </div>
-                          {/* <div className="lower_group">
-                            <small>Your google analytics Id:</small>
-                            <input
-                              value={googleAnalytics}
-                              onChange={(e) =>
-                                setGoogleAnalytics(e.target.value)
-                              }
-                              type="text"
-                              placeholder="google analytics Id"
-                            />
-                          </div> */}
+
                           <div className="lower_group">
                             <small>Set your tax percentage:</small>
                             <input
@@ -615,6 +610,17 @@ function Settings() {
                               onChange={(e) => setTax(e.target.value)}
                               type="text"
                               placeholder="tax e.g 14"
+                            />
+                          </div>
+                          <div className="lower_group">
+                            <small>Set minimum withdrawal amount:</small>
+                            <input
+                              value={minimumWithdrawalAmount}
+                              onChange={(e) =>
+                                setMinimumWithdrawalAmount(e.target.value)
+                              }
+                              type="number"
+                              placeholder="200"
                             />
                           </div>
                           <div className="lower_group">

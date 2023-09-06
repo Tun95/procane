@@ -18,6 +18,9 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      .a_flex {
+        flex-wrap: wrap;
+      }
 
       .info {
         font-size: 13px;
@@ -36,6 +39,19 @@
         font-weight: 600;
         color: var(--color-gray);
       }
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 560px) {
+      .seller_details {
+        flex-direction: column;
+      }
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 420px) {
+    .box_shadow {
+      box-shadow: none;
+      padding: 0;
     }
   }
 }

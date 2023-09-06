@@ -66,41 +66,7 @@ function Confirmation(props) {
     fetchTaxRate();
   }, [shippingAddress.countryCode, shippingAddress.zipCode]);
 
-  // const [tax, setTax] = useState(0);
-  // useEffect(() => {
-  //   const fetchTaxRate = async () => {
-  //     try {
-  //       const taxamoOptions = {
-  //         method: "POST",
-  //         headers: {
-  //           accept: "application/json",
-  //           "content-type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           country_code: shippingAddress.countryCode,
-  //           zip: shippingAddress.zipCode,
-  //         }),
-  //       };
-
-  //       const taxamoResponse = await fetch(
-  //         "https://services.taxamo.com/api/v2/tax/calculate",
-  //         taxamoOptions
-  //       );
-  //       const taxamoData = await taxamoResponse.json();
-
-  //       console.log("Response Data:", taxamoData);
-  //       const taxRate = taxamoData.total_rate;
-  //       setTax(taxRate);
-  //       console.log("Tax Rate:", taxRate);
-  //     } catch (error) {
-  //       console.log("Error fetching tax rate data:", error);
-  //     }
-  //   };
-
-  //   fetchTaxRate();
-  // }, [shippingAddress.countryCode, shippingAddress.zipCode]);
-  // console.log(tax);
-
+  
   const { express, expressCharges, standardCharges } =
     (settings &&
       settings

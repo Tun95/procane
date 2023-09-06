@@ -93,7 +93,7 @@ const columns = [
   },
   {
     field: "firstName",
-    headerName: "Firt Name",
+    headerName: "First Name",
     width: 150,
     renderCell: (params) => {
       return (

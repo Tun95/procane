@@ -35,6 +35,10 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: 14,
     },
+    minimumWithdrawalAmount: {
+      type: String,
+      default: 200,
+    },
     shipping: {
       type: String,
       default: 24,

@@ -42,7 +42,15 @@ const validationSchema = Yup.object().shape({
 
 function SellerWithdraw() {
   const { state, convertCurrency } = useContext(Context);
-  const { userInfo } = state;
+  const { userInfo, settings } = state;
+  const { minimumWithdrawalAmount } =
+    (settings &&
+      settings
+        .map((s) => ({
+          minimumWithdrawalAmount: s.minimumWithdrawalAmount,
+        }))
+        .find(() => true)) ||
+    {};
 
   const [{ loading, loadingPost, error, user }, dispatch] = useReducer(
     reducer,
@@ -148,6 +156,10 @@ function SellerWithdraw() {
           </div>
           <div className="product">
             <h1 className="title">Request withdraw</h1>
+            <small>
+              Minimum withdraw amount is{" "}
+              <strong>{convertCurrency(minimumWithdrawalAmount)}</strong>
+            </small>
             <Formik
               initialValues={{
                 amount: 0,
@@ -174,7 +186,6 @@ function SellerWithdraw() {
                     type="email"
                     id="email"
                     name="email"
-                    // className={email && email ? "input-error" : ""}
                     placeholder="Enter e.g PayPal Email"
                   />
                   <ErrorMessage
@@ -194,7 +205,9 @@ function SellerWithdraw() {
                   >
                     <option value="">Select Gateway</option>
                     <option value="PayPal">PayPal</option>
-                    <option value="Stripe">Stripe</option>
+                    <option value="Stripe" disabled>
+                      Stripe
+                    </option>
                   </Field>
                   <ErrorMessage
                     name="gateway"

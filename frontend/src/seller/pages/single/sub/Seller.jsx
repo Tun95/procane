@@ -199,11 +199,11 @@ function Seller() {
                       <div className="seller_member a_flex">
                         <h3>Status:</h3>
                         {!user?.user?.isAccountVerified ? (
-                          <span className="unverified_account a_flex">
+                          <span className="unverified_account l_flex">
                             unverified seller
                           </span>
                         ) : (
-                          <span className="verified_account a_flex">
+                          <span className="verified_account l_flex">
                             verified seller
                           </span>
                         )}

@@ -8,6 +8,7 @@ import crypto from "crypto";
 import mongoose from "mongoose";
 import Order from "../models/orderModels.js";
 import moment from "moment";
+import Settings from "../models/settings.js";
 
 // import passport from "./passport.js";
 
@@ -191,6 +192,10 @@ userRouter.post(
     const userId = req.user._id;
     const { amount, email, gateway } = req.body;
 
+    const settings = await Settings.findOne({});
+    const minimumWithdrawalAmount = settings?.minimumWithdrawalAmount || 0;
+    
+
     try {
       // Find the seller user by userId
       const seller = await User.findById(userId);
@@ -207,7 +212,7 @@ userRouter.post(
         return res.status(400).json({ message: "Invalid withdrawal amount" });
       }
 
-      if (amount < seller.minimumWithdrawalAmount) {
+      if (amount < minimumWithdrawalAmount) {
         return res
           .status(400)
           .json({ message: "Withdrawal amount is below the minimum" });
@@ -666,7 +671,11 @@ userRouter.get(
 userRouter.get(
   "/seller/:id",
   expressAsyncHandler(async (req, res) => {
-    const user = await User.findById(req.params.id).populate("products");
+    const user = await User.findById(req.params.id).populate({
+      path: "products",
+      options: { sort: { createdAt: -1 } },
+    });
+
     let numReviewsSum = 0;
     let ratingSum = 0;
     let numSales = 0;
