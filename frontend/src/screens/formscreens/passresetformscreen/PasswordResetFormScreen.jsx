@@ -73,15 +73,16 @@ function PasswordResetFormScreen() {
         }
       );
       setTimeout(() => {
+        actions.resetForm();
+      }, 2000);
+      setTimeout(() => {
         navigate("/login");
       }, 3000);
     } catch (err) {
       dispatch({ type: "SUBMIT_FAIL" });
       toast.error(getError(err), { position: "bottom-center" });
     }
-    setTimeout(() => {
-      actions.resetForm();
-    }, 2000);
+    
   };
   return (
     <div className="form-box">

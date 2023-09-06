@@ -41,13 +41,13 @@ function PasswordEmailResetScreen() {
       toast.success("Password reset email successfully sent to your email", {
         position: "bottom-center",
       });
+      setTimeout(() => {
+        actions.resetForm();
+      }, 1000);
     } catch (err) {
       dispatch({ type: "SUBMIT_FAIL" });
       toast.error(getError(err), { position: "bottom-center" });
     }
-    setTimeout(() => {
-      actions.resetForm();
-    }, 1000);
   };
 
   return (

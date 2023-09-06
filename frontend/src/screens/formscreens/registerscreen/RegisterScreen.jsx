@@ -104,12 +104,13 @@ function RegisterScreen() {
       toast.success("A Verification email has been sent to your email inbox", {
         position: "bottom-center",
       });
+       setTimeout(() => {
+         actions.resetForm();
+       }, 1000);
     } catch (err) {
       toast.error(getError(err), { position: "bottom-center", limit: 1 });
     }
-    setTimeout(() => {
-      actions.resetForm();
-    }, 1000);
+   
   };
 
   //====================

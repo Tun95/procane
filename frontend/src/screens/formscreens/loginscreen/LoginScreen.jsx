@@ -57,15 +57,15 @@ function LoginScreen() {
       localStorage.setItem("userInfo", JSON.stringify(data));
       navigate(redirect || "/");
       toast.success("Sign in successfully", { position: "bottom-center" });
+      setTimeout(() => {
+        actions.resetForm();
+      }, 1000);
     } catch (err) {
       toast.error(getError(err), {
         position: "bottom-center",
         limit: 1,
       });
     }
-    setTimeout(() => {
-      actions.resetForm();
-    }, 1000);
   };
 
   //============

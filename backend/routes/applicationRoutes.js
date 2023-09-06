@@ -3,6 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import Apply from "../models/application.js";
 import { isAdmin, isAuth } from "../utils.js";
 import User from "../models/userModels.js";
+import nodemailer from "nodemailer";
 
 const applicationRoutes = express.Router();
 
@@ -14,7 +15,7 @@ applicationRoutes.post(
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const existingApplication = await Apply.findOne({ user: req.user._id });
-    if (existingApplication && existingApplication.user.id) {
+    if (existingApplication) {
       return res.status(400).send({
         message: "You have already submitted an application.",
       });
@@ -23,8 +24,9 @@ applicationRoutes.post(
       const application = await Apply.create({
         ...req.body,
         user: req.user._id,
+        status: "pending",
       });
-      res.send(application);
+      res.status(201).send(application);
     } catch (error) {
       res.status(500).send({ message: "Internal Server Error" });
     }
@@ -36,8 +38,8 @@ applicationRoutes.post(
 //=========
 applicationRoutes.get(
   "/",
-  isAuth,
-  isAdmin,
+  // isAuth,
+  // isAdmin,
   expressAsyncHandler(async (req, res) => {
     try {
       const applications = await Apply.find({})
@@ -72,23 +74,23 @@ applicationRoutes.get(
 // Function to send an email
 //===========================
 async function sendEmail(to, subject, html) {
-  const transporter = nodemailer.createTransport({
+  const smtpTransport = nodemailer.createTransport({
     service: process.env.MAIL_SERVICE,
     auth: {
       user: process.env.EMAIL_ADDRESS,
-      pass: process.env.EMAIL_PASSWORD,
+      pass: process.env.GMAIL_PASS,
     },
   });
 
   const mailOptions = {
-    from: `"Your Application" <${process.env.EMAIL_ADDRESS}>`,
+    from: `${process.env.SHOP_NAME} <${process.env.EMAIL_ADDRESS}>`,
     to: to,
     subject: subject,
     html: html,
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await smtpTransport.sendMail(mailOptions);
     console.log("Email sent successfully");
   } catch (error) {
     console.error("Error sending email:", error);
@@ -168,41 +170,6 @@ function getEmailTemplate(content) {
 }
 
 //======================
-//DECLINE AN APPLICATION
-//======================
-applicationRoutes.put(
-  "/:id/decline",
-  isAuth,
-  isAdmin,
-  expressAsyncHandler(async (req, res) => {
-    const { id } = req.params;
-    try {
-      const application = await Apply.findById(id);
-      if (!application) {
-        res.status(404).json({ message: "Application not found" });
-        return;
-      }
-      application.status = false;
-      const updatedApplication = await application.save();
-
-      // Send styled email to user (application creator) about application decline
-      const user = await User.findById(application.user);
-      if (user) {
-        const subject = "Application Status Update";
-        const message = getEmailTemplate(
-          `<h2>Application Declined</h2><p>Your application has been declined.</p>`
-        );
-        await sendEmail(user.email, subject, message);
-      }
-
-      res.json(updatedApplication);
-    } catch (error) {
-      res.status(500).json({ message: "Error updating application" });
-    }
-  })
-);
-
-//======================
 //APPROVE AN APPLICATION
 //======================
 applicationRoutes.put(
@@ -217,7 +184,7 @@ applicationRoutes.put(
         res.status(404).json({ message: "Application not found" });
         return;
       }
-      application.status = true;
+      application.status = "approved";
       const updatedApplication = await application.save();
 
       // Send styled email to user (application creator) about application approval
@@ -227,11 +194,50 @@ applicationRoutes.put(
         const message = getEmailTemplate(
           `<h2>Application Approved</h2><p>Congratulations! Your application has been approved.</p>`
         );
+        // Log before sending email
+        console.log("Sending email to:", user.email);
+        await sendEmail(user.email, subject, message);
+        console.log("Email sent successfully");
+      }
+
+      res.json(updatedApplication);
+    } catch (error) {
+      console.error("Error updating application:", error);
+      res.status(500).json({ message: "Error updating application" });
+    }
+  })
+);
+//======================
+//DECLINE AN APPLICATION
+//======================
+applicationRoutes.put(
+  "/:id/decline",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+    try {
+      const application = await Apply.findById(id);
+      if (!application) {
+        res.status(404).json({ message: "Application not found" });
+        return;
+      }
+      application.status = "declined";
+      const updatedApplication = await application.save();
+
+      // Send styled email to user (application creator) about application decline
+      const user = await User.findById(application.user);
+      if (user) {
+        const subject = "Application Status Update";
+        const message = getEmailTemplate(
+          `<h2>Application Declined</h2><p>Your application has been declined.</p>`
+        );
         await sendEmail(user.email, subject, message);
       }
 
       res.json(updatedApplication);
     } catch (error) {
+      console.error("Error updating application:", error);
       res.status(500).json({ message: "Error updating application" });
     }
   })

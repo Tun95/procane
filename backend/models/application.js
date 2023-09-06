@@ -12,8 +12,9 @@ const applySchema = new mongoose.Schema(
       type: String,
     },
     status: {
-      type: Boolean,
-      default: false,
+      type: String,
+      enum: ["pending", "approved", "declined"],
+      default: "pending",
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,

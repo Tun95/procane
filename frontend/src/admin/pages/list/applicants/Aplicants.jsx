@@ -138,14 +138,11 @@ const columns = [
     headerName: "Status",
     width: 150,
     renderCell: (params) => {
-      if (params.row.status === true && params.row.user?.isSeller === true) {
+      if (params.row.status === "approved") {
         return <span className="approved">Approved</span>;
-      } else if (
-        params.row.status === true &&
-        params.row.user?.isSeller === false
-      ) {
+      } else if (params.row.status === "pending") {
         return <span className="pending">Pending</span>;
-      } else if (params.row.status === false) {
+      } else if (params.row.status === "declined") {
         return <span className="declined">Declined</span>;
       } else {
         return null;
@@ -207,7 +204,7 @@ function Applicants() {
     try {
       dispatch({ type: "DECLINE_REQUEST" });
       await axios.put(
-        `${request}/api/apply/${item.id}`,
+        `${request}/api/apply/${item.id}/decline`,
         {},
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -278,7 +275,8 @@ function Applicants() {
             <Link to={`/admin/application-details/${params.row._id}`}>
               <div className="viewButton">Details</div>
             </Link>
-            {params.row.status === true && (
+            {(params.row.status === "pending" ||
+              params.row.status === "approved") && (
               <div
                 onClick={() => declineHandler(params.row)}
                 className="decline"
@@ -286,7 +284,8 @@ function Applicants() {
                 Decline
               </div>
             )}
-            {params.row.status === false && (
+            {(params.row.status === "pending" ||
+              params.row.status === "declined") && (
               <div
                 onClick={() => acceptHandler(params.row)}
                 className="blockButton"
@@ -295,8 +294,8 @@ function Applicants() {
               </div>
             )}
             <div
-              className="deleteButton"
               onClick={() => deleteHandler(params.row)}
+              className="deleteButton"
             >
               Delete
             </div>

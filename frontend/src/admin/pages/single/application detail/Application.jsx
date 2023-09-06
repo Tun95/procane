@@ -89,14 +89,14 @@ function Application() {
                 </div>
                 <div className="seller_member a_flex">
                   <h4>Application status:</h4>
-                  {application.status === false ? (
+                  {application.status === "declined" ? (
                     <span className="unverified_account a_flex">declined</span>
-                  ) : application.status === true ? (
+                  ) : application.status === "approved" ? (
                     <span className="verified_account a_flex">approved</span>
-                  ) : application.status === true ? (
-                    <span className="pending_account a_flex">pending</span>
                   ) : (
-                    ""
+                    application.status === "pending" && (
+                      <span className="pending_account a_flex">pending</span>
+                    )
                   )}
                 </div>
                 <div className="seller_member a_flex">

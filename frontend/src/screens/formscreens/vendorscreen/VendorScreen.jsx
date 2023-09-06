@@ -48,7 +48,7 @@ function VendorScreen() {
     dispatch({ type: "CREATE_REQUEST" });
 
     try {
-      if (userInfo.isAccountVerified) {
+      if (!userInfo.isAccountVerified) {
         toast.error("You need to be a verified user to apply as a merchant", {
           position: "bottom-center",
         });
@@ -63,7 +63,6 @@ function VendorScreen() {
             sellerName: values.sellerName,
             storeAddress: values.storeAddress,
             sellerDescription: values.sellerDescription,
-            status: true,
           },
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -73,6 +72,9 @@ function VendorScreen() {
         toast.success("Application sent successfully", {
           position: "bottom-center",
         });
+        setTimeout(() => {
+          actions.resetForm();
+        }, 1000);
       }
     } catch (err) {
       dispatch({ type: "CREATE_FAIL" });
@@ -84,9 +86,6 @@ function VendorScreen() {
         toast.error(getError(err), { position: "bottom-center" });
       }
     }
-    setTimeout(() => {
-      actions.resetForm();
-    }, 1000);
   };
 
   return (
