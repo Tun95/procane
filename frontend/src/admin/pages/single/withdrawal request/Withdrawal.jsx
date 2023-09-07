@@ -176,6 +176,7 @@ function Withdrawal() {
                           </span>
                         </p>
                         <p>Gateway: {request.gateway}</p>
+                        <p>Email: {request.email}</p>
                         <p>
                           Status:{" "}
                           <small
