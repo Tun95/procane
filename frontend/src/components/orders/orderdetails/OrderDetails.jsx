@@ -112,12 +112,12 @@ function OrderDetails() {
   console.log(order);
 
   return (
-    <div className="mtb">
+    <div className="mtb order_details">
       <Helmet>
         <title>Order {orderId}</title>
       </Helmet>
 
-      <div className="box_shadow order_details">
+      <div className="box_shadow ">
         <>
           {loading ? (
             <LoadingBox></LoadingBox>

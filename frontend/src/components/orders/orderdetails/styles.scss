@@ -146,6 +146,13 @@
       margin-top: 15px;
     }
   }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 420px) {
+    .box_shadow {
+      box-shadow: none;
+      padding: 0;
+    }
+  }
   @media screen and (max-width: 387px) {
     .top-box .place-deliver {
       display: grid;
