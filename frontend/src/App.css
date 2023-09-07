@@ -706,13 +706,7 @@ select.input-error {
     width: 100%;
   }
 }
-/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
-@media screen and (max-width: 420px) {
-  .box_shadow {
-    box-shadow: none;
-    padding: 0;
-  }
-}
+
 @media screen and (max-width: 320px) {
   .container {
     width: var(--container-width-md);
