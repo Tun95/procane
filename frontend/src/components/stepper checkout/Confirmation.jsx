@@ -106,9 +106,9 @@ function Confirmation(props) {
     error: "",
   });
 
-  //===================
+  //==================
   // PLACE ORDER
-  //===================
+  //==================
   const placeOrderHandler = async () => {
     dispatch({ type: "CREATE_REQUEST" });
     if (!userInfo.isAccountVerified) {
