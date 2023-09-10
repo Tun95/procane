@@ -9,9 +9,67 @@
       padding: 10px;
       .profile_box {
         .profile_form {
+          .profile-form-header {
+            gap: 20px;
+            margin-bottom: 20px;
+            .light_shadow {
+              width: 100%;
+
+              padding: 20px;
+              .user_image {
+                margin-right: 20px;
+                img {
+                  width: 160px;
+                  height: 160px;
+                  object-fit: cover;
+                  border-radius: 50%;
+                }
+              }
+              .user_details {
+                line-height: 30px;
+                .user_detail_list {
+                  flex-wrap: wrap;
+                  label {
+                    font-weight: 600;
+                    color: var(--color-gray);
+                    margin-right: 10px;
+                  }
+                  h4 {
+                    font-weight: 500;
+                  }
+                }
+                .verify_now {
+                  span {
+                    border: 1px dotted var(--color-green);
+                    color: var(--color-green);
+                    padding: 0px 5px;
+                    height: 20px;
+                    cursor: pointer;
+                    border-radius: 5px;
+                  }
+                }
+              }
+              .seller_header {
+                font-weight: 600;
+                color: var(--color-gray);
+              }
+              .profile-form-group {
+                .seller_flex {
+                  img {
+                    width: 160px;
+                    height: 160px;
+                    border-radius: 10px;
+                    object-fit: cover;
+                    margin-right: 10px;
+                  }
+                }
+              }
+            }
+            @media screen and (max-width: 900px) {
+              flex-direction: column;
+            }
+          }
           .form_header {
-            -webkit-box-shadow: 0px 0px 7px -1px var(--color-light-gray);
-            box-shadow: 0px 0px 7px -1px var(--color-light-gray);
             padding: 20px;
             display: flex;
             align-items: center;
@@ -51,8 +109,6 @@
             }
           }
           .profile_inner_form {
-            -webkit-box-shadow: 0px 0px 7px -1px var(--color-light-gray);
-            box-shadow: 0px 0px 7px -1px var(--color-light-gray);
             padding: 20px;
             .profile_user_form {
               display: grid;
@@ -84,20 +140,9 @@
             }
             .seller_component {
               margin-top: 20px;
-              .seller_header {
-                margin-bottom: 10px;
-              }
-              .seller_name {
-                display: grid;
-              }
+
               .profile-form-group {
                 margin-bottom: 10px;
-                img {
-                  width: 160px;
-                  height: 160px;
-                  border-radius: 10px;
-                  object-fit: cover;
-                }
 
                 label {
                   font-weight: 600;

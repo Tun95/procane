@@ -12,7 +12,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { getError } from "../../utilities/util/Utils";
 import "react-phone-number-input/style.css";
-import PhoneInput from "react-phone-number-input";
 import LoadingBox from "../../utilities/message loading/LoadingBox";
 import MessageBox from "../../utilities/message loading/MessageBox";
 import { Helmet } from "react-helmet-async";
@@ -247,8 +246,8 @@ function Vendor() {
                             onSubmit={submitHandler}
                             className="profile_form"
                           >
-                            <div className="profile-form-header">
-                              <div className="form_header">
+                            <div className="profile-form-header d_flex">
+                              <div className="form_header light_shadow a_flex">
                                 <div className="user_image">
                                   <img src={image ? image : me} alt="" />
                                   <input
@@ -266,43 +265,42 @@ function Vendor() {
                                   </label>
                                 </div>
                                 <div className="user_details">
-                                  <div className="user_detail_list">
+                                  <div className="user_detail_list a_flex">
                                     <label>Name:</label>
                                     <h4>
                                       {user?.lastName}&#160;{user?.firstName}
                                     </h4>
                                   </div>
-                                  <div className="user_detail_list">
+                                  <div className="user_detail_list a_flex">
                                     <label>Email:</label>
                                     <h4>{user?.email}</h4>
                                   </div>
-                                  <div className="user_detail_list">
+                                  <div className="user_detail_list a_flex">
                                     <label>Address:</label>
                                     <h4>{user?.address}</h4>
                                   </div>
-                                  <div className="user_detail_list">
+                                  <div className="user_detail_list a_flex">
                                     <label>Country:</label>
                                     <h4>{user?.country}</h4>
                                   </div>
-                                  <div className="user_detail_list">
+                                  <div className="user_detail_list a_flex">
                                     <label>Application Status:</label>
-                                    {user?.apply[0]?.status === false ? (
+                                    {user?.apply[0]?.status === "declined" ? (
                                       <span className="unverified_account a_flex">
                                         declined
                                       </span>
-                                    ) : user?.apply[0]?.status === true &&
-                                      user.isSeller === true ? (
+                                    ) : user?.apply[0]?.status ===
+                                      "approved" ? (
                                       <span className="verified_account a_flex">
                                         approved
                                       </span>
-                                    ) : user?.apply[0]?.status === true &&
-                                      user.isSeller === false ? (
+                                    ) : user?.apply[0]?.status === "pending" ? (
                                       <span>pending</span>
                                     ) : (
                                       ""
                                     )}
                                   </div>
-                                  <div className="user_detail_list">
+                                  <div className="user_detail_list a_flex">
                                     <label>Account Status:</label>
                                     {!user.isAccountVerified ? (
                                       <span className="unverified_account a_flex">
@@ -324,43 +322,38 @@ function Vendor() {
                                   ) : null}
                                 </div>
                               </div>
+                              <div className="prof-seller-logo light_shadow">
+                                <label className="seller_header">
+                                  Profile Info:
+                                </label>
+                                <div className="profile-form-group">
+                                  <input
+                                    className="profile-input-box"
+                                    id="sellerlogo"
+                                    type="file"
+                                    onChange={uploadSellerFileHandler}
+                                    style={{ display: "none" }}
+                                  />
+                                  <div className="seller_flex ">
+                                    <img
+                                      src={sellerLogo ? sellerLogo : photo}
+                                      alt=""
+                                    />
+                                    <label htmlFor="sellerlogo">
+                                      <PublishIcon
+                                        className="userUpdateIcon upload_vendor upload-btn"
+                                        onChange={uploadSellerFileHandler}
+                                      />
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
 
-                            <div className="profile_inner_form">
+                            <div className="profile_inner_form light_shadow">
                               {userInfo.isSeller && (
                                 <>
                                   <div className="seller_component">
-                                    <h3 className="seller_header">
-                                      Profile Info:
-                                    </h3>
-                                    <div className="prof-seller-logo">
-                                      <div className="profile-form-group">
-                                        <label htmlFor="sellerlogo">
-                                          Logo:{" "}
-                                        </label>
-                                        <input
-                                          className="profile-input-box"
-                                          id="sellerlogo"
-                                          type="file"
-                                          onChange={uploadSellerFileHandler}
-                                          style={{ display: "none" }}
-                                        />
-                                        <div className="seller-flex">
-                                          <img
-                                            src={
-                                              sellerLogo ? sellerLogo : photo
-                                            }
-                                            alt=""
-                                          />
-                                          <label htmlFor="sellerlogo">
-                                            <PublishIcon
-                                              className="userUpdateIcon upload_vendor upload-btn"
-                                              onChange={uploadSellerFileHandler}
-                                            />
-                                          </label>
-                                        </div>
-                                      </div>
-                                    </div>
                                     <div className="profile-form-group seller_name">
                                       <label htmlFor="sellername">
                                         Merchant Name:{" "}

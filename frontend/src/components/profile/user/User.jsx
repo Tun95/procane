@@ -235,7 +235,7 @@ function User() {
                             className="profile_form"
                           >
                             <div className="profile-form-header">
-                              <div className="form_header">
+                              <div className="form_header light_shadow f_flex">
                                 <div className="user_image">
                                   <img src={image ? image : me} alt="" />
                                   <input
@@ -271,22 +271,19 @@ function User() {
                                     <label>Country:</label>
                                     <h4>{user?.country}</h4>
                                   </div>
-                                  <div className="user_detail_list">
+                                  <div className="user_detail_list a_flex">
                                     <label>Application Status:</label>
-                                    {user?.apply[0]?.status === false ? (
+                                    {user?.apply[0]?.status === "declined" ? (
                                       <span className="unverified_account a_flex">
                                         declined
                                       </span>
-                                    ) : user?.apply[0]?.status === true &&
-                                      user.isSeller === true ? (
+                                    ) : user?.apply[0]?.status ===
+                                      "approved" ? (
                                       <span className="verified_account a_flex">
                                         approved
                                       </span>
-                                    ) : user?.apply[0]?.status === true &&
-                                      user.isSeller === false ? (
-                                      <span className="pending_account a_flex">
-                                        pending
-                                      </span>
+                                    ) : user?.apply[0]?.status === "pending" ? (
+                                      <span>pending</span>
                                     ) : (
                                       ""
                                     )}
@@ -314,7 +311,7 @@ function User() {
                               </div>
                             </div>
 
-                            <div className="profile_inner_form">
+                            <div className="profile_inner_form light_shadow">
                               <div className="profile_user_form">
                                 <div className="profile_form_group">
                                   <label htmlFor="firstName">First Name </label>

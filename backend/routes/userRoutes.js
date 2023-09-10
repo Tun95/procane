@@ -194,7 +194,6 @@ userRouter.post(
 
     const settings = await Settings.findOne({});
     const minimumWithdrawalAmount = settings?.minimumWithdrawalAmount || 0;
-    
 
     try {
       // Find the seller user by userId
@@ -224,8 +223,17 @@ userRouter.post(
       // Deduct the withdrawal amount from the grandTotalEarnings
       seller.grandTotalEarnings -= amount;
 
-      // Deduct the withdrawal amount from the availableBalance
-      seller.availableBalance -= amount;
+      // Fetch the totalWithdrawn directly from the seller instance
+      const totalWithdrawn = seller.withdrawalRequests.reduce(
+        (total, request) =>
+          request.status === "approved" ? total + request.amount : total,
+        0
+      );
+
+      // Calculate and update the availableBalance for the seller
+      const grandTotalEarningsValue = seller.grandTotalEarnings;
+      const availableBalance = grandTotalEarningsValue - totalWithdrawn;
+      seller.availableBalance = availableBalance;
 
       // Add the withdrawal request to the seller's withdrawalRequests
       seller.withdrawalRequests.push({
