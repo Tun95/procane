@@ -59,6 +59,19 @@
 
 /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
 @media screen and (max-width: 480px) {
+  ._loading_overlay_content {
+    left: 42%;
+  }
+}
+
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 380px) {
+  ._loading_overlay_content {
+    left: 40%;
+  }
+}
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 480px) {
   .page_not_found .a_flex {
     flex-direction: column;
   }
