@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -41,6 +47,18 @@ function Confirmation(props) {
     cart: { cartItems, shippingAddress },
   } = state;
 
+  //SETTINGS
+  const { express, expressCharges, standardCharges } =
+    (settings &&
+      settings
+        .map((s) => ({
+          express: s.express,
+          expressCharges: s.expressCharges,
+          standardCharges: s.standardCharges,
+        }))
+        .find((props) => !isNaN(props.expressCharges))) ||
+    {};
+
   console.log(shippingAddress);
 
   const [tax, setTax] = useState(0);
@@ -66,17 +84,59 @@ function Confirmation(props) {
     fetchTaxRate();
   }, [shippingAddress.countryCode, shippingAddress.zipCode]);
 
-  
-  const { express, expressCharges, standardCharges } =
-    (settings &&
-      settings
-        .map((s) => ({
-          express: s.express,
-          expressCharges: s.expressCharges,
-          standardCharges: s.standardCharges,
-        }))
-        .find((props) => !isNaN(props.expressCharges))) ||
-    {};
+  //===================
+  //CALCULATE TAX
+  //===================
+  // const calculateTax = useCallback(async () => {
+  //   try {
+  //     const orderData = {
+  //       from_country: "US", // Replace with your from_country
+  //       from_zip: "07001", // Replace with your from_zip
+  //       from_state: "NJ", // Replace with your from_state
+  //       from_city: "Avenel", // Replace with your from_city
+  //       from_street: "305 W Village Dr", // Replace with your from_street
+
+  //       to_country: shippingAddress.countryCode, // Replace with the country from shippingAddress
+  //       to_zip: shippingAddress.zipCode, // Replace with the zipCode from shippingAddress
+  //       to_state: shippingAddress.cState, // Replace with the cState from shippingAddress
+  //       to_city: shippingAddress.city, // Replace with the city from shippingAddress
+  //       to_street: shippingAddress.address, // Replace with the address from shippingAddress
+
+  //       amount: 1006.5, // Replace with your order amount
+  //       shipping: 1.5, // Replace with your shipping cost
+
+  //       line_items: [
+  //         {
+  //           id: "1",
+  //           quantity: 1,
+  //           product_tax_code: "31000", // Replace with your product tax code
+  //           unit_price: 15.0, // Replace with your product unit price
+  //           discount: 0, // Replace with your product discount if any
+  //         },
+  //       ],
+  //     };
+
+  //     const response = await axios.post(
+  //       `${request}/api/orders/calculate-tax`,
+  //       orderData
+  //     );
+
+  //     const taxAmount = response.data.taxAmount;
+
+  //     if (taxAmount === 0) {
+  //       console.error("Tax calculation returned 0. Check address data.");
+  //     } else {
+  //       console.log(`TAXJAR: ${taxAmount}`);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error calculating tax:", error);
+  //     // Handle errors appropriately (e.g., display an error message)
+  //   }
+  // }, [shippingAddress]);
+
+  // useEffect(() => {
+  //   calculateTax();
+  // }, [calculateTax]);
 
   const itemsPrice = cartItems.reduce(
     (a, c) => a + (c.price - (c.price * c.discount) / 100) * c.quantity,

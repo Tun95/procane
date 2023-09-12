@@ -14,6 +14,7 @@ import crypto from "crypto";
 import shippo from "shippo";
 import mongoose from "mongoose";
 import bluesnap from "bluesnap";
+import Taxjar from "taxjar";
 
 const orderRouter = express.Router();
 
@@ -676,6 +677,54 @@ orderRouter.get(
       res.send(order);
     } else {
       res.send(404).send({ message: "Order Not Found" });
+    }
+  })
+);
+
+//===================
+//CALCULATE TAX
+//===================
+const sandboxUrl = "https://api.sandbox.taxjar.com";
+const client = new Taxjar({
+  apiKey: "76eb2ab542d2996eb4755ca6f8560dd7", // Replace with your TaxJar sandbox API key
+  apiUrl: "https://api.sandbox.taxjar.com", // Use the sandbox API endpoint
+});
+// const client = new Taxjar({
+//   apiKey: "76eb2ab542d2996eb4755ca6f8560dd7", // Replace with your TaxJar API key
+// });
+
+// Define your calculateTax function using async/await
+const calculateTax = async (orderData) => {
+  try {
+    // Use the TaxJar client to make the tax calculation request
+    const taxResponse = await client.taxForOrder(orderData);
+
+    // Extract the tax amount from the response
+    const taxAmount = taxResponse.tax.amount_to_collect;
+
+    return taxAmount;
+  } catch (error) {
+    console.error("Error calculating tax:", error);
+    throw error; // You can choose to handle errors as needed
+  }
+};
+
+orderRouter.post(
+  "/calculate-tax",
+  expressAsyncHandler(async (req, res) => {
+    // Extract data from the request body
+    const orderData = req.body;
+
+    try {
+      // Calculate tax using the TaxJar SDK
+      const taxAmount = await calculateTax(orderData);
+
+      // Send the tax amount as a response to the frontend
+      res.json({ taxAmount });
+    } catch (error) {
+      console.error("Error calculating tax:", error);
+      // Handle errors appropriately (e.g., send an error response)
+      res.status(500).json({ error: "Internal server error" });
     }
   })
 );

@@ -1,3 +1,4 @@
+/* ALERT & LOADING */
 .alert {
   padding: 1rem;
   border: 0.1rem solid transparent;
@@ -23,6 +24,14 @@
 
   margin-top: 5px;
 }
+
+._loading_overlay_content {
+  position: absolute;
+  top: 30%;
+  left: 47%;
+}
+
+/* ERROR 404 */
 .page_not_found {
   width: 100%;
   min-height: 600px;
@@ -33,6 +42,19 @@
 }
 .page_not_found .head_size {
   font-size: 130px;
+}
+
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 700px) {
+  ._loading_overlay_content {
+    left: 45%;
+  }
+}
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 545px) {
+  ._loading_overlay_content {
+    left: 44%;
+  }
 }
 
 /*======= MEDIA QUERIES (SMALL DEVICES) =======*/

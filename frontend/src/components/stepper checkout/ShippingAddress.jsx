@@ -106,6 +106,7 @@ function ShippingAddress() {
   };
   console.log(countryCode);
 
+  //BILLING ADDRESS
   const submitHandler = (e) => {
     e.preventDefault();
     if (
@@ -304,11 +305,7 @@ function ShippingAddress() {
               </div>
               <div className="form-group">
                 <label htmlFor="country">Country:</label>
-                {/* <CountryDropdown
-                  value={country}
-                  onChange={(val) => setCountry(val)}
-                  className="select_styles"
-                /> */}
+
                 <CountryDropdown
                   value={country}
                   onChange={handleCountryChange}

@@ -40,7 +40,8 @@
     "shippo": "^1.7.1",
     "socket.io": "^4.5.2",
     "streamifier": "^0.1.1",
-    "stripe": "^10.17.0"
+    "stripe": "^10.17.0",
+    "taxjar": "^4.0.1"
   },
   "devDependencies": {
     "morgan": "^1.10.0",

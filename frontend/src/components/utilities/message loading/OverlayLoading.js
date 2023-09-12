@@ -7,17 +7,8 @@ function LoadingOverlayComponent({ children, center }) {
   const { state } = useContext(Context);
   const { loading } = state;
 
-  const overlayStyle = center
-    ? { display: "flex", justifyContent: "center", alignItems: "center" }
-    : {};
-
   return (
-    <LoadingOverlay
-      style={overlayStyle}
-      active={loading}
-      spinner
-      text="Loading..."
-    >
+    <LoadingOverlay active={loading} spinner text="Loading...">
       {children}
     </LoadingOverlay>
   );
