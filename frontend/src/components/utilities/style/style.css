@@ -74,7 +74,7 @@
 /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
 @media screen and (max-width: 320px) {
   ._loading_overlay_content {
-    left: 32%;
+    left: 33%;
   }
 }
 
