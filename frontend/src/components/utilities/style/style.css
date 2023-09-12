@@ -60,14 +60,14 @@
 /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
 @media screen and (max-width: 480px) {
   ._loading_overlay_content {
-    left: 42%;
+    left: 40%;
   }
 }
 
 /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
 @media screen and (max-width: 380px) {
   ._loading_overlay_content {
-    left: 40%;
+    left: 38%;
   }
 }
 /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
