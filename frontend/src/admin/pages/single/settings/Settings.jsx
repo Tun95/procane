@@ -86,6 +86,8 @@ function Settings() {
   const [email, setEmail] = useState("");
   const [playstore, setPlayStore] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [twitter, setTwitter] = useState("");
   const [appstore, setAppStore] = useState("");
   const [webname, setWebname] = useState("");
   const [storeAddress, setStoreAddress] = useState("");
@@ -140,6 +142,8 @@ function Settings() {
         setEmail(data.email);
         setPlayStore(data.playstore);
         setWhatsapp(data.whatsapp);
+        setFacebook(data.facebook);
+        setTwitter(data.twitter);
         setAppStore(data.appstore);
         setWebname(data.webname);
         setStoreAddress(data.storeAddress);
@@ -206,6 +210,8 @@ function Settings() {
           email,
           playstore,
           whatsapp,
+          facebook,
+          twitter,
           appstore,
 
           webname,
@@ -694,6 +700,24 @@ function Settings() {
                               onChange={(e) => setMessenger(e.target.value)}
                               type="text"
                               placeholder="john.stone"
+                            />
+                          </div>
+                          <div className="lower_group">
+                            <small>Your Facebook profile link here:</small>
+                            <input
+                              value={facebook}
+                              onChange={(e) => setFacebook(e.target.value)}
+                              type="text"
+                              placeholder="https://web.facebook.com/Johnstone"
+                            />
+                          </div>
+                          <div className="lower_group">
+                            <small>Your Twitter profile link here:</small>
+                            <input
+                              value={twitter}
+                              onChange={(e) => setTwitter(e.target.value)}
+                              type="text"
+                              placeholder="https://twitter.com/Johnstone"
                             />
                           </div>
                           <div className="lower_group">
