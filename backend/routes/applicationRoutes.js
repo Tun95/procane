@@ -4,6 +4,7 @@ import Apply from "../models/application.js";
 import { isAdmin, isAuth } from "../utils.js";
 import User from "../models/userModels.js";
 import nodemailer from "nodemailer";
+import Settings from "../models/settings.js";
 
 const applicationRoutes = express.Router();
 
@@ -98,27 +99,37 @@ async function sendEmail(to, subject, html) {
 }
 
 // Email template styling
-function getEmailTemplate(content) {
+function getEmailTemplate(content, settings) {
+  const { facebook, twitter, whatsapp } = settings || {};
   return `
     <html>
       <head>
-       <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"
-      integrity="sha384-3B6NwesSXE7YJlcLI9RpRqGf2p/EgVH8BgoKTaUrmKNDkHPStTQ3EyoYjCGXaOTS"
-      crossorigin="anonymous"
-    />
         <style>
-          body {
+          .main {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            background-color: #f7f7f7;
+            border-radius: 8px;
             padding: 20px;
+           
           }
           .container {
-            background-color: white;
+            max-width: 600px;
             padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin: 1% auto;
+            overflow: hidden;
+          }
+          .header {
+            background-color: #007bff;
+            padding: 20px;
+            text-align: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+          }
+          .content{
+            text-align: center;
           }
           h2 {
             color: #333;
@@ -146,24 +157,43 @@ function getEmailTemplate(content) {
         </style>
       </head>
       <body>
+       <div class="main">
         <div class="container">
-          ${content}
+         <div class="header">            
+          <h1>${process.env.SHOP_NAME}</h1>
         </div>
+         <div class="content">
+           ${content}
+         </div>
         <div class="footer">
           <p>For more information, visit our website:</p>
           <p><strong>${process.env.SHOP_NAME}</strong></p>
           <div class="social-icons">
-            <a href="#" class="social-icon">
-              <img class="icons" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399098/facebook_e2bdv6.png" alt="Facebook">
+            <a href=${facebook} class="social-icon">
+              <img
+                class="icons"
+                src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399098/facebook_e2bdv6.png"
+                alt="Facebook"
+              />
             </a>
-            <a href="#" class="social-icon">
-              <img class="icons" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399098/twitter_djgizx.png" alt="Twitter">
+            <a href=${twitter} class="social-icon">
+              <img
+                class="icons"
+                src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399098/twitter_djgizx.png"
+                alt="Twitter"
+              />
             </a>
-            <a href="#" class="social-icon">
-              <img class="icons" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399099/whatsapp_m0dmdp.png" alt="WhatsApp">
+            <a href=https://wa.me/${whatsapp} class="social-icon">
+              <img
+                class="icons"
+                src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399099/whatsapp_m0dmdp.png"
+                alt="WhatsApp"
+              />
             </a>
           </div>
+        </div>  
         </div>
+       </div> 
       </body>
     </html>
   `;
@@ -177,6 +207,7 @@ applicationRoutes.put(
   isAuth,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
+    const settings = await Settings.findOne({});
     const { id } = req.params;
     try {
       const application = await Apply.findById(id);
@@ -192,7 +223,8 @@ applicationRoutes.put(
       if (user) {
         const subject = "Application Status Update";
         const message = getEmailTemplate(
-          `<h2>Application Approved</h2><p>Congratulations! Your application has been approved.</p>`
+          `<h2>Application Approved</h2><p>Congratulations! Your application has been approved.</p>`,
+          settings
         );
         // Log before sending email
         console.log("Sending email to:", user.email);
@@ -215,6 +247,7 @@ applicationRoutes.put(
   isAuth,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
+    const settings = await Settings.findOne({});
     const { id } = req.params;
     try {
       const application = await Apply.findById(id);
@@ -230,7 +263,8 @@ applicationRoutes.put(
       if (user) {
         const subject = "Application Status Update";
         const message = getEmailTemplate(
-          `<h2>Application Declined</h2><p>Your application has been declined.</p>`
+          `<h2>Application Declined</h2><p>Your application has been declined.</p>`,
+          settings
         );
         await sendEmail(user.email, subject, message);
       }

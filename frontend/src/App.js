@@ -98,18 +98,10 @@ TimeAgo.addLocale(ru);
 function App() {
   const { darkMode, state } = useContext(Context);
   const { settings } = state;
-  const {
-    messengerAppId,
-    messengerPageId,
-    shortDesc,
-    faviconUrl,
-    webname,
-    paypal,
-  } =
+  const { messengerAppId, messengerPageId, shortDesc, faviconUrl, webname } =
     (settings &&
       settings
         .map((s) => ({
-          paypal: s.paypal,
           messengerAppId: s.messengerAppId,
           messengerPageId: s.messengerPageId,
           faviconUrl: s.faviconUrl,
@@ -130,15 +122,7 @@ function App() {
     };
 
     updateFavicon(); // Call the function to update favicon
-    // Update the title dynamically
-    // document.title = webname || "ShopFinity";
 
-    // // Set the webname in the script
-    // const webnameValue = webname || "";
-    // const dynamicTitleElement = document.getElementById("dynamicTitle");
-    // if (dynamicTitleElement) {
-    //   dynamicTitleElement.innerText = webnameValue;
-    // }
 
     // Set the description dynamically using window.appShortDesc
     const metaDescriptionTag = document.querySelector(
@@ -148,12 +132,6 @@ function App() {
       metaDescriptionTag.content = window.appShortDesc || "My web app";
     }
   }, [faviconUrl]);
-
-  //============================
-  // Set the PayPal client ID on the window object
-  useEffect(() => {
-    window.paypalClientId = paypal; // Replace this with the actual PayPal client ID
-  }, [paypal]);
 
   ReactGA.initialize(process.env.REACT_APP_GOOGLE_TRACKING, {
     debug: true,

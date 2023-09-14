@@ -289,30 +289,9 @@ function RegisterScreen() {
             </Form>
           )}
         </Formik>
-        {/* <span className="l_flex or">OR</span> */}
+        
         <div>
-          {/* Google sign-up button */}
-          {/* <GoogleLogin
-            //clientId="408401850346-97mfn7e1q7f698pn7in837hha576nleb.apps.googleusercontent.com"
-            onSuccess={handleGoogleSignUp}
-            onFailure={(error) => console.log("Google sign-up failed", error)}
-            buttonText="Sign up with Google"
-          /> */}
-
-          {/* Facebook sign-up button */}
-          {/* <FacebookLogin
-            appId="6222862251176447"
-            callback={handleFacebookSignUp}
-            onFailure={(error) => console.log("Facebook sign-up failed", error)}
-            render={(renderProps) => (
-              <button
-                onClick={renderProps.onClick}
-                className="facebook-login-button mt"
-              >
-                Sign up with Facebook
-              </button>
-            )}
-          /> */}
+        
           <div className="form-lower-text">
             <p>Already a member?</p>
             <span>

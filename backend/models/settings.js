@@ -63,6 +63,14 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: "john.stone",
     },
+    facebook: {
+      type: String,
+      default: "https://web.facebook.com/",
+    },
+    twitter: {
+      type: String,
+      default: "https://twitter.com/",
+    },
     email: {
       type: String,
       default: "admin@gmail.com",

@@ -413,111 +413,6 @@ orderRouter.get(
 //===================
 //ADMIN ORDER SUMMARY
 //===================
-// orderRouter.get(
-//   "/order_summary",
-//   // isAuth,
-//   // isSellerOrAdmin,
-//   expressAsyncHandler(async (req, res) => {
-//     const productId = req?.query.id;
-//     const date = new Date();
-//     const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
-//     const previousMonth = new Date(
-//       new Date().setMonth(lastMonth.getMonth() - 1)
-//     );
-//     console.log(productId);
-
-//     // GET MONTHLY ORDERS
-//     const orders = await Order.aggregate([
-//       {
-//         $match: {
-//           createdAt: { $gte: previousMonth, $lt: lastMonth },
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: null,
-//           numOrders: { $sum: 1 },
-//         },
-//       },
-//     ]);
-
-//     // GET MONTHLY USERS STATS
-//     const users = await User.aggregate([
-//       {
-//         $match: {
-//           createdAt: { $gte: previousMonth, $lt: lastMonth },
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: null,
-//           numUsers: { $sum: 1 },
-//         },
-//       },
-//     ]);
-
-//     // GET MONTHLY INCOME
-//     const income = await Order.aggregate([
-//       {
-//         $match: {
-//           createdAt: { $gte: previousMonth, $lt: lastMonth },
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: null,
-//           orders: { $sum: 1 },
-//           numOrders: { $sum: 1 },
-//           sales: { $sum: "$grandTotal" },
-//         },
-//       },
-//     ]);
-
-//     // GET DAILY ORDERS
-//     const dailyOrders = await Order.aggregate([
-//       {
-//         $group: {
-//           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-//           orders: { $sum: 1 },
-//           numOrders: { $sum: 1 },
-//           sales: { $sum: "$grandTotal" },
-//         },
-//       },
-//       {
-//         $match: {
-//           _id: {
-//             $gte: previousMonth.toISOString(),
-//             $lt: lastMonth.toISOString(),
-//           },
-//         },
-//       },
-//       { $sort: { _id: -1 } },
-//       { $limit: 10 },
-//     ]);
-
-//     // GET SALE PERFORMANCE
-//     const salePerformance = await Order.aggregate([
-//       {
-//         $group: {
-//           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-//           sales: { $sum: "$grandTotal" },
-//         },
-//       },
-//       {
-//         $match: {
-//           _id: {
-//             $gte: previousMonth.toISOString(),
-//             $lt: lastMonth.toISOString(),
-//           },
-//         },
-//       },
-//       { $sort: { _id: -1 } },
-//       { $limit: 2 },
-//     ]);
-
-//     res.send({ users, orders, income, dailyOrders, salePerformance });
-//   })
-// );
 orderRouter.get(
   "/summary",
   // isAuth,
@@ -689,9 +584,6 @@ const client = new Taxjar({
   apiKey: "76eb2ab542d2996eb4755ca6f8560dd7", // Replace with your TaxJar sandbox API key
   apiUrl: "https://api.sandbox.taxjar.com", // Use the sandbox API endpoint
 });
-// const client = new Taxjar({
-//   apiKey: "76eb2ab542d2996eb4755ca6f8560dd7", // Replace with your TaxJar API key
-// });
 
 // Define your calculateTax function using async/await
 const calculateTax = async (orderData) => {
