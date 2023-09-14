@@ -42,7 +42,7 @@ function Footer() {
                   <Fade cascade direction="down" triggerOnce damping={0.4}>
                     <a
                       href={`${playstore}`}
-                      target="_blank"
+                      // target="_blank"
                       rel="noopener noreferrer"
                       className="img a_flex"
                     >
@@ -51,7 +51,7 @@ function Footer() {
                     </a>
                     <a
                       href={`${appstore}`}
-                      target="_blank"
+                      // target="_blank"
                       rel="noopener noreferrer"
                       className="img a_flex app-store"
                     >
