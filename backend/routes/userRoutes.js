@@ -963,9 +963,9 @@ userRouter.put(
   })
 );
 
-//===============
+//=================================
 //Generate Email Verification Token
-//===============
+//=================================
 userRouter.post(
   "/verification-token",
   isAuth,
