@@ -583,6 +583,9 @@ userRouter.patch(
         // Update the withdrawnAmount by adding the approved withdrawal amount
         seller.withdrawnAmount += withdrawalAmount;
 
+        // Save the updated user document
+        await seller.save();
+
         // Send email notification to the seller about withdrawal approval
         await sendWithdrawalEmail(
           seller.email,
@@ -593,9 +596,6 @@ userRouter.patch(
           settings
         );
 
-        // Save the updated user document
-        await seller.save();
-
         res.status(200).json({ message: "Withdrawal request approved" });
       } else if (action === "decline") {
         // Find the withdrawal request and update its status to declined
@@ -603,6 +603,9 @@ userRouter.patch(
 
         // Return the declined amount back to grandTotalEarnings
         seller.grandTotalEarnings += withdrawalAmount;
+
+        // Save the updated user document
+        await seller.save();
 
         // Send email notification to the seller about withdrawal decline
         await sendWithdrawalEmail(
@@ -613,9 +616,6 @@ userRouter.patch(
           "declined",
           settings
         );
-
-        // Save the updated user document
-        await seller.save();
 
         res.status(200).json({ message: "Withdrawal request declined" });
       } else {
