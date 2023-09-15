@@ -391,6 +391,22 @@
       background-color: var(--color-black);
     }
   }
+  //
+  .info_form {
+    .about-section-block {
+      &,
+      div,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      span {
+        color: var(--color-light-gray) !important;
+      }
+    }
+  }
 
   /*---footer--*/
   footer {

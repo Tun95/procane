@@ -19,7 +19,7 @@ function Returns() {
           <div className="content">
             {settings?.map((s, index) => (
               <div className="about-section-block" key={index}>
-                {parse(`<p>${s?.returns}</p>`)}
+                {parse(`<p class="main_content">${s?.returns}</p>`)}
               </div>
             ))}
           </div>

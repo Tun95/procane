@@ -546,15 +546,12 @@ async function sendWithdrawalEmail(
     html: message,
   };
 
-  smtpTransport.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-      res.status(500).json({ message: "Failed to send email" });
-    } else {
-      console.log("Email sent: " + info.response);
-      res.status(200).json({ message: "Email sent successfully" });
-    }
-  });
+  try {
+    await smtpTransport.sendMail(mailOptions);
+    console.log("Email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
 }
 userRouter.patch(
   "/withdraw/:id",
@@ -587,7 +584,7 @@ userRouter.patch(
         seller.withdrawnAmount += withdrawalAmount;
 
         // Send email notification to the seller about withdrawal approval
-        sendWithdrawalEmail(
+        await sendWithdrawalEmail(
           seller.email,
           withdrawalAmount,
           gateway,
@@ -608,7 +605,7 @@ userRouter.patch(
         seller.grandTotalEarnings += withdrawalAmount;
 
         // Send email notification to the seller about withdrawal decline
-        sendWithdrawalEmail(
+        await sendWithdrawalEmail(
           seller.email,
           withdrawalAmount,
           gateway,
