@@ -53,6 +53,9 @@
 
     .form-group {
       margin-bottom: 15px;
+      .lable_color {
+        color: var(--color-gray);
+      }
       input {
         border: 2px solid var(--color-light-gray);
         height: 35px;

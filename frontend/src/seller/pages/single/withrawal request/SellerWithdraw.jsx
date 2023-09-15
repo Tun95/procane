@@ -171,7 +171,9 @@ function SellerWithdraw() {
             >
               <Form>
                 <div className="form-group">
-                  <label htmlFor="amount">Amount</label>
+                  <label className="lable_color" htmlFor="amount">
+                    Amount
+                  </label>
                   <Field type="number" id="amount" name="amount" />
                   <ErrorMessage
                     name="amount"
@@ -181,7 +183,9 @@ function SellerWithdraw() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="email">Email</label>
+                  <label className="lable_color" htmlFor="email">
+                    Email
+                  </label>
                   <Field
                     type="email"
                     id="email"
@@ -196,7 +200,9 @@ function SellerWithdraw() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="gateway">Gateway</label>
+                  <label className="lable_color" htmlFor="gateway">
+                    Gateway
+                  </label>
                   <Field
                     as="select"
                     id="gateway"
