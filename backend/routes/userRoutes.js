@@ -997,7 +997,7 @@ userRouter.post(
             p {
               margin-bottom: 16px;
             }
-            a {
+            .anchor {
               display: inline-block;
               padding: 10px 20px;
               background-color: #007BFF;
@@ -1033,7 +1033,7 @@ userRouter.post(
           <p>Hello ${user.firstName},</p>
           <p>You have received this email because you have been requested to verify your account.</p>
           <p>Please click the button below to verify your account:</p>
-          <a href="${verificationLink}">Verify Account</a>
+          <a class="anchor" href="${verificationLink}">Verify Account</a>
           <p>If you did not request this verification, you can safely ignore this email.</p>
           <p>This verification link is valid for the next 10 minutes.</p>
           <p>Thank you,</p>
