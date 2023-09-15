@@ -96,7 +96,7 @@ function Annct() {
   if (error) {
     return (
       <div>
-        <MessageBox>{error}</MessageBox>
+        <MessageBox variant="danger">{error}</MessageBox>
       </div>
     );
   }
