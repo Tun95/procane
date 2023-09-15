@@ -553,10 +553,10 @@ userRouter.patch(
   isAuth,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
-    const settings = await Settings.findOne({});
-
     const { id } = req.params;
     const { action } = req.body;
+
+    
     try {
       // Find the seller user by userId
       const seller = await User.findOne({ "withdrawalRequests._id": id });
@@ -570,6 +570,7 @@ userRouter.patch(
       const gateway = withdrawalRequest.gateway;
       const transactionId = withdrawalRequest.transactionId; // Retrieve the transactionId from the withdrawal request
 
+      const settings = await Settings.findOne({});
       if (action === "approve") {
         // Find the withdrawal request and update its status to approved
         withdrawalRequest.status = "approved";
