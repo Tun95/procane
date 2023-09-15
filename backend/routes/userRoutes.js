@@ -568,7 +568,6 @@ userRouter.patch(
       const withdrawalRequest = seller.withdrawalRequests.id(id);
       const withdrawalAmount = withdrawalRequest.amount;
       const gateway = withdrawalRequest.gateway;
-      const email = withdrawalRequest.email;
       const transactionId = withdrawalRequest.transactionId; // Retrieve the transactionId from the withdrawal request
 
       if (action === "approve") {
@@ -581,7 +580,7 @@ userRouter.patch(
 
         // Send email notification to the seller about withdrawal approval
         sendWithdrawalEmail(
-          email,
+          seller.email,
           withdrawalAmount,
           gateway,
           transactionId,
@@ -602,7 +601,7 @@ userRouter.patch(
 
         // Send email notification to the seller about withdrawal decline
         sendWithdrawalEmail(
-          email,
+          seller.email,
           withdrawalAmount,
           gateway,
           transactionId,
