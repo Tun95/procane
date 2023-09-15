@@ -109,7 +109,7 @@ function ContactScreen() {
                           <a
                             className="messenger"
                             href={`https://m.me/${messenger}`}
-                            target="_blank"
+                            // target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="fa-brands fa-facebook-messenger"></i>{" "}
@@ -134,7 +134,7 @@ function ContactScreen() {
                           <a
                             className="whatsapp"
                             href={`https://wa.me/${whatsapp}`}
-                            target="_blank"
+                            // target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="fa-brands fa-whatsapp"></i> Whatsapp
