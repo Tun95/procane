@@ -310,9 +310,9 @@ userRouter.delete(
   })
 );
 
-//======================================
+//====================================
 //ADMIN APPROVAL/DECLINE A WITHDRAWAL
-//======================================
+//====================================
 // Function to send withdrawal approval/decline email
 async function sendWithdrawalEmail(
   toEmail,
