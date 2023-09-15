@@ -322,7 +322,7 @@ async function sendWithdrawalEmail(
   status,
   settings
 ) {
-  const transporter = nodemailer.createTransport({
+  const smtpTransport = nodemailer.createTransport({
     service: process.env.MAIL_SERVICE,
     auth: {
       user: process.env.EMAIL_ADDRESS,
@@ -546,7 +546,15 @@ async function sendWithdrawalEmail(
     html: message,
   };
 
-  await transporter.sendMail(mailOptions);
+  smtpTransport.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      res.status(500).json({ message: "Failed to send email" });
+    } else {
+      console.log("Email sent: " + info.response);
+      res.status(200).json({ message: "Email sent successfully" });
+    }
+  });
 }
 userRouter.patch(
   "/withdraw/:id",
@@ -556,7 +564,6 @@ userRouter.patch(
     const { id } = req.params;
     const { action } = req.body;
 
-    
     try {
       // Find the seller user by userId
       const seller = await User.findOne({ "withdrawalRequests._id": id });
