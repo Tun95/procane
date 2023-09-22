@@ -84,8 +84,8 @@ function Updates() {
           <div className="description">
             <p>
               Please click the 'Upload' button to browse your device and select
-              the ZIP file containing the update. Once selected, the update will
-              be automatically apply
+              the ZIP file containing the update. Once selected, your update will
+              be automatically installed
             </p>
           </div>
           <div className="uploader">
@@ -105,7 +105,10 @@ function Updates() {
                   />
                   <span className="uploader_box l_flex">
                     <AddPhotoAlternateOutlinedIcon className="icon" />
-                    <span className="text"> select and upload a zip file update</span>
+                    <span className="text">
+                      {" "}
+                      select and upload a zip file update
+                    </span>
                   </span>
                 </label>
               </div>

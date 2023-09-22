@@ -49,25 +49,6 @@ const WrapperComponent = () => {
   };
 
   // Function to handle editing a wrapper
-
-  // const editWrapper = (id) => {
-  //   // Find the selected wrapper by its ID
-  //   const selectedWrapper = wrappers.find(
-  //     (wrapperData) => wrapperData._id === id
-  //   );
-
-  //   if (selectedWrapper) {
-  //     // Set the form data with the values of the selected wrapper for editing
-  //     setFormData({
-  //       icon: selectedWrapper.wrappers[0].icon,
-  //       header: selectedWrapper.wrappers[0].header,
-  //       description: selectedWrapper.wrappers[0].description,
-  //       _id: selectedWrapper.wrappers[0]._id, // Set the _id to indicate it's an existing wrapper
-  //     });
-  //   } else {
-  //     toast.error("No data found for the wrapper being edited.");
-  //   }
-  // };
   const editWrapper = (id) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -120,48 +101,6 @@ const WrapperComponent = () => {
     }
   };
 
-  //Handle submit
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault(); // Prevent form submission
-
-  //   // Check if formData has an _id (indicating it's an existing wrapper)
-  //   if (formData._id) {
-  //     // Find the selected wrapper by its ID
-  //     const selectedWrapperData = wrappers.find((wrapperData) =>
-  //       wrapperData.wrappers.some((wrapper) => wrapper._id === formData._id)
-  //     );
-
-  //     console.log("Selected Wrapper Data:", selectedWrapperData); // Log the selectedWrapperData
-
-  //     if (selectedWrapperData) {
-  //       // Find the selected wrapper within the selectedWrapperData
-  //       const selectedWrapper = selectedWrapperData.wrappers.find(
-  //         (wrapper) => wrapper._id === formData._id
-  //       );
-
-  //       console.log("Selected Wrapper:", selectedWrapper); // Log the selectedWrapper
-
-  //       if (selectedWrapper) {
-  //         // Call updateWrapper function with the correct wrapper ID (outside the wrappers array)
-  //         updateWrapper(formData._id);
-  //       } else {
-  //         toast.error("No data found for the wrapper being updated.");
-  //       }
-  //     } else {
-  //       toast.error("No data found for the wrapper being updated.");
-  //     }
-  //   } else {
-  //     addWrapper(); // If no _id exists, it's a new wrapper, so call addWrapper function
-  //   }
-
-  //   // Clear form data after submitting
-  //   setFormData({
-  //     icon: "",
-  //     header: "",
-  //     description: "",
-  //     _id: "", // Clear the _id field to indicate it's a new wrapper
-  //   });
-  // };
   const updateOrAddWrapper = async () => {
     if (formData._id) {
       try {

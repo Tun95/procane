@@ -509,6 +509,11 @@
   }
   //====WRAPPER====//
   .home_wrappers {
+    h2,
+    strong,
+    span {
+      color: var(--color-light-gray);
+    }
     @media screen and (max-width: 500px) {
       .light_shadow {
         box-shadow: none;
@@ -516,6 +521,7 @@
       }
     }
   }
+  //====FILTERS====//
   .filters {
     .datagrid {
       border: 1px solid var(--color-light-gray);
