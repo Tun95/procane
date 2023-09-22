@@ -255,5 +255,6 @@
   }
   .search {
     box-shadow: -1px 15px 17px -8px rgba(0, 0, 0, 0.1);
+    border-bottom: none;
   }
 }

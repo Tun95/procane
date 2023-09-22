@@ -516,4 +516,21 @@
       }
     }
   }
+  .filters {
+    .datagrid {
+      border: 1px solid var(--color-light-gray);
+    }
+  }
+  .update {
+    .light_shadow {
+      .content {
+        .update_header {
+          color: var(--color-light-gray);
+        }
+        .description {
+          color: var(--color-light-gray);
+        }
+      }
+    }
+  }
 }

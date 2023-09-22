@@ -1,0 +1,49 @@
+.update {
+  .light_shadow {
+    padding: 20px;
+    .content {
+      text-align: center;
+
+      .update_header {
+        box-shadow: none;
+        color: var(--color-gray);
+      }
+      .description {
+        font-size: 15px;
+        color: var(--color-gray);
+      }
+      .uploader {
+        margin-top: 20px;
+        .file_handler {
+          .zip {
+            font-size: 14px;
+            color: var(--color-gray);
+            font-weight: 600;
+          }
+          label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .uploader_box {
+              border: 1px dotted var(--color-blue);
+              outline: 1px dotted var(--color-blue);
+              font-size: 14px;
+              height: 100px;
+              border-radius: 10px;
+              width: 100%;
+              color: var(--color-blue);
+              cursor: pointer;
+              margin-bottom: 5px;
+              // flex-wrap: wrap;
+              /*======= MEDIA QUERIES (MEDIUM DEVICES) =======*/
+              @media screen and (max-width: 900px) {
+                height: 50px;
+                padding: 0px 10px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

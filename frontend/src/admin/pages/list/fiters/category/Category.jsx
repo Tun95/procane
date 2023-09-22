@@ -1,22 +1,16 @@
 import React, { useContext, useEffect, useReducer } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import ReactTimeAgo from "react-time-ago";
-import "./styles.scss"
+import "./styles.scss";
 import { Context } from "../../../../../context/Context";
 import { request } from "../../../../../base url/BaseUrl";
 import { getError } from "../../../../../components/utilities/util/Utils";
 import LoadingBox from "../../../../../components/utilities/message loading/LoadingBox";
 import MessageBox from "../../../../../components/utilities/message loading/MessageBox";
-
+import { DataGrid } from "@mui/x-data-grid";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -48,6 +42,41 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+const columns = [
+  { field: "_id", headerName: "ID", width: 220 },
+  { field: "category", headerName: "Category", width: 220 },
+  {
+    field: "user",
+    headerName: "User",
+    width: 250,
+    renderCell: (params) => {
+      return (
+        <>
+          <div className="cellWidthName">{params.row.user?.lastName}</div>{" "}
+          <div className="cellWidthName">{params.row.user?.firstName}</div>
+        </>
+      );
+    },
+  },
+  {
+    field: "createdAt",
+    headerName: "Date",
+    width: 200,
+    renderCell: (params) => {
+      return (
+        <>
+          <div className="cellWidthImg">
+            <ReactTimeAgo
+              date={Date.parse(params.row.createdAt)}
+              locale="en-US"
+            />
+          </div>
+        </>
+      );
+    },
+  },
+];
 function Category() {
   const { state, dispatch: ctxDispatch } = useContext(Context);
   const { userInfo } = state;
@@ -103,73 +132,63 @@ function Category() {
       dispatch({ type: "DELETE_FAIL" });
     }
   };
+
+  const actionColumn = [
+    {
+      field: "action",
+      headerName: "Actions",
+      width: 300,
+      renderCell: (params) => {
+        return (
+          <div className="cellAction table c_flex">
+            <Link to={`/admin/category/${params.row._id}`}>
+              <div className="tableBtn">Details</div>
+            </Link>
+            <div
+              onClick={() => deleteHandler(params.row)}
+              className="deleteButton"
+            >
+              Delete
+            </div>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const customTranslations = {
+    noRowsLabel: "No category found", // Customize the "No Rows" message here
+  };
+ 
   return (
-    <div>
-      {loading || successDelete ? (
-        <LoadingBox></LoadingBox>
-      ) : error ? (
-        <MessageBox>{error}</MessageBox>
-      ) : (
-        <>
+    <div className="filters">
+      <div className="datatable mtb filters">
+        <span className="c_flex">
+          <h2>All Category</h2>
           <i
             onClick={() => {
               navigate(`/admin/new-category`);
             }}
             className="fa-solid fa-square-plus filters_plus filterPlus"
           ></i>
-          <TableContainer
-            style={{ width: "100%" }}
-            component={Paper}
-            className="table"
-          >
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell className="tableCell">ID</TableCell>
-                  <TableCell className="tableCell">Category</TableCell>
-                  <TableCell className="tableCell">User</TableCell>
-                  <TableCell className="tableCell">Date</TableCell>
-                  <TableCell className="tableCell">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {categories?.map((c, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="tableCell">{c._id}</TableCell>
-                    <TableCell className="tableCell">
-                      <div className="cellWrapper">
-                        {" "}
-                        <img src={c.categoryImg} alt="" className="image" />
-                        &nbsp;{c.category}
-                      </div>
-                    </TableCell>
-                    <TableCell className="tableCell">
-                      {c?.user?.firstName} &nbsp; {c?.user?.lastName}
-                    </TableCell>
-                    <TableCell className="tableCell">
-                      <ReactTimeAgo
-                        date={Date.parse(c.createdAt)}
-                        locale="en-US"
-                      />
-                    </TableCell>
-                    <TableCell className="tableCell">
-                      <Link to={`/admin/category/${c._id}`}>
-                        <button className="tableBtn">Details</button>
-                      </Link>
-                      <button
-                        onClick={() => deleteHandler(c)}
-                        className="deleteButton"
-                      >
-                        Delete
-                      </button>{" "}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-      )}
+        </span>
+        {loading || successDelete ? (
+          <LoadingBox></LoadingBox>
+        ) : error ? (
+          <MessageBox variant="danger">{error}</MessageBox>
+        ) : (
+          <DataGrid
+            className="datagrid"
+            rows={categories}
+            getRowId={(row) => row._id}
+            localeText={customTranslations}
+            columns={columns.concat(actionColumn)}
+            autoPageSize
+            rowsPerPageOptions={[5]}
+            checkboxSelection
+          />
+        )}
+      </div>
     </div>
   );
 }
