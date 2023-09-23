@@ -13,12 +13,6 @@ const updateRouter = express.Router();
 
 updateRouter.use(fileUpload());
 
-const config = {
-  uploadsPath: process.env.UPLOADS_PATH || "./uploads",
-  extractedUpdatesPath:
-    process.env.EXTRACTED_UPDATES_PATH || "./extracted-updates",
-};
-
 // Function to read the installation path from the update zip
 function readUpdateInfoFromZip(extractPath) {
   const configPath = path.join(extractPath, "update-config.json");
@@ -80,19 +74,17 @@ async function emptyDirectory(directoryPath) {
   }
 }
 
-//=====================
+// ====================
 // INSTALL UPDATE ROUTE
-//=====================
+// ====================
 updateRouter.post("/apply-update", async (req, res) => {
   if (!req.files || !req.files.updateZip) {
     return res.status(400).send("No update file was uploaded.");
   }
 
   const updateZipFile = req.files.updateZip;
-  const uploadPath = path.join(__dirname, config.uploadsPath);
-  const extractPath = path.join(__dirname, config.extractedUpdatesPath);
-
-  const backendRoutesPath = path.join(__dirname, "backend", "routes");
+  const uploadPath = path.join(__dirname, "uploads");
+  const extractPath = path.join(__dirname, "extracted-updates");
 
   fs.mkdirSync(uploadPath, { recursive: true });
   fs.mkdirSync(extractPath, { recursive: true });
@@ -113,7 +105,9 @@ updateRouter.post("/apply-update", async (req, res) => {
         const baseDirectory = isFrontendUpdate ? "frontend" : "backend";
 
         const targetFolder = path.join(
-          backendRoutesPath,
+          __dirname,
+          "..", // Move up one directory (to "backend" or "frontend")
+          "..", // Move up one more directory (to "MernStore")
           baseDirectory,
           updateInfo.installPath
         );
@@ -147,6 +141,46 @@ updateRouter.post("/apply-update", async (req, res) => {
   } catch (err) {
     console.error("Error processing the update:", err);
     res.status(500).send("Error applying the update.");
+  }
+});
+
+// =======================
+// UNINSTALL UPDATE ROUTE
+// =======================
+updateRouter.post("/uninstall-update", async (req, res) => {
+  const { installPath } = req.body; // Assuming you send the installPath of the update to uninstall
+
+  if (!installPath) {
+    return res.status(400).send("Missing installation path.");
+  }
+
+  const isFrontendUpdate = req.body.type === "frontend"; // You may need to send the type of update too
+  const baseDirectory = isFrontendUpdate ? "frontend" : "backend";
+
+  const targetFolder = path.join(
+    __dirname,
+    "..", // Move up one directory (to "backend" or "frontend")
+    "..", // Move up one more directory (to "MernStore")
+    baseDirectory,
+    installPath
+  );
+
+  if (!fs.existsSync(targetFolder)) {
+    return res.status(400).send("Target folder does not exist.");
+  }
+
+  try {
+    // Empty the target folder and its contents recursively
+    const emptyTargetFolder = await emptyDirectory(targetFolder);
+
+    if (emptyTargetFolder) {
+      res.send("Update uninstalled successfully.");
+    } else {
+      res.status(500).send("Error emptying target folder.");
+    }
+  } catch (err) {
+    console.error("Error uninstalling the update:", err);
+    res.status(500).send("Error uninstalling the update.");
   }
 });
 
