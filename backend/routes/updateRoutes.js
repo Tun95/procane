@@ -92,9 +92,9 @@ async function emptyDirectory(directoryPath) {
 }
 
 
-// ====================
+// =====================
 // INSTALL UPDATE ROUTE
-// ====================
+// =====================
 updateRouter.post("/apply-update", async (req, res) => {
   if (!req.files || !req.files.updateZip) {
     return res.status(400).send("No update file was uploaded.");
