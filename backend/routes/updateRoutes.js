@@ -62,17 +62,35 @@ function copyOrUpdateFiles(sourceFolder, targetFolder) {
 // Function to empty a directory and its contents recursively
 async function emptyDirectory(directoryPath) {
   try {
-    await fsExtra.emptyDir(directoryPath);
+    const items = fs.readdirSync(directoryPath);
+
+    for (const item of items) {
+      const itemPath = path.join(directoryPath, item);
+      const stats = fs.statSync(itemPath);
+
+      if (stats.isDirectory()) {
+        // Recursively empty subdirectories
+        await emptyDirectory(itemPath);
+        fs.rmdirSync(itemPath); // Remove the subdirectory itself
+      } else {
+        // Delete files other than ".gitkeep"
+        if (item !== ".gitkeep") {
+          fs.unlinkSync(itemPath);
+        }
+      }
+    }
+
     return true;
   } catch (error) {
-    if (error.code === "ENOTEMPTY") {
-      // Ignore the error if the directory is not empty
+    if (error.code === "ENOENT") {
+      // Ignore if the directory doesn't exist
       return true;
     }
     console.error(`Error emptying directory '${directoryPath}':`, error);
     return false;
   }
 }
+
 
 // ====================
 // INSTALL UPDATE ROUTE

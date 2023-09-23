@@ -3,26 +3,18 @@ import "./footer.scss";
 import { Link } from "react-router-dom";
 import { Context } from "../../context/Context";
 import { Fade } from "react-awesome-reveal";
+import paypal from "../../assets/smallpaypal.png";
+import stripe from "../../assets/smallstripe.png";
+import razor from "../../assets/smallrazor.jpeg";
+import paystack from "../../assets/smallpaystack.png";
 
 function Footer() {
   const { state, dispatch: ctxDispatch } = useContext(Context);
-  const { settings } = state;
-  const {
-    storeAddress,
-    webname,
-    shortDesc,
-    playstore,
-    appstore,
-    email,
-    whatsapp,
-  } =
+  const { settings, userInfo } = state;
+  const { storeAddress, email, whatsapp } =
     (settings &&
       settings
         .map((s) => ({
-          webname: s.webname,
-          shortDesc: s.shortDesc,
-          playstore: s.playstore,
-          appstore: s.appstore,
           storeAddress: s.storeAddress,
           whatsapp: s.whatsapp,
           email: s.email,
@@ -34,38 +26,38 @@ function Footer() {
       <footer>
         <div className="container ">
           <div className="grid2 footer-wrap">
-            <div className="box">
-              <h1>{webname}</h1>
-              <p className="short_desc">{shortDesc}</p>
-              <div className="">
-                <span className="icon d_flex">
+            <div className="box float">
+              <h4>My Account</h4>
+              <ul>
+                {userInfo ? (
                   <Fade cascade direction="down" triggerOnce damping={0.4}>
-                    <a
-                      href={`${playstore}`}
-                      // target="_blank"
-                      rel="noopener noreferrer"
-                      className="img a_flex"
-                    >
-                      <i className="fa-brands fa-google-play"></i>
-                      <span>Google Play</span>
-                    </a>
-                    <a
-                      href={`${appstore}`}
-                      // target="_blank"
-                      rel="noopener noreferrer"
-                      className="img a_flex app-store"
-                    >
-                      <i className="fa-brands fa-app-store-ios"></i>
-                      <span>App Store</span>
-                    </a>
+                    <li>
+                      <Link to={`/user-profile/${userInfo._id}`}>
+                        My profile
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/track-order">Orders</Link>
+                    </li>
+                    <li>
+                      <Link to={`/wish-list/${userInfo._id}`}>Wishlist</Link>
+                    </li>
                   </Fade>
-                </span>
-              </div>
-              <hr className="horizontal" />
+                ) : (
+                  <Fade cascade direction="down" triggerOnce damping={0.4}>
+                    <li>
+                      <Link to="/login">Login</Link>
+                    </li>
+                    <li>
+                      <Link to="/register">Create account</Link>
+                    </li>
+                  </Fade>
+                )}
+              </ul>
             </div>
 
             <div className="box float">
-              <h2>About Us</h2>
+              <h4>About Us</h4>
               <ul>
                 <Fade cascade direction="down" triggerOnce damping={0.4}>
                   <li>
@@ -87,7 +79,7 @@ function Footer() {
               </ul>
             </div>
             <div className="box float">
-              <h2>Customer Care</h2>
+              <h4>Customer Care</h4>
               <ul>
                 <Fade cascade direction="down" triggerOnce damping={0.4}>
                   <li>
@@ -111,7 +103,7 @@ function Footer() {
               </ul>
             </div>
             <div className="box float">
-              <h2>Contact Us</h2>
+              <h4>Contact Us</h4>
               <ul>
                 <Fade direction="down" triggerOnce damping={0.4}>
                   <li>{storeAddress}</li>
@@ -119,7 +111,10 @@ function Footer() {
                 <div>
                   <Fade cascade direction="down" triggerOnce damping={0.4}>
                     <li>
-                      Email: <a href={`mailto:${email}`}>{email}</a>
+                      Email:{" "}
+                      <a href={`mailto:${email}`} className="email">
+                        {email}
+                      </a>
                     </li>
                     <li>
                       Phone: <a href={`tel:${whatsapp}`}>{whatsapp}</a>
@@ -127,6 +122,17 @@ function Footer() {
                   </Fade>
                 </div>{" "}
               </ul>
+            </div>
+          </div>
+          <div className="footer_base c_flex">
+            <div className="since">
+              <p>© 2023 Mernstore | Powered by MERN Stack</p>
+            </div>
+            <div className="payment_gateway">
+              <img src={paypal} alt="" className="img" />
+              <img src={stripe} alt="" className="img" />
+              <img src={paystack} alt="" className="img" />
+              <img src={razor} alt="" className="img" />
             </div>
           </div>
         </div>
