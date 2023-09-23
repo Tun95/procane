@@ -13,6 +13,13 @@ const updateRouter = express.Router();
 
 updateRouter.use(fileUpload());
 
+const config = {
+  uploadsPath: process.env.UPLOADS_PATH || path.join(__dirname, "uploads"),
+  extractedUpdatesPath:
+    process.env.EXTRACTED_UPDATES_PATH ||
+    path.join(__dirname, "extracted-updates"),
+};
+
 // Function to read the installation path from the update zip
 function readUpdateInfoFromZip(extractPath) {
   const configPath = path.join(extractPath, "update-config.json");
@@ -62,28 +69,11 @@ function copyOrUpdateFiles(sourceFolder, targetFolder) {
 // Function to empty a directory and its contents recursively
 async function emptyDirectory(directoryPath) {
   try {
-    const items = fs.readdirSync(directoryPath);
-
-    for (const item of items) {
-      const itemPath = path.join(directoryPath, item);
-      const stats = fs.statSync(itemPath);
-
-      if (stats.isDirectory()) {
-        // Recursively empty subdirectories
-        await emptyDirectory(itemPath);
-        fs.rmdirSync(itemPath); // Remove the subdirectory itself
-      } else {
-        // Delete files other than ".gitkeep"
-        if (item !== ".gitkeep") {
-          fs.unlinkSync(itemPath);
-        }
-      }
-    }
-
+    await fsExtra.emptyDir(directoryPath);
     return true;
   } catch (error) {
-    if (error.code === "ENOENT") {
-      // Ignore if the directory doesn't exist
+    if (error.code === "ENOTEMPTY") {
+      // Ignore the error if the directory is not empty
       return true;
     }
     console.error(`Error emptying directory '${directoryPath}':`, error);
@@ -91,17 +81,17 @@ async function emptyDirectory(directoryPath) {
   }
 }
 
-//======================
+// ====================
 // INSTALL UPDATE ROUTE
-//======================
+// ====================
 updateRouter.post("/apply-update", async (req, res) => {
   if (!req.files || !req.files.updateZip) {
     return res.status(400).send("No update file was uploaded.");
   }
 
   const updateZipFile = req.files.updateZip;
-  const uploadPath = path.join(__dirname, "uploads");
-  const extractPath = path.join(__dirname, "extracted-updates");
+  const uploadPath = config.uploadsPath;
+  const extractPath = config.extractedUpdatesPath;
 
   fs.mkdirSync(uploadPath, { recursive: true });
   fs.mkdirSync(extractPath, { recursive: true });
@@ -124,7 +114,7 @@ updateRouter.post("/apply-update", async (req, res) => {
         const targetFolder = path.join(
           __dirname,
           "..", // Move up one directory (to "backend" or "frontend")
-          "..", // Move up one more directory (to "ShopFinity")
+          "..", // Move up one more directory (to "MernStore")
           baseDirectory,
           updateInfo.installPath
         );
