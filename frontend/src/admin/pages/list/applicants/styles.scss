@@ -1,4 +1,7 @@
 .applicants {
+  .datagrid {
+    height: 500px;
+  }
   .decline {
     color: rgb(218, 38, 32);
     background-color: rgba(189, 25, 3, 0.212);
@@ -25,7 +28,7 @@
     padding: 5px;
     border-radius: 5px;
   }
- 
+
   /*======= SMALL QUERIES (SMALL DEVICES) =======*/
   @media screen and (max-width: 500px) {
     .datatable {

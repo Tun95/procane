@@ -12,6 +12,7 @@
   --color-light-light-gray: #f7f7f7;
   --color-rating: #ffcd4e;
   --color-primary: #f62f5e;
+  --color-disable: "";
   --color-hover: #ff014f;
   --color-green: #075e54;
   --color-light-green: #128c7e;
@@ -194,6 +195,7 @@ button {
 
 button:disabled {
   opacity: 0.9;
+  cursor: not-allowed;
 }
 
 .main_btn {

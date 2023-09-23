@@ -129,11 +129,8 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: "Our stores info here",
     },
-    paypal: {
-      type: String,
-      default:
-        "AVSqcwu8gCktEtMw2sSWrXdATPkiXfrfJIGPJvp7YJYqEcrwcXOhujirF6QEBIdigzqQzw6tSJ3_rgey",
-    },
+
+    // API
     razorkeyid: {
       type: String,
       default: "rzp_test_yyI1vXw8dNpnfO",
@@ -141,22 +138,6 @@ const settingsSchema = new mongoose.Schema(
     razorsecret: {
       type: String,
       default: "kIwDzb0JYPzwzoePpseCBEXe",
-    },
-    paytmid: {
-      type: String,
-      default: "frogiro89f409r099rofhepko",
-    },
-    paytmkey: {
-      type: String,
-      default: "frogiro89f409r099rofhepko",
-    },
-    payUPub: {
-      type: String,
-      default: "6cd530c6-f2d3-41ab-b1f2-8d56418ac919",
-    },
-    payUPriv: {
-      type: String,
-      default: "584af1fe-ad9c-4ae3-b18f-da86b3933c7d",
     },
     exhangerate: {
       type: String,
@@ -176,10 +157,6 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: "pk_test_ef13bcd8c41beba368902728447ba2b4f79a3287",
     },
-    googleAnalytics: {
-      type: String,
-      default: "G-MNF3WLVGEC",
-    },
     messengerAppId: {
       type: String,
       default: "6222862251176447",
@@ -188,6 +165,8 @@ const settingsSchema = new mongoose.Schema(
       type: String,
       default: "107454247668619",
     },
+    // API
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

@@ -649,10 +649,6 @@ const data = {
         "AVSqcwu8gCktEtMw2sSWrXdATPkiXfrfJIGPJvp7YJYqEcrwcXOhujirF6QEBIdigzqQzw6tSJ3_rgey",
       razorkeyid: "rzp_test_yyI1vXw8dNpnfO",
       razorsecret: "kIwDzb0JYPzwzoePpseCBEXe",
-      paytmid: "frogiro89f409r099rofhepko",
-      paytmkey: "frogiro89f409r099rofhepko",
-      payUPub: "6cd530c6-f2d3-41ab-b1f2-8d56418ac919",
-      payUPriv: "584af1fe-ad9c-4ae3-b18f-da86b3933c7d",
       exhangerate: "10270e08382c90d68a845cdd",
       stripeApiKey:
         "sk_test_51LddZCG74SnLVBhQgEpJEtwmrZun228Px4rYGTLUZ1xC81NzN2TP2svtDGXT3UPaYcEy8jtfj6X6k5EbzcEROpFu00eKwTYye4",

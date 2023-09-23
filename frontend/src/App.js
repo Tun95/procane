@@ -75,7 +75,6 @@ import OrderlistScreen from "./admin/pages/list/order/main/OrderlistScreen";
 import SellerRoute from "./components/utilities/protectedRoute/SellerRoute";
 import ProductlistScreen from "./admin/pages/list/product/main/ProductListScreen";
 import DashboardScreen from "./admin/pages/home/main/DashboardScreen";
-import Settings from "./admin/pages/single/settings/Settings";
 import VendorScreen from "./screens/formscreens/vendorscreen/VendorScreen";
 import Application from "./admin/pages/single/application detail/Application";
 import TrackScreen from "./screens/orderscreen/trackscreen/TrackScreen";
@@ -122,7 +121,6 @@ function App() {
     };
 
     updateFavicon(); // Call the function to update favicon
-
 
     // Set the description dynamically using window.appShortDesc
     const metaDescriptionTag = document.querySelector(
@@ -483,14 +481,7 @@ function App() {
                 </AdminRoute>
               }
             ></Route>
-            <Route
-              path="/admin/settings/:id"
-              element={
-                <AdminRoute>
-                  <Settings />
-                </AdminRoute>
-              }
-            ></Route>
+
             <Route
               path="/admin/application-details/:id"
               element={

@@ -1,9 +1,11 @@
 .settings_screen {
+  .tabPanel {
+    width: 100%;
+  }
   .settings_box {
     .a_flex {
       flex-direction: column;
       width: 80%;
-      
 
       .link_btn {
         width: 60%;
@@ -17,9 +19,9 @@
       /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
       @media screen and (max-width: 500px) {
         width: 100%;
-				.dude {
-        width: 100%;
-      }
+        .dude {
+          width: 100%;
+        }
         .link_btn {
           width: 100%;
           font-weight: 500;

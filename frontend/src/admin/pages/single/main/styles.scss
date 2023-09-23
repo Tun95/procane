@@ -73,20 +73,7 @@
         margin-right: 20px;
       }
     }
-    .logo_image {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      .logo {
-        width: 50%;
-        height: 100px;
-        margin-right: 5px;
-        object-fit: contain;
-      }
-      .logo_url {
-        width: 50%;
-      }
-    }
+
     .submit_btn button {
       width: 45%;
       background-color: var(--color-primary);
@@ -132,5 +119,55 @@
     .content_settings .upper_form .upper_inner_form {
       grid-template-columns: 1fr;
     }
+  }
+}
+.new_settings {
+  width: 100%;
+  .content_settings {
+    width: 100%;
+    padding: 10px;
+    .lower_form {
+      width: 100%;
+      grid-template-columns: 1fr;
+      .lower_group {
+        width: 100%;
+        @media screen and (max-width: 720px) {
+          .d_flex {
+            flex-direction: column;
+          }
+        }
+        .flex_row {
+          display: block;
+          flex-direction: row;
+        }
+        .sub_input {
+          width: 100%;
+        }
+        .logo_image {
+          width: 100%;
+          .store_logo {
+            width: 200px;
+            object-fit: fill;
+            height: 50px;
+          }
+        }
+      }
+    }
+  }
+  .btn {
+    color: var(--color-white);
+    background-color: var(--color-primary);
+    padding: 10px;
+    width: 25%;
+    margin-top: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    @media screen and (max-width: 720px) {
+      width: 100%;
+    }
+  }
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
   }
 }

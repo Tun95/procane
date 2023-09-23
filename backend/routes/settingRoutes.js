@@ -73,7 +73,7 @@ settingsRoutes.get(
 //=======
 settingsRoutes.put(
   "/:id",
-  isAuth,
+  // isAuth,
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
     try {
