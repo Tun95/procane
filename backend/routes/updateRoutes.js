@@ -144,9 +144,9 @@ updateRouter.post("/apply-update", async (req, res) => {
   }
 });
 
-// =======================
+// ======================
 // UNINSTALL UPDATE ROUTE
-// =======================
+// ======================
 updateRouter.post("/uninstall-update", async (req, res) => {
   const { installPath } = req.body; // Assuming you send the installPath of the update to uninstall
 
