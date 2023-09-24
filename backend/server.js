@@ -70,18 +70,6 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const paypalClientId = process.env.PAYPAL_CLIENT_ID || "sb";
-app.get("/", (req, res) => {
-  res.render("index", { paypalClientId });
-});
-app.get("/api/keys/paypal", (req, res) => {
-  res.send(process.env.PAYPAL_CLIENT_ID || "sb");
-});
-
-app.get("/get-stripe-key", (req, res) => {
-  res.send({ key: process.env.STRIPE_PUBLISHABLE_KEY });
-});
-
 app.use("/api/message", sendEmailRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/seed", seedRouter);
