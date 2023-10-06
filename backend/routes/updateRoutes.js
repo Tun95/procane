@@ -106,11 +106,11 @@ updateRouter.post("/apply-update", async (req, res) => {
 
         const targetFolder = path.join(
           __dirname,
-          "..", // Move up one directory (to the root of your project)
+          "..", // Move up one directory (to "backend" or "frontend")
+          // "..", // Move up one more directory (to "MernStore")
           baseDirectory,
           updateInfo.installPath
         );
-        
         console.log("updateInfo:", updateInfo);
         console.log("targetFolder:", targetFolder);
 
@@ -144,44 +144,6 @@ updateRouter.post("/apply-update", async (req, res) => {
   }
 });
 
-// ======================
-// UNINSTALL UPDATE ROUTE
-// ======================
-updateRouter.post("/uninstall-update", async (req, res) => {
-  const { installPath } = req.body; // Assuming you send the installPath of the update to uninstall
 
-  if (!installPath) {
-    return res.status(400).send("Missing installation path.");
-  }
-
-  const isFrontendUpdate = req.body.type === "frontend"; // You may need to send the type of update too
-  const baseDirectory = isFrontendUpdate ? "frontend" : "backend";
-
-  const targetFolder = path.join(
-    __dirname,
-    "..", // Move up one directory (to "backend" or "frontend")
-    "..", // Move up one more directory (to "MernStore")
-    baseDirectory,
-    installPath
-  );
-
-  if (!fs.existsSync(targetFolder)) {
-    return res.status(400).send("Target folder does not exist.");
-  }
-
-  try {
-    // Empty the target folder and its contents recursively
-    const emptyTargetFolder = await emptyDirectory(targetFolder);
-
-    if (emptyTargetFolder) {
-      res.send("Update uninstalled successfully.");
-    } else {
-      res.status(500).send("Error emptying target folder.");
-    }
-  } catch (err) {
-    console.error("Error uninstalling the update:", err);
-    res.status(500).send("Error uninstalling the update.");
-  }
-});
 
 export default updateRouter;
