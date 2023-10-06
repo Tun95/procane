@@ -55,10 +55,10 @@ const StyledDivider = styled(Divider)(({ theme, darkMode }) => ({
 }));
 
 function Search() {
-  // window.addEventListener("scroll", function () {
-  //   const search = document.querySelector(".search");
-  //   search.classList.toggle("active", window.scrollY > 100);
-  // });
+  window.addEventListener("scroll", function () {
+    const search = document.querySelector(".search");
+    search.classList.toggle("active", this.window.scrollY > 10);
+  });
 
   const { state, dispatch: ctxDispatch, darkMode } = useContext(Context);
   const { cart, userInfo, settings } = state;

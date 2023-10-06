@@ -6,7 +6,6 @@ import { request } from "../../../../base url/BaseUrl";
 import { toast } from "react-toastify";
 import MessageBox from "../../../../components/utilities/message loading/MessageBox";
 
-const fileTypes = ["ZIP"];
 
 const initialState = {
   loadingUpdate: false,

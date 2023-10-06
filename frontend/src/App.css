@@ -34,12 +34,7 @@
   --container-width-sm: 99%;
 }
 
-.app {
-  overflow: hidden;
-}
-html {
-  scroll-behavior: smooth;
-}
+
 body {
   font-family: "Poppins", sans-serif;
   background-color: var(--color-white);
