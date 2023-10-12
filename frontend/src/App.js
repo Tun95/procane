@@ -23,7 +23,6 @@ import LoginScreen from "./screens/formscreens/loginscreen/LoginScreen";
 import RegisterScreen from "./screens/formscreens/registerscreen/RegisterScreen";
 import ContactScreen from "./screens/formscreens/contactscreen/ContactScreen";
 import AccountVerifyScreen from "./screens/formscreens/accountverifyscreen/AccountVerifyScreen";
-import VerifySuccessScreen from "./screens/formscreens/verifiedscreen/VerifiedScreen";
 import UserList from "./admin/pages/list/user/UserList";
 import VendorList from "./admin/pages/list/vendor/VendorList";
 import Footer from "./common/footer/Footer";
@@ -90,6 +89,8 @@ import SellerDashboard from "./seller/pages/dashboard/Dashboard";
 import UnSubscribeScreen from "./screens/formscreens/unsubscribescreen/UnsubcribeScreen";
 import Withdrawal from "./admin/pages/single/withdrawal request/Withdrawal";
 import SellerWithdraw from "./seller/pages/single/withrawal request/SellerWithdraw";
+import VerifyScreen from "./screens/formscreens/verifiedscreen/VerifiedScreen";
+import VerifiedSuccessScreen from "./screens/formscreens/verifiedsuccesscreen/VerifiedSuccessScreen";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -245,7 +246,15 @@ function App() {
               path="/verify-success/:id/:token"
               element={
                 <ProtectedRoute>
-                  <VerifySuccessScreen />
+                  <VerifyScreen />
+                </ProtectedRoute>
+              }
+            ></Route>
+            <Route
+              path="/verified-success"
+              element={
+                <ProtectedRoute>
+                  <VerifiedSuccessScreen />
                 </ProtectedRoute>
               }
             ></Route>

@@ -1,5 +1,5 @@
 import React, { useContext, useReducer } from "react";
-import DoneIcon from "@mui/icons-material/Done";
+import QuestionMarkOutlinedIcon from "@mui/icons-material/QuestionMarkOutlined";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Context } from "../../../context/Context";
 import axios from "axios";
@@ -19,7 +19,7 @@ const reducer = (state, action) => {
       return state;
   }
 };
-function VerifySuccessScreen() {
+function VerifyScreen() {
   const params = useParams();
   const { token, id: userId } = params;
 
@@ -49,22 +49,11 @@ function VerifySuccessScreen() {
         }
       );
       dispatch({ type: "VERIFY_SUCCESS", payload: data.token });
+      navigate(redirect || "/verified-success");
     } catch (err) {
       dispatch({ type: "VERIFY_FAIL" });
       toast.error(getError(err), { position: "bottom-center" });
     }
-  };
-
-  //===============
-  //SIGN OUT
-  //===============
-  const signoutHandler = () => {
-    ctxDispatch({ type: "USER_SIGNOUT" });
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("!userInfo" && "cartItems");
-    localStorage.removeItem("shippingAddress");
-    localStorage.removeItem("paymentMethod");
-    window.location.href = "/login";
   };
 
   return (
@@ -72,8 +61,8 @@ function VerifySuccessScreen() {
       <div className="form-box-content">
         <div className="inner-form inner-form-small">
           <div className="form-icon-done">
-            <span className="form-icon-span">
-              <DoneIcon className="form-icon" />
+            <span className="form-icon-span question">
+              <QuestionMarkOutlinedIcon className="form-icon" />
             </span>
           </div>
           <h2>Account Verified</h2>
@@ -84,10 +73,7 @@ function VerifySuccessScreen() {
           <div className="form-btn">
             <button
               className="form-submit-btn"
-              onClick={() => {
-                verificationHandler();
-                signoutHandler();
-              }}
+              onClick={() => verificationHandler()}
             >
               Log Out
             </button>
@@ -98,4 +84,4 @@ function VerifySuccessScreen() {
   );
 }
 
-export default VerifySuccessScreen;
+export default VerifyScreen;

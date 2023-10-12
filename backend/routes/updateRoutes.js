@@ -107,7 +107,7 @@ updateRouter.post("/apply-update", async (req, res) => {
         const targetFolder = path.join(
           __dirname,
           "..", // Move up one directory (to "backend" or "frontend")
-          // "..", // Move up one more directory (to "MernStore")
+          "..", // Move up one more directory (to "MernStore")
           baseDirectory,
           updateInfo.installPath
         );
