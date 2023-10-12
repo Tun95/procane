@@ -55,10 +55,10 @@ const StyledDivider = styled(Divider)(({ theme, darkMode }) => ({
 }));
 
 function Search() {
-  window.addEventListener("scroll", function () {
-    const search = document.querySelector(".search");
-    search.classList.toggle("active", this.window.scrollY > 10);
-  });
+  // window.addEventListener("scroll", function () {
+  //   const search = document.querySelector(".search");
+  //   search.classList.toggle("active", window.scrollY > 100);
+  // });
 
   const { state, dispatch: ctxDispatch, darkMode } = useContext(Context);
   const { cart, userInfo, settings } = state;
@@ -104,7 +104,7 @@ function Search() {
   };
 
   return (
-    <div>
+    <>
       <section className="search">
         <div className="container c_flex search_bar">
           <div className="logo width">
@@ -306,7 +306,7 @@ function Search() {
           </div>
         </div>
       </section>
-    </div>
+    </>
   );
 }
 

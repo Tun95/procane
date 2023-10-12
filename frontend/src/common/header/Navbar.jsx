@@ -101,7 +101,7 @@ function Navbar() {
     }
   };
   return (
-    <div>
+    <>
       <header className="header">
         <div className="container d_flex">
           <div className="categories ">
@@ -181,7 +181,7 @@ function Navbar() {
           </div>
         </div>
       </header>
-    </div>
+    </>
   );
 }
 
