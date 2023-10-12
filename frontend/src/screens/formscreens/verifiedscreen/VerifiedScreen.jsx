@@ -19,6 +19,7 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
 function VerifyScreen() {
   const params = useParams();
   const { token, id: userId } = params;
@@ -31,15 +32,14 @@ function VerifyScreen() {
   const { state, dispatch: ctxDispatch } = useContext(Context);
   const { userInfo } = state;
   const [{ loading, error }, dispatch] = useReducer(reducer, {
-    loading: true,
+    loading: false,
     order: {},
     error: "",
   });
 
-  //===============
-  //Verify Account
-  //===============
   const verificationHandler = async () => {
+    dispatch({ type: "VERIFY_REQUEST" }); // Set loading to true when verification starts.
+
     try {
       const { data } = await axios.put(
         `${request}/api/users/verify-account/${userId}`,
@@ -48,7 +48,7 @@ function VerifyScreen() {
           headers: { authorization: `Bearer ${userInfo.token}` },
         }
       );
-      dispatch({ type: "VERIFY_SUCCESS", payload: data.token });
+      dispatch({ type: "VERIFY_SUCCESS" });
       navigate(redirect || "/verified-success");
     } catch (err) {
       dispatch({ type: "VERIFY_FAIL" });
@@ -65,17 +65,15 @@ function VerifyScreen() {
               <QuestionMarkOutlinedIcon className="form-icon" />
             </span>
           </div>
-          <h2>Account Verified</h2>
-          <p>
-            Your account is now verified. Log Out and Log In to apply the
-            changes
-          </p>
+          <h2>Verify Now</h2>
+          <p>Click on the link down below to verify your account?</p>
           <div className="form-btn">
             <button
               className="form-submit-btn"
               onClick={() => verificationHandler()}
+              disabled={loading} // Disable the button when loading
             >
-              Log Out
+              {loading ? "Verifying..." : "Verify Now"}
             </button>
           </div>
         </div>

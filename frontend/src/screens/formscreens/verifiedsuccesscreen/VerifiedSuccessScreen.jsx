@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Context } from "../../../context/Context";
 import DoneIcon from "@mui/icons-material/Done";
 
@@ -6,17 +6,26 @@ function VerifiedSuccessScreen() {
   const { state, dispatch: ctxDispatch } = useContext(Context);
   const { userInfo } = state;
 
-  //===============
-  //SIGN OUT
-  //===============
+  const [loading, setLoading] = useState(false); // Add loading state
+
+  // Log Out function
   const signoutHandler = () => {
+    setLoading(true); // Set loading to true when log out starts
+
+    // Perform the log out action
     ctxDispatch({ type: "USER_SIGNOUT" });
     localStorage.removeItem("userInfo");
     localStorage.removeItem("!userInfo" && "cartItems");
     localStorage.removeItem("shippingAddress");
     localStorage.removeItem("paymentMethod");
-    window.location.href = "/login";
+
+    // Simulate a delay for demonstration purposes (remove this in your actual code)
+    setTimeout(() => {
+      setLoading(false); // Set loading to false when log out is completed
+      window.location.href = "/login";
+    }, 2000); // Replace with your actual log out logic
   };
+
   return (
     <div className="form-box">
       <div className="form-box-content">
@@ -35,8 +44,9 @@ function VerifiedSuccessScreen() {
             <button
               className="form-submit-btn"
               onClick={() => signoutHandler()}
+              disabled={loading} // Disable the button when loading
             >
-              Log Out
+              {loading ? "Logging Out..." : "Log Out"}
             </button>
           </div>
         </div>
