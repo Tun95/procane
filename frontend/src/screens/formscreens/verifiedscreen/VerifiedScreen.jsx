@@ -27,7 +27,7 @@ function VerifyScreen() {
   const navigate = useNavigate();
   const { search } = useLocation();
   const redirectUnUrl = new URLSearchParams(search).get("redirect");
-  const redirect = redirectUnUrl ? redirectUnUrl : "/login";
+  const redirect = redirectUnUrl ? redirectUnUrl : "/";
 
   const { state, dispatch: ctxDispatch } = useContext(Context);
   const { userInfo } = state;
@@ -49,7 +49,10 @@ function VerifyScreen() {
         }
       );
       dispatch({ type: "VERIFY_SUCCESS" });
-      navigate(redirect || "/verified-success");
+      navigate(redirect || "/");
+      toast.success("Account verified successfully", {
+        position: "bottom-center",
+      });
     } catch (err) {
       dispatch({ type: "VERIFY_FAIL" });
       toast.error(getError(err), { position: "bottom-center" });
@@ -66,7 +69,7 @@ function VerifyScreen() {
             </span>
           </div>
           <h2>Verify Now</h2>
-          <p>Click on the link down below to verify your account?</p>
+          <p>Click on the button down below to verify your account?</p>
           <div className="form-btn">
             <button
               className="form-submit-btn"

@@ -251,7 +251,7 @@ function App() {
               }
             ></Route>
             <Route
-              path="/verified-success"
+              path="/verified"
               element={
                 <ProtectedRoute>
                   <VerifiedSuccessScreen />
