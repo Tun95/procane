@@ -29,7 +29,7 @@
 ._loading_overlay_overlay,
 ._loading_overlay_content,
 ._loading_overlay_spinner {
-  z-index: 1001;
+  z-index: 1001 !important;
 }
 ._loading_overlay_content {
   position: absolute;
