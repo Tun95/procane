@@ -25,6 +25,12 @@
   margin-top: 5px;
 }
 
+._loading_overlay_wrapper,
+._loading_overlay_overlay,
+._loading_overlay_content,
+._loading_overlay_spinner {
+  z-index: 1001;
+}
 ._loading_overlay_content {
   position: absolute;
   top: 30%;
