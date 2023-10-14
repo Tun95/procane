@@ -25,9 +25,9 @@ function Wrapper() {
     wrappers: [],
   });
 
-  //===============
+  //================
   //FETCH ALL BRANDS
-  //===============
+  //================
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: "FETCH_REQUEST" });
