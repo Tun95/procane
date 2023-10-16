@@ -16,7 +16,7 @@ const reducer = (state, action) => {
     case "FETCH_REQUEST":
       return { ...state, loading: true };
     case "FETCH_SUCCESS":
-      return { ...state, loading: false, users: action.payload };
+      return { ...state, loading: false, users: action?.payload };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
 
@@ -87,11 +87,11 @@ const columns = [
     renderCell: (params) => {
       return (
         <>
-          <div className={`cellWithAdminSellerStatus ${params.row.isBlocked}`}>
-            {params.row.isSeller === true ? (
+          <div className={`cellWithAdminSellerStatus ${params?.row?.isBlocked}`}>
+            {params?.row?.isSeller === true ? (
               <span className="yes">YES</span>
-            ) : params.row.isSeller === false &&
-              params.row.apply[0]?.status === true ? (
+            ) : params?.row?.isSeller === false &&
+              params?.row?.apply[0]?.status === true ? (
               <span className="pending">pending</span>
             ) : (
               <span className="no">NO</span>
@@ -108,8 +108,8 @@ const columns = [
     renderCell: (params) => {
       return (
         <>
-          <div className={`cellWithAdminSellerStatus ${params.row.isBlocked}`}>
-            {params.row.isAdmin === true ? (
+          <div className={`cellWithAdminSellerStatus ${params?.row?.isBlocked}`}>
+            {params?.row?.isAdmin === true ? (
               <span className="yes">YES</span>
             ) : (
               <span className="no">NO</span>
@@ -126,8 +126,8 @@ const columns = [
     renderCell: (params) => {
       return (
         <>
-          <div className={`cellWithStatus ${params.row.isBlocked}`}>
-            {params.row.isBlocked === true ? (
+          <div className={`cellWithStatus ${params?.row?.isBlocked}`}>
+            {params?.row?.isBlocked === true ? (
               <span className="blocked">Blocked</span>
             ) : (
               <span className="active">Active</span>
@@ -245,7 +245,7 @@ function UserList() {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            {params.row.isBlocked === true ? (
+            {params?.row?.isBlocked === true ? (
               <div
                 onClick={() => unBlockHandler(params.row)}
                 className="blockButton"
@@ -266,7 +266,7 @@ function UserList() {
             >
               Delete
             </div>
-            <Link to={`/admin/user/${params.row._id}`}>
+            <Link to={`/admin/user/${params.row?._id}`}>
               <div className="viewButton">View</div>
             </Link>
           </div>
@@ -293,8 +293,8 @@ function UserList() {
             <DataGrid
               className="datagrid"
               rows={users}
-              getRowId={(row) => row._id}
-              columns={columns.concat(actionColumn)}
+              getRowId={(row) => row?._id}
+              columns={columns?.concat(actionColumn)}
               autoPageSize
               rowsPerPageOptions={[10]}
               checkboxSelection
