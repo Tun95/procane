@@ -16,7 +16,7 @@ const reducer = (state, action) => {
     case "FETCH_REQUEST":
       return { ...state, loading: true };
     case "FETCH_SUCCESS":
-      return { ...state, loading: false, vendors: action.payload };
+      return { ...state, loading: false, vendors: action?.payload };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
 
@@ -275,8 +275,8 @@ function VendorList() {
             <DataGrid
               className="datagrid"
               rows={vendors}
-              getRowId={(row) => row._id}
-              columns={columns.concat(actionColumn)}
+              getRowId={(row) => row?._id}
+              columns={columns?.concat(actionColumn)}
               autoPageSize
               rowsPerPageOptions={[10]}
               checkboxSelection
